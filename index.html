@@ -488,7 +488,82 @@
                     <button onclick="mudarSubAbaClientes('sub-clientes-cad')" id="btn-sub-cli" class="btn-sub-aba ativo-sub">Cadastro de Clientes</button>
                     <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
+<!-- [Mantenha todo o seu código anterior e apenas substitua o trecho abaixo] -->
 
+<!-- Módulo: Clientes (Atualizado com campo Celular) -->
+<!-- ... (dentro de form-cliente, adicione este novo div) ... -->
+<div>
+    <label>Celular / WhatsApp:</label>
+    <input type="text" id="cli-celular" placeholder="(00) 00000-0000">
+</div>
+
+<!-- Módulo: Prestadores (Atualizado com campo Celular) -->
+<!-- ... (dentro de form-prestador, adicione este novo div) ... -->
+<div>
+    <label>Celular / WhatsApp:</label>
+    <input type="text" id="pres-celular" placeholder="(00) 00000-0000">
+</div>
+
+<!-- Aba Atividades (Atualizada com Menu de Filtro) -->
+
+    <h3 style="color: var(--primary);">Atividades</h3>
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button onclick="filtrarAtividades('clientes')" class="btn-sub-aba">Clientes</button>
+        <button onclick="filtrarAtividades('prestadores')" class="btn-sub-aba">Prestadores</button>
+    </div>
+    <div id="container-atividades-lista">
+        <!-- Aqui aparecerão os dados filtrados -->
+    </div>
+</div>
+
+<script>
+    // 1. Lógica do TAB no Post-it (Corrigida)
+    function tratarTeclas(event) {
+        if (event.key === "Tab") {
+            event.preventDefault(); // Impede que o foco saia do textarea
+            const start = event.target.selectionStart;
+            const end = event.target.selectionEnd;
+            event.target.value = event.target.value.substring(0, start) + "    " + event.target.value.substring(end);
+            event.target.selectionStart = event.target.selectionEnd = start + 4;
+        }
+        if (event.key === "Enter") {
+            event.preventDefault();
+            event.target.blur(); // Confirma e fecha foco
+        }
+    }
+
+    // 2. Lógica para separar em Atividades
+    function filtrarAtividades(tipo) {
+        const container = document.getElementById('container-atividades-lista');
+        container.innerHTML = `<h4>Listagem de ${tipo.toUpperCase()}</h4>`;
+
+        const lista = (tipo === 'clientes') ? listaClientes : listaPrestadores;
+
+        if (lista.length === 0) {
+            container.innerHTML += "<p>Nenhuma atividade encontrada.</p>";
+            return;
+        }
+
+        lista.forEach(item => {
+            container.innerHTML += `
+                <div style="border: 1px solid #e2e8f0; padding: 10px; margin-bottom: 5px; border-radius: 6px;">
+                    <strong>${item.nome}</strong> - Cel: ${item.celular || 'Não informado'} - Atividade: ${item.atividade}
+                </div>
+            `;
+        });
+    }
+
+    // 3. Atualize o salvarCliente e salvarPrestador para capturar o novo campo:
+    function salvarCliente(event) {
+        event.preventDefault();
+        listaClientes.push({
+            nome: document.getElementById('cli-nome').value,
+            celular: document.getElementById('cli-celular').value,
+            // ... resto dos campos
+        });
+        // ...
+    }
+</script>
                 <!-- Sub-aba 1: Cadastro de Clientes -->
                 <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
                     <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
