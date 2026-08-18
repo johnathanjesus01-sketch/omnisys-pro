@@ -601,10 +601,10 @@
                 </div>
             </div>
 
-            <!-- Módulo: Estoque com Subgrupos Dinâmicos -->
+            <!-- Módulo: Estoque com Subgrupos Predeterminados + Personalizar -->
             <div id="tab-estoque" class="card">
                 <h3>Gerenciamento de Estoque</h3>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre e controle os itens do inventário divididos por subgrupos.</p>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre e controle os itens do inventário divididos por categorias e subgrupos.</p>
 
                 <form id="form-estoque" onsubmit="salvarProdutoEstoque(event)" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: flex-end;">
                     <input type="hidden" id="prod-edit-index" value="-1">
@@ -620,16 +620,24 @@
                         <label>Validade:</label>
                         <input type="date" id="produto-validade">
                     </div>
-                    <div style="grid-column: span 3;">
+                    <div>
                         <label>Subgrupo / Categoria:</label>
-                        <select id="produto-subgrupo">
+                        <select id="produto-subgrupo" onchange="verificarSubgrupoPersonalizado(this.value)">
                             <option value="Geral">Geral (Sem subgrupo específico)</option>
-                            <option value="Comida">Comida</option>
-                            <option value="Construção">Construção</option>
-                            <option value="Elétrica">Elétrica</option>
-                            <option value="Objetos Descartáveis">Objetos Descartáveis</option>
+                            <option value="Alimentos e Bebidas">Alimentos e Bebidas</option>
+                            <option value="Descartáveis e Embalagens">Descartáveis e Embalagens</option>
+                            <option value="Material de Escritório">Material de Escritório</option>
+                            <option value="Limpeza e Higiene">Limpeza e Higiene</option>
+                            <option value="Ferramentas e Manutenção">Ferramentas e Manutenção</option>
+                            <option value="Eletrônicos e Informática">Eletrônicos e Informática</option>
+                            <option value="Personalizado">Outro (Personalizar)...</option>
                         </select>
                     </div>
+                    <div id="container-subgrupo-personalizado" style="display: none; grid-column: span 2;">
+                        <label style="color: #2563eb; font-weight: bold;">Digite o Nome do Subgrupo Personalizado:</label>
+                        <input type="text" id="produto-subgrupo-custom" placeholder="Ex: Peças Especiais" style="border-color: #93c5fd; background: #eff6ff;">
+                    </div>
+
                     <button type="submit" id="btn-salvar-produto" class="btn-form" style="grid-column: span 3; background-color: var(--success); margin-top: 5px;">Salvar Produto</button>
                 </form>
 
@@ -819,6 +827,13 @@
             }
         }
 
+        function verificarSubgrupoPersonalizado(valor) {
+            const containerCustom = document.getElementById('container-subgrupo-personalizado');
+            if (containerCustom) {
+                containerCustom.style.display = (valor === 'Personalizado') ? 'block' : 'none';
+            }
+        }
+
         // --- PERSISTÊNCIA DE DADOS (LOCALSTORAGE) ---
         let listaClientes = JSON.parse(localStorage.getItem('omnisys_clientes')) || [];
         let listaPrestadores = JSON.parse(localStorage.getItem('omnisys_prestadores')) || [];
@@ -838,11 +853,18 @@
         function salvarProdutoEstoque(event) {
             event.preventDefault();
             const indexEdit = parseInt(document.getElementById('prod-edit-index').value);
+
+            let subgrupoSelecionado = document.getElementById('produto-subgrupo').value;
+            if (subgrupoSelecionado === 'Personalizado') {
+                const customInput = document.getElementById('produto-subgrupo-custom').value.trim();
+                subgrupoSelecionado = customInput !== '' ? customInput : 'Outros';
+            }
+
             const dadosProduto = {
                 nome: document.getElementById('produto-nome').value.trim(),
                 qtd: document.getElementById('produto-qtd').value.trim(),
                 validade: document.getElementById('produto-validade').value || '-',
-                subgrupo: document.getElementById('produto-subgrupo').value
+                subgrupo: subgrupoSelecionado
             };
 
             if (indexEdit === -1) {
@@ -856,6 +878,7 @@
             }
 
             document.getElementById('form-estoque').reset();
+            document.getElementById('container-subgrupo-personalizado').style.display = 'none';
             salvarDadosLocal();
             atualizarTabelaEstoque();
         }
@@ -866,7 +889,19 @@
             document.getElementById('produto-nome').value = p.nome;
             document.getElementById('produto-qtd').value = p.qtd;
             document.getElementById('produto-validade').value = p.validade !== '-' ? p.validade : '';
-            document.getElementById('produto-subgrupo').value = p.subgrupo;
+
+            const selectSub = document.getElementById('produto-subgrupo');
+            const predefinidos = ['Geral', 'Alimentos e Bebidas', 'Descartáveis e Embalagens', 'Material de Escritório', 'Limpeza e Higiene', 'Ferramentas e Manutenção', 'Eletrônicos e Informática'];
+
+            if (predefinidos.includes(p.subgrupo)) {
+                selectSub.value = p.subgrupo;
+                document.getElementById('container-subgrupo-personalizado').style.display = 'none';
+            } else {
+                selectSub.value = 'Personalizado';
+                document.getElementById('container-subgrupo-personalizado').style.display = 'block';
+                document.getElementById('produto-subgrupo-custom').value = p.subgrupo;
+            }
+
             document.getElementById('btn-salvar-produto').innerText = "Atualizar Produto";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -890,13 +925,11 @@
             const tbody = document.getElementById('tabela-estoque-corpo');
             if (!tbody || !containerSub) return;
 
-            // Gerar abas de subgrupos dinâmicos
             const subgruposDisponiveis = ['Todos', ...new Set(listaEstoque.map(p => p.subgrupo))];
             containerSub.innerHTML = subgruposDisponiveis.map(sub => `
                 <button onclick="filtrarSubgrupoEstoque('${sub}')" class="btn-sub-aba ${subgrupoFiltroAtual === sub ? 'ativo-sub' : ''}">${sub}</button>
             `).join('');
 
-            // Filtrar produtos
             const filtrados = listaEstoque.map((p, originalIndex) => ({ ...p, originalIndex })).filter(p => {
                 if (subgrupoFiltroAtual === 'Todos') return true;
                 return p.subgrupo === subgrupoFiltroAtual;
