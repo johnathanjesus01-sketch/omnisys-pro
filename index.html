@@ -466,6 +466,9 @@
                 <li id="menu-item-criacao" style="display: none; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                     <button onclick="mudarAba('criar-login', this)" id="btn-criar-login" style="background: #1e3a8a; color: white; font-weight: bold;">🔑 Criar Novo Acesso</button>
                 </li>
+                <li style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    <button onclick="sairDoApp()" style="background: rgba(220, 38, 38, 0.2); color: #fca5a5; font-weight: bold; border: 1px solid rgba(220, 38, 38, 0.4);">🚪 Sair do App</button>
+                </li>
             </ul>
         </aside>
 
@@ -489,7 +492,7 @@
                     <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
 
-                <!-- Sub-aba 1: Cadastro de Clientes (Com Edição e Exclusão) -->
+                <!-- Sub-aba 1: Cadastro de Clientes -->
                 <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
                     <h4 id="titulo-form-cliente" style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
                     <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
@@ -552,10 +555,11 @@
                     </div>
                 </div>
 
-                <!-- Sub-aba 2: Prestador de Serviço (Com Data de Início e Horário) -->
+                <!-- Sub-aba 2: Prestador de Serviço -->
                 <div id="sub-prestador-cad" class="sub-conteudo-cli" style="display: none;">
-                    <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Prestador de Serviço / Orçamento</h4>
+                    <h4 id="titulo-form-prestador" style="margin-bottom: 12px; color: var(--primary);">Registar Prestador de Serviço / Orçamento</h4>
                     <form id="form-prestador" onsubmit="salvarPrestador(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
+                        <input type="hidden" id="pres-edit-index" value="-1">
                         <div>
                             <label>Nome Empresa / Física:</label>
                             <input type="text" id="pres-nome" placeholder="Ex: Fornecedor Y" required>
@@ -600,7 +604,7 @@
                             <input type="date" id="pres-exp-boleto" style="border-color: #fca5a5; background: #fef2f2;">
                         </div>
 
-                        <button type="submit" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Prestador</button>
+                        <button type="submit" id="btn-salvar-prestador" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Prestador</button>
                     </form>
 
                     <h4 style="margin-bottom: 10px; color: var(--primary);">Lista de Prestadores Registados</h4>
@@ -615,10 +619,11 @@
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Método</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Venc. Boleto</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-prestadores-corpo">
-                                <tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>
+                                <tr><td colspan="8" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -652,7 +657,7 @@
                 <div id="calendario-postit"></div>
             </div>
 
-            <!-- Módulo: Atividades (Com abas superiores Clientes e Prestadores detalhadas) -->
+            <!-- Módulo: Atividades -->
             <div id="tab-atividades" class="card">
                 <h3 style="color: var(--primary);">Controle de Atividades</h3>
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
@@ -682,7 +687,7 @@
                 <h3>Atividades Concluídas</h3>
             </div>
 
-            <!-- Módulo: Lembretes (Com Prazos de Boletos e Datas) -->
+            <!-- Módulo: Lembretes -->
             <div id="tab-lembretes" class="card">
                 <h3>Central de Lembretes e Prazos</h3>
                 <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Prazos e vencimentos de boletos para os próximos 7 dias.</p>
@@ -736,6 +741,15 @@
             document.getElementById("user-role").innerText = "adminMaster";
             document.getElementById("badge-master").style.display = "block";
             document.getElementById("menu-item-criacao").style.display = "block";
+        }
+
+        function sairDoApp() {
+            if (confirm("Deseja realmente sair do Omnisys Pro?")) {
+                document.getElementById("dashboard-container").style.display = "none";
+                document.getElementById("login-screen").style.display = "flex";
+                document.getElementById("login-usuario").value = "";
+                document.getElementById("login-senha").value = "";
+            }
         }
 
         function mudarAba(nomeAba, elementoBotao) {
@@ -801,8 +815,16 @@
             }
         }
 
-        const listaClientes = [];
-        const listaPrestadores = [];
+        // --- PERSISTÊNCIA DE DADOS (LOCALSTORAGE) ---
+        let listaClientes = JSON.parse(localStorage.getItem('omnisys_clientes')) || [];
+        let listaPrestadores = JSON.parse(localStorage.getItem('omnisys_prestadores')) || [];
+        let agendaDados = JSON.parse(localStorage.getItem('omnisys_agenda')) || {};
+
+        function salvarDadosLocal() {
+            localStorage.setItem('omnisys_clientes', JSON.stringify(listaClientes));
+            localStorage.setItem('omnisys_prestadores', JSON.stringify(listaPrestadores));
+            localStorage.setItem('omnisys_agenda', JSON.stringify(agendaDados));
+        }
 
         function salvarCliente(event) {
             event.preventDefault();
@@ -829,6 +851,7 @@
             }
 
             document.getElementById('form-cliente').reset();
+            salvarDadosLocal();
             atualizarTabelaClientes();
         }
 
@@ -851,6 +874,7 @@
         function excluirCliente(index) {
             if (confirm("Tem certeza que deseja excluir este cliente?")) {
                 listaClientes.splice(index, 1);
+                salvarDadosLocal();
                 atualizarTabelaClientes();
                 alert("Cliente excluído com sucesso!");
             }
@@ -882,8 +906,9 @@
 
         function salvarPrestador(event) {
             event.preventDefault();
+            const indexEdit = parseInt(document.getElementById('pres-edit-index').value);
             const pagamento = document.getElementById('pres-pagamento').value;
-            listaPrestadores.push({
+            const dadosPrestador = {
                 nome: document.getElementById('pres-nome').value.trim(),
                 doc: document.getElementById('pres-doc').value.trim(),
                 celular: document.getElementById('pres-celular').value.trim(),
@@ -893,21 +918,63 @@
                 valor: document.getElementById('pres-valor').value.trim(),
                 pagamento: pagamento,
                 expBoleto: (pagamento === 'Boleto') ? document.getElementById('pres-exp-boleto').value : '-'
-            });
+            };
+
+            if (indexEdit === -1) {
+                listaPrestadores.push(dadosPrestador);
+                alert("Prestador registado com sucesso!");
+            } else {
+                listaPrestadores[indexEdit] = dadosPrestador;
+                document.getElementById('pres-edit-index').value = "-1";
+                document.getElementById('titulo-form-prestador').innerText = "Registar Prestador de Serviço / Orçamento";
+                document.getElementById('btn-salvar-prestador').innerText = "Guardar Prestador";
+                alert("Prestador atualizado com sucesso!");
+            }
+
             document.getElementById('form-prestador').reset();
             document.getElementById('container-boleto-exp').style.display = 'none';
+            salvarDadosLocal();
             atualizarTabelaPrestadores();
-            alert("Prestador registado com sucesso!");
+        }
+
+        function editarPrestador(index) {
+            const p = listaPrestadores[index];
+            document.getElementById('pres-edit-index').value = index;
+            document.getElementById('pres-nome').value = p.nome;
+            document.getElementById('pres-doc').value = p.doc;
+            document.getElementById('pres-celular').value = p.celular;
+            document.getElementById('pres-atividade').value = p.atividade;
+            document.getElementById('pres-data-inicio').value = p.dataInicio;
+            document.getElementById('pres-horario').value = p.horario;
+            document.getElementById('pres-valor').value = p.valor;
+            document.getElementById('pres-pagamento').value = p.pagamento;
+            verificarBoletoPrestador(p.pagamento);
+            if(p.pagamento === 'Boleto') {
+                document.getElementById('pres-exp-boleto').value = p.expBoleto;
+            }
+
+            document.getElementById('titulo-form-prestador').innerText = "Editar Prestador: " + p.nome;
+            document.getElementById('btn-salvar-prestador').innerText = "Atualizar Prestador";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function excluirPrestador(index) {
+            if (confirm("Tem certeza que deseja excluir este prestador?")) {
+                listaPrestadores.splice(index, 1);
+                salvarDadosLocal();
+                atualizarTabelaPrestadores();
+                alert("Prestador excluído com sucesso!");
+            }
         }
 
         function atualizarTabelaPrestadores() {
             const tbody = document.getElementById('tabela-prestadores-corpo');
             if (!tbody) return;
             if (listaPrestadores.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = listaPrestadores.map(p => `
+            tbody.innerHTML = listaPrestadores.map((p, i) => `
                 <tr style="border-bottom: 1px solid #e2e8f0;">
                     <td style="padding: 10px;">${p.nome}</td>
                     <td style="padding: 10px;">${p.celular}</td>
@@ -916,6 +983,10 @@
                     <td style="padding: 10px;">R$ ${parseFloat(p.valor).toFixed(2)}</td>
                     <td style="padding: 10px;">${p.pagamento}</td>
                     <td style="padding: 10px; color: ${p.expBoleto !== '-' ? '#b91c1c' : 'inherit'}; font-weight: ${p.expBoleto !== '-' ? 'bold' : 'normal'};">${p.expBoleto}</td>
+                    <td style="padding: 10px; text-align: center;">
+                        <button class="btn-table-edit" onclick="editarPrestador(${i})">Editar</button>
+                        <button class="btn-table-del" onclick="excluirPrestador(${i})">Excluir</button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -932,7 +1003,6 @@
         }
 
         /* --- AGENDA POST-IT (7 COLUNAS & TAB PARA PULAR LINHA) --- */
-        const agendaDados = {};
         let anoAtualGlobal = 2026;
         let mesAtualGlobal = 7;
         const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
@@ -1026,6 +1096,7 @@
         function salvarNotaPostit(ano, mes, dia, texto) {
             const chaveKey = `${ano}-${mes}-${dia}`;
             agendaDados[chaveKey] = texto;
+            salvarDadosLocal();
             carregarCalendario(ano, mes);
         }
 
@@ -1037,7 +1108,6 @@
             hoje.setHours(0,0,0,0);
             let alertasProximos = [];
 
-            // Verificar prazos da Agenda
             for (const [chave, nota] of Object.entries(agendaDados)) {
                 if (nota && nota.trim() !== "") {
                     const partes = chave.split('-');
@@ -1059,10 +1129,9 @@
                 }
             }
 
-            // Verificar Vencimentos de Boletos de Prestadores
             listaPrestadores.forEach(p => {
                 if (p.expBoleto && p.expBoleto !== '-') {
-                    const partesBoleto = p.expBoleto.split('-'); // Formato YYYY-MM-DD do input date
+                    const partesBoleto = p.expBoleto.split('-');
                     if (partesBoleto.length === 3) {
                         const dataBoleto = new Date(partesBoleto[0], partesBoleto[1] - 1, partesBoleto[2]);
                         dataBoleto.setHours(0,0,0,0);
@@ -1107,9 +1176,12 @@
             if (timeoutPopup) clearTimeout(timeoutPopup);
         }
 
+        // Inicializações e carregamento automático das tabelas salvas
         renderizarSeletorAnos();
         renderizarMesesDoAno();
         carregarCalendario(2026, 7);
+        atualizarTabelaClientes();
+        atualizarTabelaPrestadores();
         setTimeout(verificarPrazosEAlimentarLembretes, 1500);
     </script>
 </body>
