@@ -329,6 +329,47 @@
             color: white;
             border-color: var(--primary);
         }
+
+        /* Calendário Fixo com 7 Colunas Exatas (Padrão Real) */
+        #calendario-postit {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
+        .dia-postit {
+            padding: 12px;
+            min-height: 110px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.25s ease;
+            border: 1px solid rgba(0,0,0,0.1);
+            position: relative;
+            background: white;
+        }
+        .dia-postit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .dia-postit:focus-within {
+            transform: scale(1.15) translateY(-5px);
+            z-index: 50;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            border-color: #0f223d;
+        }
+        .dia-postit textarea {
+            border: none;
+            background: transparent;
+            resize: none;
+            width: 100%;
+            height: 100%;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            color: #0f172a;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -417,7 +458,7 @@
                     </ul>
                 </li>
 
-                <!-- NOVA ABA DE LEMBRETES -->
+                <!-- ABA DE LEMBRETES -->
                 <li><button onclick="mudarAba('lembretes', this)" id="btn-lembretes" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">🔔 Lembretes</button></li>
 
                 <!-- OPÇÃO EXCLUSIVA DO MASTER PARA CRIAR NOVO LOGIN -->
@@ -438,18 +479,18 @@
                 </div>
             </div>
 
-            <!-- Módulo: Clientes (Atualizado com Sub-abas e Gestão Completa solicitada) -->
+            <!-- Módulo: Clientes (Com Sub-abas de Cabeçalho e Prestadores com Boleto) -->
             <div id="tab-clientes" class="card active-tab">
                 <h3>Gestão de Clientes e Prestadores</h3>
 
                 <!-- Cabeçalho de Botões (Sub-abas) -->
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-                    <button onclick="mudarSubAbaClientes('clientes-cad')" id="btn-sub-cli" class="btn-sub-aba ativo-sub">Cadastro de Clientes</button>
-                    <button onclick="mudarSubAbaClientes('prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
+                    <button onclick="mudarSubAbaClientes('sub-clientes-cad')" id="btn-sub-cli" class="btn-sub-aba ativo-sub">Cadastro de Clientes</button>
+                    <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
 
                 <!-- Sub-aba 1: Cadastro de Clientes -->
-                <div id="sub-clientes-cad" class="sub-conteudo-cli">
+                <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
                     <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
                     <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
                         <div>
@@ -536,7 +577,7 @@
                         </div>
 
                         <!-- Caixinha dinâmica para data de expiração se for Boleto -->
-                        <div id="container-boleto-exp" style="display: none;">
+                        <div id="container-boleto-exp" style="display: none; grid-column: span 2;">
                             <label style="color: #b91c1c; font-weight: bold;">Data de Expiração do Boleto:</label>
                             <input type="date" id="pres-exp-boleto" style="border-color: #fca5a5; background: #fef2f2;">
                         </div>
@@ -629,7 +670,7 @@
                 </div>
             </div>
 
-            <!-- Módulo: Agenda -->
+            <!-- Módulo: Agenda (Calendário Fixo 7 Colunas e Controlo de Teclas Enter/Tab) -->
             <div id="tab-agenda" class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
                     <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
@@ -638,7 +679,7 @@
 
                 <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;"></div>
 
-                <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;"></div>
+                <div id="calendario-postit"></div>
             </div>
 
             <style>
@@ -673,39 +714,6 @@
                 .btn-ano-agenda.ativo-ano {
                     background: var(--primary);
                     color: white;
-                }
-
-                .dia-postit {
-                    padding: 14px;
-                    min-height: 120px;
-                    border-radius: 10px;
-                    display: flex;
-                    flex-direction: column;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-                    transition: all 0.25s ease;
-                    border: 1px solid rgba(0,0,0,0.1);
-                    position: relative;
-                }
-                .dia-postit:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-                }
-                .dia-postit:focus-within {
-                    transform: scale(1.15) translateY(-5px);
-                    z-index: 50;
-                    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-                    border-color: #0f223d;
-                }
-                .dia-postit textarea {
-                    border: none;
-                    background: transparent;
-                    resize: none;
-                    width: 100%;
-                    height: 100%;
-                    font-size: 0.85rem;
-                    font-family: 'Inter', sans-serif;
-                    color: #0f172a;
-                    outline: none;
                 }
             </style>
 
@@ -928,16 +936,29 @@
 
         /* --- SUB-ABAS DE CLIENTES E PRESTADORES DE SERVIÇO --- */
         function mudarSubAbaClientes(subAbaId) {
-            document.getElementById('sub-clientes-cad').style.display = (subAbaId === 'sub-clientes-cad') ? 'block' : 'none';
-            document.getElementById('sub-prestador-cad').style.display = (subAbaId === 'sub-prestador-cad') ? 'block' : 'none';
+            const subCli = document.getElementById('sub-clientes-cad');
+            const subPres = document.getElementById('sub-prestador-cad');
+            const btnCli = document.getElementById('btn-sub-cli');
+            const btnPres = document.getElementById('btn-sub-pres');
 
-            document.getElementById('btn-sub-cli').className = `btn-sub-aba ${subAbaId === 'sub-clientes-cad' ? 'ativo-sub' : ''}`;
-            document.getElementById('btn-sub-pres').className = `btn-sub-aba ${subAbaId === 'sub-prestador-cad' ? 'ativo-sub' : ''}`;
+            if (subAbaId === 'sub-clientes-cad') {
+                if (subCli) subCli.style.display = 'block';
+                if (subPres) subPres.style.display = 'none';
+                if (btnCli) btnCli.className = 'btn-sub-aba ativo-sub';
+                if (btnPres) btnPres.className = 'btn-sub-aba';
+            } else {
+                if (subCli) subCli.style.display = 'none';
+                if (subPres) subPres.style.display = 'block';
+                if (btnCli) btnCli.className = 'btn-sub-aba';
+                if (btnPres) btnPres.className = 'btn-sub-aba ativo-sub';
+            }
         }
 
         function verificarBoletoPrestador(metodo) {
             const containerBoleto = document.getElementById('container-boleto-exp');
-            containerBoleto.style.display = (metodo === 'Boleto') ? 'block' : 'none';
+            if (containerBoleto) {
+                containerBoleto.style.display = (metodo === 'Boleto') ? 'block' : 'none';
+            }
         }
 
         const listaClientes = [];
@@ -960,6 +981,7 @@
 
         function atualizarTabelaClientes() {
             const tbody = document.getElementById('tabela-clientes-corpo');
+            if (!tbody) return;
             if (listaClientes.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>`;
                 return;
@@ -991,13 +1013,15 @@
 
             listaPrestadores.push({ nome, doc, atividade, valor, pagamento, expBoleto });
             document.getElementById('form-prestador').reset();
-            document.getElementById('container-boleto-exp').style.display = 'none';
+            const containerBoleto = document.getElementById('container-boleto-exp');
+            if (containerBoleto) containerBoleto.style.display = 'none';
             atualizarTabelaPrestadores();
             alert("Prestador de serviço registado com sucesso!");
         }
 
         function atualizarTabelaPrestadores() {
             const tbody = document.getElementById('tabela-prestadores-corpo');
+            if (!tbody) return;
             if (listaPrestadores.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>`;
                 return;
@@ -1106,7 +1130,7 @@
             if (selectAll) selectAll.checked = false;
         }
 
-        /* --- AGENDA POST-IT --- */
+        /* --- AGENDA POST-IT COM 7 COLUNAS E TECLAS ENTER/TAB --- */
         const agendaDados = {};
         let anoAtualGlobal = 2026;
         let mesAtualGlobal = 7;
@@ -1182,12 +1206,30 @@
                     <div class="dia-postit" style="background-color: ${corFundo};">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                             <span style="font-weight: 700; font-size: 0.95rem; color: #0f223d;">${i < 10 ? '0'+i : i}</span>
-                            <span style="font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
+                            <span style="font-size: 0.7rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
                         </div>
-                        <textarea onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
-                                  placeholder="Escrever compromisso...">${textoNota}</textarea>
+                        <textarea
+                            onkeydown="tratarTeclas(event)"
+                            onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
+                            placeholder="...">${textoNota}</textarea>
                     </div>
                 `;
+            }
+        }
+
+        function tratarTeclas(event) {
+            // Tecla ENTER confirma/salva (tira o foco)
+            if (event.key === "Enter") {
+                event.preventDefault();
+                event.target.blur();
+            }
+            // Tecla TAB insere indentação/espaçamento dentro do post-it em vez de trocar de campo
+            if (event.key === "Tab") {
+                event.preventDefault();
+                const start = event.target.selectionStart;
+                const end = event.target.selectionEnd;
+                event.target.value = event.target.value.substring(0, start) + "\t" + event.target.value.substring(end);
+                event.target.selectionStart = event.target.selectionEnd = start + 1;
             }
         }
 
