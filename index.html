@@ -1276,7 +1276,7 @@
                             <span style="font-size: 0.7rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
                         </div>
                         <textarea
-                            onkeydown="tratarTeclas(event)"
+                           <textarea onkeydown="tratarTeclas(event)" onblur="salvarNotaPostit(...)">...</textarea>
                             onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
                             placeholder="...">${textoNota}</textarea>
                     </div>
