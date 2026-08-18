@@ -317,7 +317,6 @@
             border-color: var(--primary);
         }
 
-        /* Calendário Real com 7 Colunas Fixas (Dom a Sáb) e Post-its Expansíveis */
         #calendario-postit {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -472,7 +471,7 @@
                     <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
 
-                <!-- Sub-aba 1: Cadastro de Clientes (Com Serviço / Atividade) -->
+                <!-- Sub-aba 1: Cadastro de Clientes -->
                 <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
                     <h4 id="titulo-form-cliente" style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
                     <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
@@ -641,7 +640,7 @@
                 <div id="calendario-postit"></div>
             </div>
 
-            <!-- Módulo: Atividades (Com botões de concluir/pendente e justificativa) -->
+            <!-- Módulo: Atividades -->
             <div id="tab-atividades" class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
                     <h3 style="margin: 0; color: var(--primary);">Controle de Atividades</h3>
@@ -813,7 +812,7 @@
                 dataEntrega: document.getElementById('cli-data-entrega').value,
                 valor: document.getElementById('cli-valor').value.trim(),
                 pagamento: document.getElementById('cli-pagamento').value,
-                status: 'pendente', // 'pendente', 'concluidodia', 'concluido'
+                status: 'pendente',
                 motivoPendente: ''
             };
 
@@ -976,7 +975,6 @@
             `).join('');
         }
 
-        // Funções para gerir o status das Atividades
         function marcarConcluido(tipo, index) {
             if (tipo === 'clientes') {
                 listaClientes[index].status = 'concluido';
