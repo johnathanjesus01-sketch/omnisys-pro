@@ -13,6 +13,7 @@
             --card-bg: #ffffff;
             --border-color: #cbd5e1;
             --success: #16a34a;
+            --danger: #dc2626;
             --sidebar-width: 260px;
         }
 
@@ -298,6 +299,9 @@
         }
         .btn-form:hover { background-color: #1d4ed8; }
 
+        .btn-table-edit { background: #2563eb; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-right: 5px; }
+        .btn-table-del { background: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
         .resultado {
             background: #f8fafc;
             padding: 12px;
@@ -350,7 +354,6 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
-        /* Post-it expande bastante e fica por cima ao clicar/escrever para ver múltiplas notas e horários */
         .dia-postit:focus-within {
             transform: scale(1.18) translateY(-10px);
             z-index: 100;
@@ -371,7 +374,7 @@
             transition: height 0.25s ease;
         }
         .dia-postit:focus-within textarea {
-            height: 150px; /* Aumenta a área de texto ao clicar */
+            height: 150px;
         }
     </style>
 </head>
@@ -486,10 +489,11 @@
                     <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
 
-                <!-- Sub-aba 1: Cadastro de Clientes (Com Data Início e Data Entrega) -->
+                <!-- Sub-aba 1: Cadastro de Clientes (Com Edição e Exclusão) -->
                 <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
-                    <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
+                    <h4 id="titulo-form-cliente" style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
                     <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
+                        <input type="hidden" id="cli-edit-index" value="-1">
                         <div>
                             <label>Nome Empresa / Física:</label>
                             <input type="text" id="cli-nome" placeholder="Ex: Empresa X" required>
@@ -523,7 +527,7 @@
                                 <option value="Cartão de Débito">Cartão de Débito</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Cliente</button>
+                        <button type="submit" id="btn-salvar-cliente" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Cliente</button>
                     </form>
 
                     <h4 style="margin-bottom: 10px; color: var(--primary);">Lista de Clientes Registados</h4>
@@ -538,16 +542,17 @@
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Entrega</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Pagamento</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-clientes-corpo">
-                                <tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>
+                                <tr><td colspan="8" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Sub-aba 2: Prestador de Serviço -->
+                <!-- Sub-aba 2: Prestador de Serviço (Com Data de Início e Horário) -->
                 <div id="sub-prestador-cad" class="sub-conteudo-cli" style="display: none;">
                     <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Prestador de Serviço / Orçamento</h4>
                     <form id="form-prestador" onsubmit="salvarPrestador(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
@@ -568,6 +573,14 @@
                             <input type="text" id="pres-atividade" placeholder="Ex: Manutenção" required>
                         </div>
                         <div>
+                            <label>Data de Início da Atividade:</label>
+                            <input type="date" id="pres-data-inicio" required>
+                        </div>
+                        <div>
+                            <label>Horário da Atividade:</label>
+                            <input type="time" id="pres-horario" required>
+                        </div>
+                        <div>
                             <label>Valor Orçamento (R$):</label>
                             <input type="number" step="0.01" id="pres-valor" placeholder="0.00" required>
                         </div>
@@ -583,7 +596,7 @@
                         </div>
 
                         <div id="container-boleto-exp" style="display: none; grid-column: span 2;">
-                            <label style="color: #b91c1c; font-weight: bold;">Data de Expiração do Boleto:</label>
+                            <label style="color: #b91c1c; font-weight: bold;">Data de Vencimento do Boleto:</label>
                             <input type="date" id="pres-exp-boleto" style="border-color: #fca5a5; background: #fef2f2;">
                         </div>
 
@@ -596,12 +609,12 @@
                             <thead>
                                 <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Nome</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Celular</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Atividade</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Orçamento</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Início / Horário</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Método</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Expiração</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Venc. Boleto</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-prestadores-corpo">
@@ -639,7 +652,7 @@
                 <div id="calendario-postit"></div>
             </div>
 
-            <!-- Módulo: Atividades (Com formato Início ... até Entrega ...) -->
+            <!-- Módulo: Atividades (Com abas superiores Clientes e Prestadores detalhadas) -->
             <div id="tab-atividades" class="card">
                 <h3 style="color: var(--primary);">Controle de Atividades</h3>
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
@@ -669,10 +682,10 @@
                 <h3>Atividades Concluídas</h3>
             </div>
 
-            <!-- Módulo: Lembretes -->
+            <!-- Módulo: Lembretes (Com Prazos de Boletos e Datas) -->
             <div id="tab-lembretes" class="card">
                 <h3>Central de Lembretes e Prazos</h3>
-                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Prazos agendados para os próximos 7 dias.</p>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Prazos e vencimentos de boletos para os próximos 7 dias.</p>
                 <div id="lista-lembretes-ativos" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
 
@@ -793,7 +806,8 @@
 
         function salvarCliente(event) {
             event.preventDefault();
-            listaClientes.push({
+            const indexEdit = parseInt(document.getElementById('cli-edit-index').value);
+            const dadosCliente = {
                 nome: document.getElementById('cli-nome').value.trim(),
                 doc: document.getElementById('cli-doc').value.trim(),
                 celular: document.getElementById('cli-celular').value.trim(),
@@ -801,20 +815,55 @@
                 dataEntrega: document.getElementById('cli-data-entrega').value,
                 valor: document.getElementById('cli-valor').value.trim(),
                 pagamento: document.getElementById('cli-pagamento').value
-            });
+            };
+
+            if (indexEdit === -1) {
+                listaClientes.push(dadosCliente);
+                alert("Cliente cadastrado com sucesso!");
+            } else {
+                listaClientes[indexEdit] = dadosCliente;
+                document.getElementById('cli-edit-index').value = "-1";
+                document.getElementById('titulo-form-cliente').innerText = "Registar Novo Cliente";
+                document.getElementById('btn-salvar-cliente').innerText = "Guardar Cliente";
+                alert("Cliente atualizado com sucesso!");
+            }
+
             document.getElementById('form-cliente').reset();
             atualizarTabelaClientes();
-            alert("Cliente cadastrado com sucesso!");
+        }
+
+        function editarCliente(index) {
+            const c = listaClientes[index];
+            document.getElementById('cli-edit-index').value = index;
+            document.getElementById('cli-nome').value = c.nome;
+            document.getElementById('cli-doc').value = c.doc;
+            document.getElementById('cli-celular').value = c.celular;
+            document.getElementById('cli-data-inicio').value = c.dataInicio;
+            document.getElementById('cli-data-entrega').value = c.dataEntrega;
+            document.getElementById('cli-valor').value = c.valor;
+            document.getElementById('cli-pagamento').value = c.pagamento;
+
+            document.getElementById('titulo-form-cliente').innerText = "Editar Cliente: " + c.nome;
+            document.getElementById('btn-salvar-cliente').innerText = "Atualizar Cliente";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function excluirCliente(index) {
+            if (confirm("Tem certeza que deseja excluir este cliente?")) {
+                listaClientes.splice(index, 1);
+                atualizarTabelaClientes();
+                alert("Cliente excluído com sucesso!");
+            }
         }
 
         function atualizarTabelaClientes() {
             const tbody = document.getElementById('tabela-clientes-corpo');
             if (!tbody) return;
             if (listaClientes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = listaClientes.map(c => `
+            tbody.innerHTML = listaClientes.map((c, i) => `
                 <tr style="border-bottom: 1px solid #e2e8f0;">
                     <td style="padding: 10px;">${c.nome}</td>
                     <td style="padding: 10px;">${c.doc}</td>
@@ -823,6 +872,10 @@
                     <td style="padding: 10px;">${c.dataEntrega}</td>
                     <td style="padding: 10px;">R$ ${parseFloat(c.valor).toFixed(2)}</td>
                     <td style="padding: 10px;">${c.pagamento}</td>
+                    <td style="padding: 10px; text-align: center;">
+                        <button class="btn-table-edit" onclick="editarCliente(${i})">Editar</button>
+                        <button class="btn-table-del" onclick="excluirCliente(${i})">Excluir</button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -835,6 +888,8 @@
                 doc: document.getElementById('pres-doc').value.trim(),
                 celular: document.getElementById('pres-celular').value.trim(),
                 atividade: document.getElementById('pres-atividade').value.trim(),
+                dataInicio: document.getElementById('pres-data-inicio').value,
+                horario: document.getElementById('pres-horario').value,
                 valor: document.getElementById('pres-valor').value.trim(),
                 pagamento: pagamento,
                 expBoleto: (pagamento === 'Boleto') ? document.getElementById('pres-exp-boleto').value : '-'
@@ -855,12 +910,12 @@
             tbody.innerHTML = listaPrestadores.map(p => `
                 <tr style="border-bottom: 1px solid #e2e8f0;">
                     <td style="padding: 10px;">${p.nome}</td>
-                    <td style="padding: 10px;">${p.doc}</td>
                     <td style="padding: 10px;">${p.celular}</td>
                     <td style="padding: 10px;">${p.atividade}</td>
+                    <td style="padding: 10px;">${p.dataInicio} às ${p.horario}</td>
                     <td style="padding: 10px;">R$ ${parseFloat(p.valor).toFixed(2)}</td>
                     <td style="padding: 10px;">${p.pagamento}</td>
-                    <td style="padding: 10px;">${p.expBoleto}</td>
+                    <td style="padding: 10px; color: ${p.expBoleto !== '-' ? '#b91c1c' : 'inherit'}; font-weight: ${p.expBoleto !== '-' ? 'bold' : 'normal'};">${p.expBoleto}</td>
                 </tr>
             `).join('');
         }
@@ -869,12 +924,11 @@
             const contCli = document.getElementById('lista-atividades-clientes');
             const contPres = document.getElementById('lista-atividades-prestadores');
 
-            // Formato solicitado: "Início: [data] até Entrega: [data]"
             contCli.innerHTML = listaClientes.length === 0 ? '<p style="color: #64748b;">Nenhum cliente registado.</p>' :
                 listaClientes.map(c => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${c.nome}</strong> | Celular: ${c.celular} | Início: ${c.dataInicio} até Entrega: ${c.dataEntrega}</div>`).join('');
 
             contPres.innerHTML = listaPrestadores.length === 0 ? '<p style="color: #64748b;">Nenhum prestador registado.</p>' :
-                listaPrestadores.map(p => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | Pagamento: ${p.pagamento}</div>`).join('');
+                listaPrestadores.map(p => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | <b>Início:</b> ${p.dataInicio} às ${p.horario} ${p.expBoleto !== '-' ? `| <b>Venc. Boleto:</b> ${p.expBoleto}` : ''}</div>`).join('');
         }
 
         /* --- AGENDA POST-IT (7 COLUNAS & TAB PARA PULAR LINHA) --- */
@@ -956,12 +1010,10 @@
         }
 
         function tratarTeclas(event) {
-            // Tecla ENTER confirma/salva (tira o foco)
             if (event.key === "Enter") {
                 event.preventDefault();
                 event.target.blur();
             }
-            // Tecla TAB insere quebra de linha (pula para baixo) para permitir múltiplos horários e anotações
             if (event.key === "Tab") {
                 event.preventDefault();
                 const start = event.target.selectionStart;
@@ -985,6 +1037,7 @@
             hoje.setHours(0,0,0,0);
             let alertasProximos = [];
 
+            // Verificar prazos da Agenda
             for (const [chave, nota] of Object.entries(agendaDados)) {
                 if (nota && nota.trim() !== "") {
                     const partes = chave.split('-');
@@ -998,7 +1051,7 @@
                         alertasProximos.push(textoAlerta);
                         containerLembretes.innerHTML += `
                             <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px;">
-                                <strong style="color: #991b1b;">Prazo Próximo (${diffDays} dia(s))</strong>
+                                <strong style="color: #991b1b;">Compromisso Próximo (${diffDays} dia(s))</strong>
                                 <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #1e293b;">${nota} - <b>Data: ${partes[2]}/${parseInt(partes[1])+1}/${partes[0]}</b></p>
                             </div>
                         `;
@@ -1006,8 +1059,32 @@
                 }
             }
 
+            // Verificar Vencimentos de Boletos de Prestadores
+            listaPrestadores.forEach(p => {
+                if (p.expBoleto && p.expBoleto !== '-') {
+                    const partesBoleto = p.expBoleto.split('-'); // Formato YYYY-MM-DD do input date
+                    if (partesBoleto.length === 3) {
+                        const dataBoleto = new Date(partesBoleto[0], partesBoleto[1] - 1, partesBoleto[2]);
+                        dataBoleto.setHours(0,0,0,0);
+                        const diffTime = dataBoleto - hoje;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        if (diffDays >= 0 && diffDays <= 7) {
+                            const alertaBoleto = `Boleto de ${p.nome} vence em ${partesBoleto[2]}/${partesBoleto[1]}/${partesBoleto[0]} (R$ ${parseFloat(p.valor).toFixed(2)})`;
+                            alertasProximos.push(alertaBoleto);
+                            containerLembretes.innerHTML += `
+                                <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 6px;">
+                                    <strong style="color: #b45309;">⚠️ Vencimento de Boleto (${diffDays} dia(s))</strong>
+                                    <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #1e293b;">Prestador: <b>${p.nome}</b> | Valor: <b>R$ ${parseFloat(p.valor).toFixed(2)}</b> - <b>Vencimento: ${partesBoleto[2]}/${partesBoleto[1]}/${partesBoleto[0]}</b></p>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+            });
+
             if (containerLembretes.innerHTML === "") {
-                containerLembretes.innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">Nenhum compromisso para os próximos 7 dias.</p>`;
+                containerLembretes.innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">Nenhum compromisso ou boleto para os próximos 7 dias.</p>`;
             } else if (alertasProximos.length > 0) {
                 mostrarPopupNotificacao(alertasProximos[0]);
             }
