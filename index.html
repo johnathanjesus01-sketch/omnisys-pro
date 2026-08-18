@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omnisys Pro - Gestão Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f223d;       /* Azul Marinho */
+            --accent: #2563eb;
+            --bg-color: #0f172a;      /* Fundo da página mais escuro */
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1;
+            --success: #16a34a;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #334155;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- TELAS DE AUTENTICAÇÃO (LOGIN E CADASTRO) --- */
+        .auth-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            padding: 20px 0;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 45px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            border: 1px solid #334155;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .exact-image-logo {
+            width: 100%;
+            max-width: 260px;
+            height: auto;
+            margin: 0 auto 25px auto;
+            border-radius: 8px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background: #fafafa;
+        }
+
+        .terms-group {
+            display: flex;
+            align-items: flex-start;
+            text-align: left;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 0.82rem;
+            color: #475569;
+            line-height: 1.4;
+            width: 100%;
+        }
+
+        .terms-group input[type="checkbox"] {
+            margin-top: 2px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .btn-action {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            margin-top: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .btn-action:hover { background-color: #1e3a8a; }
+
+        .btn-register {
+            background-color: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .btn-register:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-back {
+            background-color: transparent;
+            color: #64748b;
+            border: none;
+            padding: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        .btn-back:hover { text-decoration: underline; }
+
+        /* --- PAINEL PRINCIPAL COM MENU LATERAL (SIDEBAR) --- */
+        #dashboard-container {
+            display: none;
+            min-height: 100vh;
+            background-color: #f4f5f7;
+        }
+
+        aside {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo {
+            width: 100%;
+            max-width: 150px;
+            height: auto;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 10px;
+            margin: 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 6px;
+        }
+
+        .sidebar-menu button {
+            width: 100%;
+            background: transparent;
+            color: #cbd5e1;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu button:hover, .sidebar-menu button.active {
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .submenu {
+            list-style: none;
+            padding-left: 20px;
+            margin: 4px 0 10px 0;
+        }
+
+        .submenu button {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .submenu button:hover, .submenu button.active {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            box-sizing: border-box;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            margin-bottom: 25px;
+            display: none;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card.active-tab { display: block; }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: var(--primary); }
+        .card input, .card select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .btn-form {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 1rem;
+        }
+        .btn-form:hover { background-color: #1d4ed8; }
+
+        .resultado {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--accent);
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. TELA DE LOGIN -->
+    <div id="login-screen" class="auth-screen">
+        <div class="login-card">
+            <img src="/static/logo-login.jpg" alt="Logo Omnisys Pro" class="exact-image-logo">
+
+            <div class="form-group">
+                <label for="login-usuario">E-mail ou CNPJ/CPF</label>
+                <input type="text" id="login-usuario" placeholder="Digite seu e-mail">
+            </div>
+
+            <div class="form-group">
+                <label for="login-senha">Senha</label>
+                <input type="password" id="login-senha" placeholder="Sua senha">
+            </div>
+
+            <button class="btn-action" onclick="fazerLogin()">Acessar Sistema</button>
+            <button class="btn-register" onclick="mostrarTelaCadastro()">Criar Conta / Cadastre-se</button>
+        </div>
+    </div>
+
+    <!-- 2. TELA DE CADASTRO COMPLETA (LGPD & DADOS) -->
+    <div id="register-screen" class="auth-screen" style="display: none;">
+        <div class="login-card">
+            <h2 style="color: var(--primary); margin-top: 0; font-size: 1.3rem;">Cadastre-se no Omnisys Pro</h2>
+            <p style="font-size: 0.83rem; color: #64748b; margin-bottom: 15px;">Ambiente seguro e protegido por sigilo comercial e leis aplicáveis (LGPD e CDC).</p>
+
+            <div class="form-group">
+                <label for="reg-nome">Nome Completo ou Razão Social</label>
+                <input type="text" id="reg-nome" placeholder="Ex: João da Silva">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-documento">CPF ou CNPJ</label>
+                <input type="text" id="reg-documento" placeholder="Apenas números">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-email">E-mail de Acesso</label>
+                <input type="email" id="reg-email" placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-celular">Número de Celular / WhatsApp</label>
+                <input type="text" id="reg-celular" placeholder="(00) 90000-0000">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-senha">Senha de Acesso</label>
+                <input type="password" id="reg-senha" placeholder="Crie uma senha segura">
+            </div>
+
+            <div class="terms-group">
+                <input type="checkbox" id="reg-termos">
+                <label for="reg-termos" style="display:inline; font-weight:normal; font-size:0.8rem; cursor:pointer;">
+                    Declaro que li e concordo com os <strong>Termos de Confidencialidade e Privacidade</strong> sob as leis aplicáveis (LGPD).
+                </label>
+            </div>
+
+            <button class="btn-action" onclick="executarCadastro()">Concluir Cadastro Seguro</button>
+            <button class="btn-back" onclick="mostrarTelaLogin()">← Voltar para o Login</button>
+        </div>
+    </div>
+
+    <!-- 3. PAINEL PRINCIPAL COM MENU LATERAL -->
+    <div id="dashboard-container">
+        <aside>
+            <div class="sidebar-brand">
+                <img src="/static/logo-login.jpg" alt="Logo Omnisys Pro" class="sidebar-logo">
+            </div>
+
+            <ul class="sidebar-menu">
+                <li><button onclick="mudarAba('clientes', this)" id="btn-clientes" class="active">👥 Clientes</button></li>
+                <li><button onclick="mudarAba('estoque', this)" id="btn-estoque">📦 Estoque</button></li>
+                <li><button onclick="mudarAba('agenda', this)" id="btn-agenda">📅 Agenda</button></li>
+                <li><button onclick="mudarAba('faturamento', this)" id="btn-faturamento">💰 Faturamento</button></li>
+
+                <li>
+                    <button onclick="mudarAba('atividades', this)" id="btn-atividades">📋 Atividades</button>
+                    <ul class="submenu">
+                        <li><button onclick="mudarAba('atividades-pendentes', this)" id="btn-atividades-pendentes">⏳ Pendentes</button></li>
+                        <li><button onclick="mudarAba('atividades-concluidas', this)" id="btn-atividades-concluidas">✅ Concluídas</button></li>
+                    </ul>
+                </li>
+
+                <!-- OPÇÃO EXCLUSIVA DO MASTER PARA CRIAR NOVO LOGIN -->
+                <li id="menu-item-criacao" style="display: none; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <button onclick="mudarAba('criar-login', this)" id="btn-criar-login" style="background: #1e3a8a; color: white; font-weight: bold;">🔑 Criar Novo Acesso</button>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div>
+                    <strong>Utilizador:</strong> <span id="user-email"></span> |
+                    <strong>Nível:</strong> <span id="user-role"></span>
+                </div>
+                <div id="badge-master" style="display: none; background: #e0e7ff; padding: 5px 12px; border-radius: 6px;">
+                    <span style="font-size: 0.85rem; font-weight: bold; color: #1e40af;">👑 Master Ativo</span>
+                </div>
+            </div>
+
+            <!-- Módulo: Clientes -->
+            <div id="tab-clientes" class="card active-tab">
+                <h3>Gestão de Clientes</h3>
+                <label>Nome Fantasia / Cliente:</label>
+                <input type="text" id="empresa-nome" placeholder="Ex: Clínica Sorriso ou Oficina Central">
+                <label>CNPJ / CPF:</label>
+                <input type="text" id="empresa-cnpj" placeholder="00.000.000/0001-00">
+                <button class="btn-form" onclick="cadastrarEmpresa()">Salvar Cliente</button>
+                <div id="resultado-empresa" class="resultado" style="display:none;"></div>
+            </div>
+
+          <!-- Módulo: Estoque (Atualizado com Gestão de Produtos) -->
+            <div id="tab-estoque" class="card">
+                <h3>Gerenciamento de Estoque</h3>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre, controle e gerencie os itens do inventário.</p>
+
+                <!-- Formulário de Novo Produto -->
+                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+                    <h4 style="margin-top: 0; color: var(--primary); font-size: 1rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Novo Produto</h4>
+
+                    <label>Nome do Produto (Obrigatório):</label>
+                    <input type="text" id="produto-nome" placeholder="Ex: Produto X ou Peça Y" required>
+
+                    <label>Quantidade do Produto (Obrigatório):</label>
+                    <input type="number" id="produto-qtd" placeholder="0" min="1" required>
+
+                    <label>Validade do Produto (Opcional):</label>
+                    <input type="date" id="produto-validade">
+
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn-form" style="margin-top:0; background-color: var(--success);" onclick="salvarProdutoEstoque()">Salvar Produto</button>
+                    </div>
+                </div>
+
+                <!-- Lista de Produtos Cadastrados com Seleção para Exclusão -->
+                <div style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: var(--primary); font-size: 1rem;">Produtos em Stock</h4>
+                        <button onclick="confirmarExclusaoSelecionados()" style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">Excluir Selecionados</button>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 6px; text-align: left; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="background: #f1f5f9; color: var(--primary); border-bottom: 1px solid #e2e8f0;">
+                                    <th style="padding: 10px; width: 40px; text-align: center;"><input type="checkbox" id="selectAll" onclick="selecionarTodosProdutos(this)"></th>
+                                    <th style="padding: 10px;">Nome do Produto</th>
+                                    <th style="padding: 10px;">Quantidade</th>
+                                    <th style="padding: 10px;">Validade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-produtos-corpo">
+                                <!-- Os produtos salvos aparecem aqui dinamicamente -->
+                                <tr>
+                                    <td colspan="4" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto cadastrado ainda.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="resultado-estoque" class="resultado" style="display:none;"></div>
+            </div>
+
+            <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO PERSONALIZADO -->
+            <div id="modal-exclusao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+                <div style="background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <h3 style="color: #dc2626; margin-top: 0;">Confirmação de Exclusão</h3>
+                    <p id="mensagem-modal-exclusao" style="font-size: 0.95rem; color: #334155; margin: 20px 0; line-height: 1.5;"></p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="fecharModalExclusao()" style="background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                        <button onclick="executarExclusaoProdutos()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulo: Agenda -->
+           <!-- Módulo: Agenda (Calendário Dinâmico) -->
+<!-- Módulo: Agenda (Calendário Profissional Post-it) -->
+<!-- Módulo: Agenda (Calendário Profissional Post-it com Zoom e Cores Vivas) -->
+<div id="tab-agenda" class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+        <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
+        <div id="container-seletor-ano" style="display: flex; gap: 8px;">
+            <!-- Navegação de Anos gerada dinamicamente -->
+        </div>
+    </div>
+
+    <!-- Seleção de Meses do Ano Ativo -->
+    <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;">
+        <!-- Meses injetados via JS -->
+    </div>
+
+    <!-- Área do Calendário Post-it Estilizado -->
+    <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;">
+        <!-- Gerado via JS -->
+    </div>
+</div>
+
+<style>
+    .btn-mes-agenda {
+        padding: 8px 16px;
+        cursor: pointer;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        color: #334155;
+    }
+    .btn-mes-agenda:hover { background: #e2e8f0; }
+    .btn-mes-agenda.ativo {
+        background: #0f223d !important;
+        color: white !important;
+        border-color: #0f223d !important;
+    }
+
+    .btn-ano-agenda {
+        padding: 8px 18px;
+        cursor: pointer;
+        border: 1px solid var(--primary);
+        border-radius: 6px;
+        background: white;
+        font-weight: bold;
+        color: var(--primary);
+        transition: all 0.2s;
+    }
+    .btn-ano-agenda.ativo-ano {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* Post-its com cores bem fortes e efeito zoom fluido ao focar/escrever */
+    .dia-postit {
+        padding: 14px;
+        min-height: 120px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: all 0.25s ease;
+        border: 1px solid rgba(0,0,0,0.1);
+        position: relative;
+    }
+    .dia-postit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    /* Efeito de saltar para a frente e ficar maior quando focado/clicado */
+    .dia-postit:focus-within {
+        transform: scale(1.15) translateY(-5px);
+        z-index: 50;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        border-color: #0f223d;
+    }
+    .dia-postit textarea {
+        border: none;
+        background: transparent;
+        resize: none;
+        width: 100%;
+        height: 100%;
+        font-size: 0.85rem;
+        font-family: 'Inter', sans-serif;
+        color: #0f172a;
+        outline: none;
+    }
+</style>
+
+<script>
+    const agendaDados = {}; // Registo de notas por ano-mes-dia
+    let anoAtualGlobal = 2026;
+    let mesAtualGlobal = 7; // Agosto (0 a 11)
+
+    const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+    const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+    function renderizarSeletorAnos() {
+        const containerAno = document.getElementById("container-seletor-ano");
+        containerAno.innerHTML = `
+            <button onclick="mudarAno(2026)" class="btn-ano-agenda ${anoAtualGlobal === 2026 ? 'ativo-ano' : ''}">2026</button>
+            <button onclick="mudarAno(2027)" class="btn-ano-agenda ${anoAtualGlobal === 2027 ? 'ativo-ano' : ''}">2027</button>
+        `;
+    }
+
+    function mudarAno(ano) {
+        anoAtualGlobal = ano;
+        mesAtualGlobal = 0;
+        renderizarSeletorAnos();
+        renderizarMesesDoAno();
+        carregarCalendario(ano, mesAtualGlobal);
+    }
+
+    function renderizarMesesDoAno() {
+        const navMeses = document.getElementById("nav-meses");
+        navMeses.innerHTML = "";
+
+        nomesMeses.forEach((nomeMes, index) => {
+            const btn = document.createElement("button");
+            btn.className = `btn-mes-agenda ${mesAtualGlobal === index ? 'ativo' : ''}`;
+            btn.innerText = nomeMes;
+            btn.onclick = () => {
+                mesAtualGlobal = index;
+                renderizarMesesDoAno();
+                carregarCalendario(anoAtualGlobal, mesAtualGlobal);
+            };
+            navMeses.appendChild(btn);
+        });
+    }
+
+    function carregarCalendario(ano, mesIndex) {
+        const container = document.getElementById("calendario-postit");
+        container.innerHTML = "";
+
+        const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+
+        for (let i = 1; i <= diasNoMes; i++) {
+            const dataDia = new Date(ano, mesIndex, i);
+            dataDia.setHours(0,0,0,0);
+
+            const nomeDiaSemana = diasSemanaNomes[dataDia.getDay()];
+            const chaveKey = `${ano}-${mesIndex}-${i}`;
+            const textoNota = agendaDados[chaveKey] || "";
+
+            let corFundo = "#ffffff"; // Branco limpo padrão
+
+            const diffTime = dataDia - hoje;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (dataDia < hoje) {
+                corFundo = "#86efac"; // Verde bem vivo e forte (Passado)
+            } else if (textoNota.trim() !== "") {
+                if (diffDays <= 1) {
+                    corFundo = "#fca5a5"; // Vermelho bem vivo e forte (Hoje ou falta 1 dia)
+                } else {
+                    corFundo = "#93c5fd"; // Azul bem vivo e forte (Faltam 2 ou mais dias)
+                }
+            }
+
+            container.innerHTML += `
+                <div class="dia-postit" style="background-color: ${corFundo};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-weight: 700; font-size: 0.95rem; color: #0f223d;">${i < 10 ? '0'+i : i}</span>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
+                    </div>
+                    <textarea onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
+                              placeholder="Escrever compromisso...">${textoNota}</textarea>
+                </div>
+            `;
+        }
+    }
+
+    function salvarNotaPostit(ano, mes, dia, texto) {
+        const chaveKey = `${ano}-${mes}-${dia}`;
+        agendaDados[chaveKey] = texto;
+        carregarCalendario(ano, mes);
+    }
+
+    // Inicialização da Agenda
+    renderizarSeletorAnos();
+    renderizarMesesDoAno();
+    carregarCalendario(2026, 7); // Inicia em Agosto de 2026
+</script>
+
+            <!-- Módulo: Faturamento -->
+            <div id="tab-faturamento" class="card">
+                <h3>Faturamento e Financeiro</h3>
+                <p>Controlo financeiro e transações.</p>
+            </div>
+
+            <!-- Módulo: Atividades -->
+            <div id="tab-atividades" class="card">
+                <h3>Controle de Atividades e Tarefas</h3>
+                <p>Visão geral de todas as tarefas.</p>
+            </div>
+
+            <!-- Sub-aba: Pendentes -->
+            <div id="tab-atividades-pendentes" class="card">
+                <h3>Atividades Pendentes</h3>
+                <p>Lista de tarefas que aguardam execução.</p>
+            </div>
+
+            <!-- Sub-aba: Concluídas -->
+            <div id="tab-atividades-concluidas" class="card">
+                <h3>Atividades Concluídas</h3>
+                <p>Histórico de tarefas já finalizadas com sucesso.</p>
+            </div>
+
+            <!-- MÓDULO EXCLUSIVO MASTER: CRIAR LOGIN -->
+            <div id="tab-criar-login" class="card">
+                <h3>Criar Login para Novo Utilizador</h3>
+                <p style="font-size: 0.9rem; color: #64748b;">Gere credenciais de acesso direto para equipas ou novos parceiros.</p>
+
+                <label>Nome do Novo Utilizador:</label>
+                <input type="text" id="novo-nome" placeholder="Nome completo">
+
+                <label>E-mail de Acesso:</label>
+                <input type="email" id="novo-email" placeholder="email@empresa.com">
+
+                <label>Senha Temporária:</label>
+                <input type="password" id="novo-senha" placeholder="Definir senha inicial">
+
+                <label>Nível de Permissão:</label>
+                <select id="novo-nivel">
+                    <option value="usuario">Utilizador Padrão</option>
+                    <option value="adminMaster">Administrador Master</option>
+                </select>
+
+                <button class="btn-form" onclick="criarAcessoParaOutraPessoa()">Gerar e Salvar Novo Acesso</button>
+                <div id="resultado-criacao-login" class="resultado" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. SCRIPTS DE CONTROLO -->
+    <script>
+        function mostrarTelaCadastro() {
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("register-screen").style.display = "flex";
+        }
+
+        function mostrarTelaLogin() {
+            document.getElementById("register-screen").style.display = "none";
+            document.getElementById("login-screen").style.display = "flex";
+        }
+
+        function validarCPFCNPJ(doc) {
+            const numeros = doc.replace(/\D/g, '');
+            return numeros.length === 11 || numeros.length === 14;
+        }
+
+        async function executarCadastro() {
+            const nome = document.getElementById("reg-nome").value.trim();
+            const documento = document.getElementById("reg-documento").value.trim();
+            const email = document.getElementById("reg-email").value.trim();
+            const celular = document.getElementById("reg-celular").value.trim();
+            const senha = document.getElementById("reg-senha").value.trim();
+            const termos = document.getElementById("reg-termos").checked;
+
+            if (!nome || !documento || !email || !celular || !senha) {
+                alert("Por favor, preencha todos os campos do cadastro.");
+                return;
+            }
+            if (!validarCPFCNPJ(documento)) {
+                alert("O CPF ou CNPJ informado é inválido.");
+                return;
+            }
+            if (!termos) {
+                alert("Você deve aceitar os Termos de Confidencialidade e LGPD.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/usuarios/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome: nome, email: email, password: senha, role: "usuario" })
+                });
+
+                if (response.ok) {
+                    alert("Cadastro realizado com sucesso! Faça login com suas credenciais.");
+                    mostrarTelaLogin();
+                } else {
+                    const errorData = await response.json();
+                    alert("Erro no cadastro: " + (errorData.detail || "Tente novamente."));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de conexão ao salvar o registo.");
+            }
+        }
+
+        async function fazerLogin() {
+            const emailInput = document.getElementById("login-usuario").value.trim();
+            const senhaInput = document.getElementById("login-senha").value.trim();
+
+            if (!emailInput || !senhaInput) {
+                alert("Preencha o e-mail/documento e a senha!");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: emailInput, password: senhaInput })
+                });
+
+                if (response.ok) {
+                    const usuario = await response.json();
+
+                    document.getElementById("login-screen").style.display = "none";
+                    document.getElementById("dashboard-container").style.display = "block";
+
+                    document.getElementById("user-email").innerText = usuario.email;
+                    document.getElementById("user-role").innerText = usuario.role;
+
+                    if (usuario.role === "adminMaster") {
+                        document.getElementById("badge-master").style.display = "block";
+                        document.getElementById("menu-item-criacao").style.display = "block";
+                    } else {
+                        document.getElementById("badge-master").style.display = "none";
+                        document.getElementById("menu-item-criacao").style.display = "none";
+                    }
+                } else {
+                    alert("E-mail ou senha incorretos!");
+                }
+            } catch (error) {
+                console.error("Erro no login:", error);
+                alert("Erro de conexão com o servidor FastAPI.");
+            }
+        }
+
+        function mudarAba(nomeAba, elementoBotao) {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => card.classList.remove('active-tab'));
+
+            const botoes = document.querySelectorAll('.sidebar-menu button, .submenu button');
+            botoes.forEach(btn => btn.classList.remove('active'));
+
+            const abaAlvo = document.getElementById('tab-' + nomeAba);
+            if (abaAlvo) abaAlvo.classList.add('active-tab');
+            if (elementoBotao) elementoBotao.classList.add('active');
+        }
+
+        async function criarAcessoParaOutraPessoa() {
+            const nome = document.getElementById("novo-nome").value.trim();
+            const email = document.getElementById("novo-email").value.trim();
+            const senha = document.getElementById("novo-senha").value.trim();
+            const nivel = document.getElementById("novo-nivel").value;
+
+            if (!nome || !email || !senha) {
+                alert("Preencha todos os campos do novo acesso!");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/usuarios/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome: nome, email: email, password: senha, role: nivel })
+                });
+
+                const resDiv = document.getElementById("resultado-criacao-login");
+                resDiv.style.display = "block";
+
+                if (response.ok) {
+                    resDiv.innerText = `Sucesso! Novo login criado para ${email} (${nivel}).`;
+                    document.getElementById("novo-nome").value = "";
+                    document.getElementById("novo-email").value = "";
+                    document.getElementById("novo-senha").value = "";
+                } else {
+                    const erroData = await response.json();
+                    resDiv.innerText = "Erro ao criar utilizador: " + (erroData.detail || "Verifique os dados.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de comunicação com o servidor.");
+            }
+        }
+
+        async function cadastrarEmpresa() {
+            const nome = document.getElementById('empresa-nome').value;
+            const cnpj = document.getElementById('empresa-cnpj').value;
+            const resDiv = document.getElementById('resultado-empresa');
+            resDiv.style.display = 'block';
+            resDiv.innerText = "Sucesso! Cliente salvo com ID de registo.";
+        }
+        // Array local para simular a tabela de produtos do stock
+        let listaProdutos = [];
+
+        function salvarProdutoEstoque() {
+            const nome = document.getElementById("produto-nome").value.trim();
+            const qtd = document.getElementById("produto-qtd").value.trim();
+            const validade = document.getElementById("produto-validade").value;
+
+            // Validação obrigatória dos dois campos principais
+            if (!nome || !qtd) {
+                alert("O preenchimento do Nome do Produto e da Quantidade é obrigatório!");
+                return;
+            }
+
+            // Adiciona o produto na lista
+            listaProdutos.push({
+                id: Date.now(),
+                nome: nome,
+                qtd: parseInt(qtd),
+                validade: validade ? validade.split('-').reverse().join('/') : 'Não informada'
+            });
+
+            // Limpa os campos
+            document.getElementById("produto-nome").value = "";
+            document.getElementById("produto-qtd").value = "";
+            document.getElementById("produto-validade").value = "";
+
+            renderizarTabelaProdutos();
+
+            const resDiv = document.getElementById("resultado-estoque");
+            resDiv.style.display = "block";
+            resDiv.innerText = `Sucesso! Produto "${nome}" guardado no stock.`;
+            setTimeout(() => { resDiv.style.display = "none"; }, 3000);
+        }
+
+        function renderizarTabelaProdutos() {
+            const tbody = document.getElementById("tabela-produtos-corpo");
+            if (listaProdutos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto cadastrado ainda.</td></tr>`;
+                return;
+            }
+
+            let html = "";
+            listaProdutos.forEach(prod => {
+                html += `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 10px; text-align: center;"><input type="checkbox" class="produto-checkbox" value="${prod.id}"></td>
+                        <td style="padding: 10px; font-weight: 500;">${prod.nome}</td>
+                        <td style="padding: 10px;">${prod.qtd}</td>
+                        <td style="padding: 10px;">${prod.validade}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function selecionarTodosProdutos(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.produto-checkbox');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+
+        function confirmarExclusaoSelecionados() {
+            const checkboxes = document.querySelectorAll('.produto-checkbox:checked');
+            const quantidadeSelecionada = checkboxes.length;
+
+            if (quantidadeSelecionada === 0) {
+                alert("Selecione pelo menos um produto para excluir.");
+                return;
+            }
+
+            // Mensagem solicitada contendo exatamente a quantidade de produtos selecionados
+            document.getElementById("mensagem-modal-exclusao").innerText = `Deseja realmente excluir os ${quantidadeSelecionada} produto(s) selecionado(s)?`;
+            document.getElementById("modal-exclusao").style.display = "flex";
+        }
+
+        function fecharModalExclusao() {
+            document.getElementById("modal-exclusao").style.display = "none";
+        }
+
+        function executarExclusaoProdutos() {
+            const checkboxes = document.querySelectorAll('.produto-checkbox:checked');
+            const idsParaExcluir = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+            // Filtra a lista removendo os selecionados
+            listaProdutos = listaProdutos.filter(prod => !idsParaExcluir.includes(prod.id));
+
+            fecharModalExclusao();
+            renderizarTabelaProdutos();
+
+            // Reseta o checkbox principal
+            const selectAll = document.getElementById("selectAll");
+            if (selectAll) selectAll.checked = false;
+        }
+    </script>
+</body>
+</html>
