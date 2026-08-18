@@ -519,18 +519,18 @@
 <script>
     // 1. Lógica do TAB no Post-it (Corrigida)
     function tratarTeclas(event) {
-        if (event.key === "Tab") {
-            event.preventDefault(); // Impede que o foco saia do textarea
-            const start = event.target.selectionStart;
-            const end = event.target.selectionEnd;
-            event.target.value = event.target.value.substring(0, start) + "    " + event.target.value.substring(end);
-            event.target.selectionStart = event.target.selectionEnd = start + 4;
-        }
-        if (event.key === "Enter") {
-            event.preventDefault();
-            event.target.blur(); // Confirma e fecha foco
-        }
+    if (event.key === "Enter") {
+        event.preventDefault();
+        event.target.blur(); // Salva e sai do foco
     }
+    if (event.key === "Tab") {
+        event.preventDefault();
+        const start = event.target.selectionStart;
+        const end = event.target.selectionEnd;
+        event.target.value = event.target.value.substring(0, start) + "    " + event.target.value.substring(end);
+        event.target.selectionStart = event.target.selectionEnd = start + 4;
+    }
+}
 
     // 2. Lógica para separar em Atividades
     function filtrarAtividades(tipo) {
@@ -745,17 +745,9 @@
                 </div>
             </div>
 
-            <!-- Módulo: Agenda (Calendário Fixo 7 Colunas e Controlo de Teclas Enter/Tab) -->
-            <div id="tab-agenda" class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-                    <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
-                    <div id="container-seletor-ano" style="display: flex; gap: 8px;"></div>
-                </div>
-
-                <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;"></div>
-
-                <div id="calendario-postit"></div>
-            </div>
+            #calendario-postit { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding: 15px; }
+.dia-postit { padding: 10px; min-height: 100px; border-radius: 8px; border: 1px solid #ddd; background: #fff; position: relative; }
+.dia-postit textarea { border: none; width: 100%; height: 80px; resize: none; outline: none; }
 
             <style>
                 .btn-mes-agenda {
