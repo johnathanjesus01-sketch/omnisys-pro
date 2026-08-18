@@ -285,6 +285,9 @@
         .btn-table-edit { background: #2563eb; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-right: 5px; }
         .btn-table-del { background: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
+        .btn-atv-concluir { background: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .btn-atv-pendente { background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; margin-left: 5px; }
+
         .resultado {
             background: #f8fafc;
             padding: 12px;
@@ -469,7 +472,7 @@
                     <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
 
-                <!-- Sub-aba 1: Cadastro de Clientes -->
+                <!-- Sub-aba 1: Cadastro de Clientes (Com Serviço / Atividade) -->
                 <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
                     <h4 id="titulo-form-cliente" style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
                     <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
@@ -487,8 +490,8 @@
                             <input type="text" id="cli-celular" placeholder="(00) 00000-0000" required>
                         </div>
                         <div>
-                            <label>Valor (R$):</label>
-                            <input type="number" step="0.01" id="cli-valor" placeholder="0.00" required>
+                            <label>Atividade a Realizar / Serviço:</label>
+                            <input type="text" id="cli-atividade" placeholder="Ex: Consultoria / Desenvolvimento" required>
                         </div>
                         <div>
                             <label>Data de Início:</label>
@@ -498,7 +501,11 @@
                             <label>Data de Entrega:</label>
                             <input type="date" id="cli-data-entrega" required>
                         </div>
-                        <div style="grid-column: span 2;">
+                        <div>
+                            <label>Valor (R$):</label>
+                            <input type="number" step="0.01" id="cli-valor" placeholder="0.00" required>
+                        </div>
+                        <div>
                             <label>Forma de Pagamento:</label>
                             <select id="cli-pagamento">
                                 <option value="Pix">Pix</option>
@@ -516,7 +523,7 @@
                             <thead>
                                 <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Nome</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Serviço</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Celular</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Início</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Entrega</th>
@@ -634,18 +641,17 @@
                 <div id="calendario-postit"></div>
             </div>
 
-            <!-- Módulo: Atividades (Com abas superiores Clientes/Prestadores na mesma linha e 3 sub-filtros cada) -->
+            <!-- Módulo: Atividades (Com botões de concluir/pendente e justificativa) -->
             <div id="tab-atividades" class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
                     <h3 style="margin: 0; color: var(--primary);">Controle de Atividades</h3>
-                    <!-- Botões principais na mesma linha -->
                     <div style="display: flex; gap: 10px;">
                         <button onclick="mudarSubAbaAtividadesPrincipal('clientes')" id="btn-main-atv-cli" class="btn-sub-aba ativo-sub">Clientes</button>
                         <button onclick="mudarSubAbaAtividadesPrincipal('prestadores')" id="btn-main-atv-pres" class="btn-sub-aba">Prestadores</button>
                     </div>
                 </div>
 
-                <!-- Sub-abas de Filtro (Atividades do Dia, Pendentes, Concluídas) -->
+                <!-- Sub-abas de Filtro -->
                 <div style="display: flex; gap: 8px; margin-bottom: 20px;">
                     <button onclick="mudarFiltroAtividade('dia')" id="btn-filtro-dia" class="btn-sub-aba ativo-sub">Atividades do Dia</button>
                     <button onclick="mudarFiltroAtividade('pendentes')" id="btn-filtro-pendentes" class="btn-sub-aba">Atividades Pendentes</button>
@@ -759,7 +765,6 @@
             }
         }
 
-        // Variáveis de controle para as Atividades
         let tipoAtividadeAtual = 'clientes'; // 'clientes' ou 'prestadores'
         let filtroAtividadeAtual = 'dia';     // 'dia', 'pendentes' ou 'concluidas'
 
@@ -803,16 +808,21 @@
                 nome: document.getElementById('cli-nome').value.trim(),
                 doc: document.getElementById('cli-doc').value.trim(),
                 celular: document.getElementById('cli-celular').value.trim(),
+                atividade: document.getElementById('cli-atividade').value.trim(),
                 dataInicio: document.getElementById('cli-data-inicio').value,
                 dataEntrega: document.getElementById('cli-data-entrega').value,
                 valor: document.getElementById('cli-valor').value.trim(),
-                pagamento: document.getElementById('cli-pagamento').value
+                pagamento: document.getElementById('cli-pagamento').value,
+                status: 'pendente', // 'pendente', 'concluidodia', 'concluido'
+                motivoPendente: ''
             };
 
             if (indexEdit === -1) {
                 listaClientes.push(dadosCliente);
                 alert("Cliente cadastrado com sucesso!");
             } else {
+                dadosCliente.status = listaClientes[indexEdit].status || 'pendente';
+                dadosCliente.motivoPendente = listaClientes[indexEdit].motivoPendente || '';
                 listaClientes[indexEdit] = dadosCliente;
                 document.getElementById('cli-edit-index').value = "-1";
                 document.getElementById('titulo-form-cliente').innerText = "Registar Novo Cliente";
@@ -831,6 +841,7 @@
             document.getElementById('cli-nome').value = c.nome;
             document.getElementById('cli-doc').value = c.doc;
             document.getElementById('cli-celular').value = c.celular;
+            document.getElementById('cli-atividade').value = c.atividade || '';
             document.getElementById('cli-data-inicio').value = c.dataInicio;
             document.getElementById('cli-data-entrega').value = c.dataEntrega;
             document.getElementById('cli-valor').value = c.valor;
@@ -860,7 +871,7 @@
             tbody.innerHTML = listaClientes.map((c, i) => `
                 <tr style="border-bottom: 1px solid #e2e8f0;">
                     <td style="padding: 10px;">${c.nome}</td>
-                    <td style="padding: 10px;">${c.doc}</td>
+                    <td style="padding: 10px;">${c.atividade || '-'}</td>
                     <td style="padding: 10px;">${c.celular}</td>
                     <td style="padding: 10px;">${c.dataInicio}</td>
                     <td style="padding: 10px;">${c.dataEntrega}</td>
@@ -887,13 +898,17 @@
                 horario: document.getElementById('pres-horario').value,
                 valor: document.getElementById('pres-valor').value.trim(),
                 pagamento: pagamento,
-                expBoleto: (pagamento === 'Boleto') ? document.getElementById('pres-exp-boleto').value : '-'
+                expBoleto: (pagamento === 'Boleto') ? document.getElementById('pres-exp-boleto').value : '-',
+                status: 'pendente',
+                motivoPendente: ''
             };
 
             if (indexEdit === -1) {
                 listaPrestadores.push(dadosPrestador);
                 alert("Prestador registado com sucesso!");
             } else {
+                dadosPrestador.status = listaPrestadores[indexEdit].status || 'pendente';
+                dadosPrestador.motivoPendente = listaPrestadores[indexEdit].motivoPendente || '';
                 listaPrestadores[indexEdit] = dadosPrestador;
                 document.getElementById('pres-edit-index').value = "-1";
                 document.getElementById('titulo-form-prestador').innerText = "Registar Prestador de Serviço / Orçamento";
@@ -961,6 +976,34 @@
             `).join('');
         }
 
+        // Funções para gerir o status das Atividades
+        function marcarConcluido(tipo, index) {
+            if (tipo === 'clientes') {
+                listaClientes[index].status = 'concluido';
+                listaClientes[index].motivoPendente = '';
+            } else {
+                listaPrestadores[index].status = 'concluido';
+                listaPrestadores[index].motivoPendente = '';
+            }
+            salvarDadosLocal();
+            atualizarListasAtividades();
+        }
+
+        function marcarPendenteComMotivo(tipo, index) {
+            const motivo = prompt("Digite o motivo de não concluir esta atividade:");
+            if (motivo !== null) {
+                if (tipo === 'clientes') {
+                    listaClientes[index].status = 'pendente';
+                    listaClientes[index].motivoPendente = motivo.trim();
+                } else {
+                    listaPrestadores[index].status = 'pendente';
+                    listaPrestadores[index].motivoPendente = motivo.trim();
+                }
+                salvarDadosLocal();
+                atualizarListasAtividades();
+            }
+        }
+
         function atualizarListasAtividades() {
             const container = document.getElementById('lista-atividades-container');
             if (!container) return;
@@ -974,10 +1017,10 @@
                     return;
                 }
 
-                const filtrados = listaClientes.filter(c => {
+                const filtrados = listaClientes.map((c, originalIndex) => ({ ...c, originalIndex })).filter(c => {
                     if (filtroAtividadeAtual === 'dia') return c.dataInicio === hojeStr || c.dataEntrega === hojeStr;
-                    if (filtroAtividadeAtual === 'pendentes') return c.dataEntrega >= hojeStr;
-                    if (filtroAtividadeAtual === 'concluidas') return c.dataEntrega < hojeStr;
+                    if (filtroAtividadeAtual === 'pendentes') return c.status === 'pendente';
+                    if (filtroAtividadeAtual === 'concluidas') return c.status === 'concluido';
                     return true;
                 });
 
@@ -987,8 +1030,23 @@
                 }
 
                 htmlConteudo = filtrados.map(c => `
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;">
-                        <strong>${c.nome}</strong> | Celular: ${c.celular} | Início: ${c.dataInicio} até Entrega: ${c.dataEntrega}
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${c.nome}</strong> (${c.atividade || 'Serviço Geral'}) | Celular: ${c.celular} | Início: ${c.dataInicio} até Entrega: ${c.dataEntrega}
+                            ${c.motivoPendente ? `<br><span style="color: #dc2626; font-size: 0.85rem;"><b>Motivo Pendência:</b> ${c.motivoPendente}</span>` : ''}
+                        </div>
+                        <div>
+                            ${filtroAtividadeAtual === 'dia' ? `
+                                <button class="btn-atv-concluir" onclick="marcarConcluido('clientes', ${c.originalIndex})">Concluída</button>
+                                <button class="btn-atv-pendente" onclick="marcarPendenteComMotivo('clientes', ${c.originalIndex})">Pendente</button>
+                            ` : ''}
+                            ${filtroAtividadeAtual === 'pendentes' ? `
+                                <button class="btn-atv-concluir" onclick="marcarConcluido('clientes', ${c.originalIndex})">Concluído</button>
+                            ` : ''}
+                            ${filtroAtividadeAtual === 'concluidas' ? `
+                                <span style="color: #16a34a; font-weight: bold; font-size: 0.85rem;">✅ Concluído</span>
+                            ` : ''}
+                        </div>
                     </div>
                 `).join('');
 
@@ -998,10 +1056,10 @@
                     return;
                 }
 
-                const filtrados = listaPrestadores.filter(p => {
+                const filtrados = listaPrestadores.map((p, originalIndex) => ({ ...p, originalIndex })).filter(p => {
                     if (filtroAtividadeAtual === 'dia') return p.dataInicio === hojeStr;
-                    if (filtroAtividadeAtual === 'pendentes') return p.dataInicio >= hojeStr;
-                    if (filtroAtividadeAtual === 'concluidas') return p.dataInicio < hojeStr;
+                    if (filtroAtividadeAtual === 'pendentes') return p.status === 'pendente';
+                    if (filtroAtividadeAtual === 'concluidas') return p.status === 'concluido';
                     return true;
                 });
 
@@ -1011,8 +1069,23 @@
                 }
 
                 htmlConteudo = filtrados.map(p => `
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;">
-                        <strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | <b>Início:</b> ${p.dataInicio} às ${p.horario} ${p.expBoleto !== '-' ? `| <b>Venc. Boleto:</b> ${p.expBoleto}` : ''}
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | <b>Início:</b> ${p.dataInicio} às ${p.horario} ${p.expBoleto !== '-' ? `| <b>Venc. Boleto:</b> ${p.expBoleto}` : ''}
+                            ${p.motivoPendente ? `<br><span style="color: #dc2626; font-size: 0.85rem;"><b>Motivo Pendência:</b> ${p.motivoPendente}</span>` : ''}
+                        </div>
+                        <div>
+                            ${filtroAtividadeAtual === 'dia' ? `
+                                <button class="btn-atv-concluir" onclick="marcarConcluido('prestadores', ${p.originalIndex})">Concluída</button>
+                                <button class="btn-atv-pendente" onclick="marcarPendenteComMotivo('prestadores', ${p.originalIndex})">Pendente</button>
+                            ` : ''}
+                            ${filtroAtividadeAtual === 'pendentes' ? `
+                                <button class="btn-atv-concluir" onclick="marcarConcluido('prestadores', ${p.originalIndex})">Concluído</button>
+                            ` : ''}
+                            ${filtroAtividadeAtual === 'concluidas' ? `
+                                <span style="color: #16a34a; font-weight: bold; font-size: 0.85rem;">✅ Concluído</span>
+                            ` : ''}
+                        </div>
                     </div>
                 `).join('');
             }
@@ -1024,7 +1097,7 @@
         let anoAtualGlobal = 2026;
         let mesAtualGlobal = 7;
         const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
-        const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]; // Começa no Domingo
+        const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
         function renderizarSeletorAnos() {
             const containerAno = document.getElementById("container-seletor-ano");
@@ -1062,12 +1135,11 @@
             const container = document.getElementById("calendario-postit");
             container.innerHTML = "";
 
-            const primeiroDiaDoMes = new Date(ano, mesIndex, 1).getDay(); // 0 = Domingo, 1 = Segunda, etc.
+            const primeiroDiaDoMes = new Date(ano, mesIndex, 1).getDay();
             const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
             const hoje = new Date();
             hoje.setHours(0,0,0,0);
 
-            // Espaços vazios iniciais para alinhar o primeiro dia da semana corretamente (Domingo)
             for (let espaco = 0; espaco < primeiroDiaDoMes; espaco++) {
                 container.innerHTML += `<div style="visibility: hidden;"></div>`;
             }
