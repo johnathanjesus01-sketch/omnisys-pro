@@ -288,18 +288,6 @@
         .btn-atv-concluir { background: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
         .btn-atv-pendente { background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; margin-left: 5px; }
 
-        .resultado {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 15px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            white-space: pre-wrap;
-            border-left: 4px solid var(--accent);
-            border: 1px solid #e2e8f0;
-        }
-
         .btn-sub-aba {
             padding: 8px 16px;
             cursor: pointer;
@@ -613,20 +601,59 @@
                 </div>
             </div>
 
-            <!-- Módulo: Estoque -->
+            <!-- Módulo: Estoque com Subgrupos Dinâmicos -->
             <div id="tab-estoque" class="card">
                 <h3>Gerenciamento de Estoque</h3>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre e controle os itens do inventário.</p>
-                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
-                    <label>Nome do Produto:</label>
-                    <input type="text" id="produto-nome" placeholder="Ex: Produto X">
-                    <label>Quantidade:</label>
-                    <input type="number" id="produto-qtd" placeholder="0">
-                    <label>Validade:</label>
-                    <input type="date" id="produto-validade">
-                    <button class="btn-form" style="background-color: var(--success);" onclick="salvarProdutoEstoque()">Salvar Produto</button>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre e controle os itens do inventário divididos por subgrupos.</p>
+
+                <form id="form-estoque" onsubmit="salvarProdutoEstoque(event)" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: flex-end;">
+                    <input type="hidden" id="prod-edit-index" value="-1">
+                    <div>
+                        <label>Nome do Produto:</label>
+                        <input type="text" id="produto-nome" placeholder="Ex: Produto X" required>
+                    </div>
+                    <div>
+                        <label>Quantidade:</label>
+                        <input type="number" id="produto-qtd" placeholder="0" required>
+                    </div>
+                    <div>
+                        <label>Validade:</label>
+                        <input type="date" id="produto-validade">
+                    </div>
+                    <div style="grid-column: span 3;">
+                        <label>Subgrupo / Categoria:</label>
+                        <select id="produto-subgrupo">
+                            <option value="Geral">Geral (Sem subgrupo específico)</option>
+                            <option value="Comida">Comida</option>
+                            <option value="Construção">Construção</option>
+                            <option value="Elétrica">Elétrica</option>
+                            <option value="Objetos Descartáveis">Objetos Descartáveis</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="btn-salvar-produto" class="btn-form" style="grid-column: span 3; background-color: var(--success); margin-top: 5px;">Salvar Produto</button>
+                </form>
+
+                <!-- Abas de Subgrupos de Estoque -->
+                <div id="container-subgrupos-estoque" style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                    <!-- Preenchido dinamicamente -->
                 </div>
-                <div id="resultado-estoque" class="resultado" style="display:none;"></div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
+                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Produto</th>
+                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Quantidade</th>
+                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Validade</th>
+                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Subgrupo</th>
+                                <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-estoque-corpo">
+                            <tr><td colspan="5" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto registado no estoque.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Módulo: Agenda -->
@@ -743,6 +770,9 @@
             if (nomeAba === 'atividades') {
                 atualizarListasAtividades();
             }
+            if (nomeAba === 'estoque') {
+                atualizarTabelaEstoque();
+            }
         }
 
         function mudarSubAbaClientes(subAbaId) {
@@ -764,8 +794,8 @@
             }
         }
 
-        let tipoAtividadeAtual = 'clientes'; // 'clientes' ou 'prestadores'
-        let filtroAtividadeAtual = 'dia';     // 'dia', 'pendentes' ou 'concluidas'
+        let tipoAtividadeAtual = 'clientes';
+        let filtroAtividadeAtual = 'dia';
 
         function mudarSubAbaAtividadesPrincipal(tipo) {
             tipoAtividadeAtual = tipo;
@@ -792,12 +822,103 @@
         // --- PERSISTÊNCIA DE DADOS (LOCALSTORAGE) ---
         let listaClientes = JSON.parse(localStorage.getItem('omnisys_clientes')) || [];
         let listaPrestadores = JSON.parse(localStorage.getItem('omnisys_prestadores')) || [];
+        let listaEstoque = JSON.parse(localStorage.getItem('omnisys_estoque')) || [];
         let agendaDados = JSON.parse(localStorage.getItem('omnisys_agenda')) || {};
 
         function salvarDadosLocal() {
             localStorage.setItem('omnisys_clientes', JSON.stringify(listaClientes));
             localStorage.setItem('omnisys_prestadores', JSON.stringify(listaPrestadores));
+            localStorage.setItem('omnisys_estoque', JSON.stringify(listaEstoque));
             localStorage.setItem('omnisys_agenda', JSON.stringify(agendaDados));
+        }
+
+        // --- GESTÃO DE ESTOQUE ---
+        let subgrupoFiltroAtual = 'Todos';
+
+        function salvarProdutoEstoque(event) {
+            event.preventDefault();
+            const indexEdit = parseInt(document.getElementById('prod-edit-index').value);
+            const dadosProduto = {
+                nome: document.getElementById('produto-nome').value.trim(),
+                qtd: document.getElementById('produto-qtd').value.trim(),
+                validade: document.getElementById('produto-validade').value || '-',
+                subgrupo: document.getElementById('produto-subgrupo').value
+            };
+
+            if (indexEdit === -1) {
+                listaEstoque.push(dadosProduto);
+                alert("Produto registado no estoque com sucesso!");
+            } else {
+                listaEstoque[indexEdit] = dadosProduto;
+                document.getElementById('prod-edit-index').value = "-1";
+                document.getElementById('btn-salvar-produto').innerText = "Salvar Produto";
+                alert("Produto atualizado com sucesso!");
+            }
+
+            document.getElementById('form-estoque').reset();
+            salvarDadosLocal();
+            atualizarTabelaEstoque();
+        }
+
+        function editarProduto(index) {
+            const p = listaEstoque[index];
+            document.getElementById('prod-edit-index').value = index;
+            document.getElementById('produto-nome').value = p.nome;
+            document.getElementById('produto-qtd').value = p.qtd;
+            document.getElementById('produto-validade').value = p.validade !== '-' ? p.validade : '';
+            document.getElementById('produto-subgrupo').value = p.subgrupo;
+            document.getElementById('btn-salvar-produto').innerText = "Atualizar Produto";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function excluirProduto(index) {
+            if (confirm("Tem certeza que deseja excluir este produto do estoque?")) {
+                listaEstoque.splice(index, 1);
+                salvarDadosLocal();
+                atualizarTabelaEstoque();
+                alert("Produto excluído com sucesso!");
+            }
+        }
+
+        function filtrarSubgrupoEstoque(subgrupo) {
+            subgrupoFiltroAtual = subgrupo;
+            atualizarTabelaEstoque();
+        }
+
+        function atualizarTabelaEstoque() {
+            const containerSub = document.getElementById('container-subgrupos-estoque');
+            const tbody = document.getElementById('tabela-estoque-corpo');
+            if (!tbody || !containerSub) return;
+
+            // Gerar abas de subgrupos dinâmicos
+            const subgruposDisponiveis = ['Todos', ...new Set(listaEstoque.map(p => p.subgrupo))];
+            containerSub.innerHTML = subgruposDisponiveis.map(sub => `
+                <button onclick="filtrarSubgrupoEstoque('${sub}')" class="btn-sub-aba ${subgrupoFiltroAtual === sub ? 'ativo-sub' : ''}">${sub}</button>
+            `).join('');
+
+            // Filtrar produtos
+            const filtrados = listaEstoque.map((p, originalIndex) => ({ ...p, originalIndex })).filter(p => {
+                if (subgrupoFiltroAtual === 'Todos') return true;
+                return p.subgrupo === subgrupoFiltroAtual;
+            });
+
+            if (filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto encontrado nesta categoria.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtrados.map(p => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px;">${p.nome}</td>
+                    <td style="padding: 10px;">${p.qtd}</td>
+                    <td style="padding: 10px;">${p.validade}</td>
+                    <td style="padding: 10px;"><b>${p.subgrupo}</b></td>
+                    <td style="padding: 10px; text-align: center;">
+                        <button class="btn-table-edit" onclick="editarProduto(${p.originalIndex})">Editar</button>
+                        <button class="btn-table-del" onclick="excluirProduto(${p.originalIndex})">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function salvarCliente(event) {
@@ -1277,6 +1398,7 @@
         carregarCalendario(2026, 7);
         atualizarTabelaClientes();
         atualizarTabelaPrestadores();
+        atualizarTabelaEstoque();
         setTimeout(verificarPrazosEAlimentarLembretes, 1500);
     </script>
 </body>
