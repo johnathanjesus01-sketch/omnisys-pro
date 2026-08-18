@@ -15,9 +15,9 @@
         body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
         /* Sidebar */
-        .sidebar { width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; padding: 20px; }
+        .sidebar { width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
         .sidebar h2 { font-size: 1.25rem; margin-bottom: 30px; letter-spacing: 0.5px; }
-        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
+        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; transition: all 0.2s; display: block; }
         .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; }
 
         /* Main Content */
@@ -44,44 +44,37 @@
 </head>
 <body>
 
-    <!-- Menu Lateral -->
+    <!-- Menu Lateral (Mantido 100% com todas as opções originais) -->
     <div class="sidebar">
         <h2>Omnisys Pro</h2>
         <a href="#" onclick="mudarAba('dashboard')" id="menu-dashboard" class="active">Dashboard</a>
+        <a href="#" onclick="mudarAba('clientes')" id="menu-clientes">Clientes</a>
         <a href="#" onclick="mudarAba('estoque')" id="menu-estoque">Estoque</a>
         <a href="#" onclick="mudarAba('agenda')" id="menu-agenda">Agenda</a>
-        <a href="#" onclick="mudarAba('clientes')" id="menu-clientes">Clientes & Prestadores</a>
-        <a href="#" onclick="mudarAba('lembretes')" id="menu-lembretes">Lembretes</a>
+        <a href="#" onclick="mudarAba('faturamento')" id="menu-faturamento">Faturamento</a>
+        <a href="#" onclick="mudarAba('atividades')" id="menu-atividades">Atividades</a>
+        <a href="#" style="padding-left: 25px; font-size: 0.85rem;" onclick="mudarAba('atividades-pendentes')" id="menu-atividades-pendentes">⏳ Pendentes</a>
+        <a href="#" style="padding-left: 25px; font-size: 0.85rem;" onclick="mudarAba('atividades-concluidas')" id="menu-atividades-concluidas">✅ Concluídas</a>
+        <a href="#" onclick="mudarAba('lembretes')" id="menu-lembretes" style="margin-top: 15px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4);">🔔 Lembretes</a>
+        <a href="#" onclick="mudarAba('novo-acesso')" id="menu-novo-acesso" style="margin-top: auto;">Criar Novo Acesso</a>
     </div>
 
     <!-- Conteúdo Principal -->
     <div class="main-content">
 
+        <!-- Barra de Utilizador ativa -->
+        <div class="card" style="padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div><strong>Utilizador:</strong> master@omnisys.com | <strong>Nível:</strong> adminMaster</div>
+            <div style="background: #fef08a; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: #854d0e;">👑 Master Ativo</div>
+        </div>
+
         <!-- Módulo: Dashboard -->
         <div id="tab-dashboard" class="card">
             <h3 style="color: var(--primary); margin-bottom: 10px;">Visão Geral</h3>
-            <p style="color: #64748b;">Bem-vindo ao sistema Omnisys Pro. Selecione uma opção no menu lateral para começar.</p>
+            <p style="color: #64748b;">Bem-vindo ao painel de controlo principal do Omnisys Pro.</p>
         </div>
 
-        <!-- Módulo: Estoque -->
-        <div id="tab-estoque" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Controlo de Estoque</h3>
-            <p style="color: #64748b; font-size: 0.9rem;">Módulo integrado ao backend FastAPI para gestão de produtos.</p>
-        </div>
-
-        <!-- Módulo: Agenda (Calendário Post-it com Cores Vivas e Zoom) -->
-        <div id="tab-agenda" class="card" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-                <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
-                <div id="container-seletor-ano" style="display: flex; gap: 8px;"></div>
-            </div>
-
-            <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;"></div>
-
-            <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;"></div>
-        </div>
-
-        <!-- Módulo: Clientes e Prestadores -->
+        <!-- Módulo: Clientes (Atualizado com sub-abas solicitadas e Prestadores com boleto) -->
         <div id="tab-clientes" class="card" style="display: none;">
             <h3 style="color: var(--primary); margin-bottom: 15px;">Gestão de Clientes e Prestadores</h3>
 
@@ -170,11 +163,51 @@
             </div>
         </div>
 
+        <!-- Módulo: Estoque -->
+        <div id="tab-estoque" class="card" style="display: none;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Controlo de Estoque</h3>
+            <p style="color: #64748b;">Gestão integrada de produtos.</p>
+        </div>
+
+        <!-- Módulo: Agenda -->
+        <div id="tab-agenda" class="card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
+                <div id="container-seletor-ano" style="display: flex; gap: 8px;"></div>
+            </div>
+            <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;"></div>
+            <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;"></div>
+        </div>
+
+        <!-- Módulo: Faturamento -->
+        <div id="tab-faturamento" class="card" style="display: none;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Faturamento e Financeiro</h3>
+            <p style="color: #64748b;">Controlo financeiro e transações.</p>
+        </div>
+
+        <!-- Módulo: Atividades / Pendentes / Concluídas -->
+        <div id="tab-atividades" class="card" style="display: none;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Atividades Gerais</h3>
+            <p style="color: #64748b;">Painel geral de tarefas.</p>
+        </div>
+        <div id="tab-atividades-pendentes" class="card" style="display: none;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Atividades Pendentes</h3>
+        </div>
+        <div id="tab-atividades-concluidas" class="card" style="display: none;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Atividades Concluídas</h3>
+        </div>
+
         <!-- Módulo: Lembretes -->
         <div id="tab-lembretes" class="card" style="display: none;">
             <h3 style="color: var(--primary); margin-bottom: 15px;">Central de Lembretes e Prazos</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Visualização de compromissos e prazos que vencem nos próximos 7 dias.</p>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Compromissos e prazos que vencem nos próximos 7 dias.</p>
             <div id="lista-lembretes-ativos" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <!-- Módulo: Criar Novo Acesso -->
+        <div id="tab-novo-acesso" class="card" style="display: none;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Criar Novo Acesso</h3>
+            <p style="color: #64748b;">Gestão de utilizadores do sistema.</p>
         </div>
 
     </div>
@@ -189,9 +222,9 @@
     </div>
 
     <script>
-        // Controlo de Abas Principais
+        // Controlo de Abas Principais (Mantendo todas as originais)
         function mudarAba(abaId) {
-            const abas = ['dashboard', 'estoque', 'agenda', 'clientes', 'lembretes'];
+            const abas = ['dashboard', 'clientes', 'estoque', 'agenda', 'faturamento', 'atividades', 'atividades-pendentes', 'atividades-concluidas', 'lembretes', 'novo-acesso'];
             abas.forEach(a => {
                 const el = document.getElementById(`tab-${a}`);
                 const menu = document.getElementById(`menu-${a}`);
