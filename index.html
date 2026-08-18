@@ -311,6 +311,24 @@
             border-left: 4px solid var(--accent);
             border: 1px solid #e2e8f0;
         }
+
+        /* Estilos dos botões de Sub-abas de Clientes/Prestadores */
+        .btn-sub-aba {
+            padding: 8px 16px;
+            cursor: pointer;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #334155;
+            transition: all 0.2s;
+        }
+        .btn-sub-aba.ativo-sub {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -399,6 +417,9 @@
                     </ul>
                 </li>
 
+                <!-- NOVA ABA DE LEMBRETES -->
+                <li><button onclick="mudarAba('lembretes', this)" id="btn-lembretes" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">🔔 Lembretes</button></li>
+
                 <!-- OPÇÃO EXCLUSIVA DO MASTER PARA CRIAR NOVO LOGIN -->
                 <li id="menu-item-criacao" style="display: none; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                     <button onclick="mudarAba('criar-login', this)" id="btn-criar-login" style="background: #1e3a8a; color: white; font-weight: bold;">🔑 Criar Novo Acesso</button>
@@ -417,18 +438,134 @@
                 </div>
             </div>
 
-            <!-- Módulo: Clientes -->
+            <!-- Módulo: Clientes (Atualizado com Sub-abas e Gestão Completa solicitada) -->
             <div id="tab-clientes" class="card active-tab">
-                <h3>Gestão de Clientes</h3>
-                <label>Nome Fantasia / Cliente:</label>
-                <input type="text" id="empresa-nome" placeholder="Ex: Clínica Sorriso ou Oficina Central">
-                <label>CNPJ / CPF:</label>
-                <input type="text" id="empresa-cnpj" placeholder="00.000.000/0001-00">
-                <button class="btn-form" onclick="cadastrarEmpresa()">Salvar Cliente</button>
-                <div id="resultado-empresa" class="resultado" style="display:none;"></div>
+                <h3>Gestão de Clientes e Prestadores</h3>
+
+                <!-- Cabeçalho de Botões (Sub-abas) -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                    <button onclick="mudarSubAbaClientes('clientes-cad')" id="btn-sub-cli" class="btn-sub-aba ativo-sub">Cadastro de Clientes</button>
+                    <button onclick="mudarSubAbaClientes('prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
+                </div>
+
+                <!-- Sub-aba 1: Cadastro de Clientes -->
+                <div id="sub-clientes-cad" class="sub-conteudo-cli">
+                    <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
+                    <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
+                        <div>
+                            <label>Nome Empresa / Física:</label>
+                            <input type="text" id="cli-nome" placeholder="Ex: Empresa X ou João da Silva" required>
+                        </div>
+                        <div>
+                            <label>CNPJ / CPF:</label>
+                            <input type="text" id="cli-doc" placeholder="00.000.000/0001-00" required>
+                        </div>
+                        <div>
+                            <label>Atividade a Realizar:</label>
+                            <input type="text" id="cli-atividade" placeholder="Ex: Consultoria / Instalação" required>
+                        </div>
+                        <div>
+                            <label>Valor (R$):</label>
+                            <input type="number" step="0.01" id="cli-valor" placeholder="0.00" required>
+                        </div>
+                        <div>
+                            <label>Forma de Pagamento:</label>
+                            <select id="cli-pagamento">
+                                <option value="Pix">Pix</option>
+                                <option value="Dinheiro">Dinheiro</option>
+                                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                <option value="Cartão de Débito">Cartão de Débito</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Data de Execução / Entrega:</label>
+                            <input type="date" id="cli-data" required>
+                        </div>
+                        <button type="submit" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Cliente</button>
+                    </form>
+
+                    <h4 style="margin-bottom: 10px; color: var(--primary);">Lista de Clientes Registados</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Nome</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Atividade</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Pagamento</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Data Entrega</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-clientes-corpo">
+                                <tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sub-aba 2: Prestador de Serviço -->
+                <div id="sub-prestador-cad" class="sub-conteudo-cli" style="display: none;">
+                    <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Prestador de Serviço / Orçamento</h4>
+                    <form id="form-prestador" onsubmit="salvarPrestador(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
+                        <div>
+                            <label>Nome Empresa / Física:</label>
+                            <input type="text" id="pres-nome" placeholder="Ex: Fornecedor Y" required>
+                        </div>
+                        <div>
+                            <label>CNPJ / CPF:</label>
+                            <input type="text" id="pres-doc" placeholder="00.000.000/0001-00" required>
+                        </div>
+                        <div>
+                            <label>Atividade Solicitada:</label>
+                            <input type="text" id="pres-atividade" placeholder="Ex: Manutenção" required>
+                        </div>
+                        <div>
+                            <label>Valor Orçamento (R$):</label>
+                            <input type="number" step="0.01" id="pres-valor" placeholder="0.00" required>
+                        </div>
+                        <div>
+                            <label>Método de Pagamento:</label>
+                            <select id="pres-pagamento" onchange="verificarBoletoPrestador(this.value)">
+                                <option value="Pix">Pix</option>
+                                <option value="Dinheiro">Dinheiro</option>
+                                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                <option value="Cartão de Débito">Cartão de Débito</option>
+                                <option value="Boleto">Boleto</option>
+                            </select>
+                        </div>
+
+                        <!-- Caixinha dinâmica para data de expiração se for Boleto -->
+                        <div id="container-boleto-exp" style="display: none;">
+                            <label style="color: #b91c1c; font-weight: bold;">Data de Expiração do Boleto:</label>
+                            <input type="date" id="pres-exp-boleto" style="border-color: #fca5a5; background: #fef2f2;">
+                        </div>
+
+                        <button type="submit" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Prestador</button>
+                    </form>
+
+                    <h4 style="margin-bottom: 10px; color: var(--primary);">Lista de Prestadores Registados</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Nome</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Atividade</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Orçamento</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Método Pagamento</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Expiração Boleto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-prestadores-corpo">
+                                <tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-          <!-- Módulo: Estoque (Atualizado com Gestão de Produtos) -->
+            <!-- Módulo: Estoque -->
             <div id="tab-estoque" class="card">
                 <h3>Gerenciamento de Estoque</h3>
                 <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre, controle e gerencie os itens do inventário.</p>
@@ -469,7 +606,6 @@
                                 </tr>
                             </thead>
                             <tbody id="tabela-produtos-corpo">
-                                <!-- Os produtos salvos aparecem aqui dinamicamente -->
                                 <tr>
                                     <td colspan="4" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto cadastrado ainda.</td>
                                 </tr>
@@ -494,194 +630,84 @@
             </div>
 
             <!-- Módulo: Agenda -->
-           <!-- Módulo: Agenda (Calendário Dinâmico) -->
-<!-- Módulo: Agenda (Calendário Profissional Post-it) -->
-<!-- Módulo: Agenda (Calendário Profissional Post-it com Zoom e Cores Vivas) -->
-<div id="tab-agenda" class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-        <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
-        <div id="container-seletor-ano" style="display: flex; gap: 8px;">
-            <!-- Navegação de Anos gerada dinamicamente -->
-        </div>
-    </div>
-
-    <!-- Seleção de Meses do Ano Ativo -->
-    <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;">
-        <!-- Meses injetados via JS -->
-    </div>
-
-    <!-- Área do Calendário Post-it Estilizado -->
-    <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;">
-        <!-- Gerado via JS -->
-    </div>
-</div>
-
-<style>
-    .btn-mes-agenda {
-        padding: 8px 16px;
-        cursor: pointer;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        background: white;
-        font-weight: 600;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-        color: #334155;
-    }
-    .btn-mes-agenda:hover { background: #e2e8f0; }
-    .btn-mes-agenda.ativo {
-        background: #0f223d !important;
-        color: white !important;
-        border-color: #0f223d !important;
-    }
-
-    .btn-ano-agenda {
-        padding: 8px 18px;
-        cursor: pointer;
-        border: 1px solid var(--primary);
-        border-radius: 6px;
-        background: white;
-        font-weight: bold;
-        color: var(--primary);
-        transition: all 0.2s;
-    }
-    .btn-ano-agenda.ativo-ano {
-        background: var(--primary);
-        color: white;
-    }
-
-    /* Post-its com cores bem fortes e efeito zoom fluido ao focar/escrever */
-    .dia-postit {
-        padding: 14px;
-        min-height: 120px;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        transition: all 0.25s ease;
-        border: 1px solid rgba(0,0,0,0.1);
-        position: relative;
-    }
-    .dia-postit:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    /* Efeito de saltar para a frente e ficar maior quando focado/clicado */
-    .dia-postit:focus-within {
-        transform: scale(1.15) translateY(-5px);
-        z-index: 50;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-        border-color: #0f223d;
-    }
-    .dia-postit textarea {
-        border: none;
-        background: transparent;
-        resize: none;
-        width: 100%;
-        height: 100%;
-        font-size: 0.85rem;
-        font-family: 'Inter', sans-serif;
-        color: #0f172a;
-        outline: none;
-    }
-</style>
-
-<script>
-    const agendaDados = {}; // Registo de notas por ano-mes-dia
-    let anoAtualGlobal = 2026;
-    let mesAtualGlobal = 7; // Agosto (0 a 11)
-
-    const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
-    const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-
-    function renderizarSeletorAnos() {
-        const containerAno = document.getElementById("container-seletor-ano");
-        containerAno.innerHTML = `
-            <button onclick="mudarAno(2026)" class="btn-ano-agenda ${anoAtualGlobal === 2026 ? 'ativo-ano' : ''}">2026</button>
-            <button onclick="mudarAno(2027)" class="btn-ano-agenda ${anoAtualGlobal === 2027 ? 'ativo-ano' : ''}">2027</button>
-        `;
-    }
-
-    function mudarAno(ano) {
-        anoAtualGlobal = ano;
-        mesAtualGlobal = 0;
-        renderizarSeletorAnos();
-        renderizarMesesDoAno();
-        carregarCalendario(ano, mesAtualGlobal);
-    }
-
-    function renderizarMesesDoAno() {
-        const navMeses = document.getElementById("nav-meses");
-        navMeses.innerHTML = "";
-
-        nomesMeses.forEach((nomeMes, index) => {
-            const btn = document.createElement("button");
-            btn.className = `btn-mes-agenda ${mesAtualGlobal === index ? 'ativo' : ''}`;
-            btn.innerText = nomeMes;
-            btn.onclick = () => {
-                mesAtualGlobal = index;
-                renderizarMesesDoAno();
-                carregarCalendario(anoAtualGlobal, mesAtualGlobal);
-            };
-            navMeses.appendChild(btn);
-        });
-    }
-
-    function carregarCalendario(ano, mesIndex) {
-        const container = document.getElementById("calendario-postit");
-        container.innerHTML = "";
-
-        const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
-        const hoje = new Date();
-        hoje.setHours(0,0,0,0);
-
-        for (let i = 1; i <= diasNoMes; i++) {
-            const dataDia = new Date(ano, mesIndex, i);
-            dataDia.setHours(0,0,0,0);
-
-            const nomeDiaSemana = diasSemanaNomes[dataDia.getDay()];
-            const chaveKey = `${ano}-${mesIndex}-${i}`;
-            const textoNota = agendaDados[chaveKey] || "";
-
-            let corFundo = "#ffffff"; // Branco limpo padrão
-
-            const diffTime = dataDia - hoje;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (dataDia < hoje) {
-                corFundo = "#86efac"; // Verde bem vivo e forte (Passado)
-            } else if (textoNota.trim() !== "") {
-                if (diffDays <= 1) {
-                    corFundo = "#fca5a5"; // Vermelho bem vivo e forte (Hoje ou falta 1 dia)
-                } else {
-                    corFundo = "#93c5fd"; // Azul bem vivo e forte (Faltam 2 ou mais dias)
-                }
-            }
-
-            container.innerHTML += `
-                <div class="dia-postit" style="background-color: ${corFundo};">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: 700; font-size: 0.95rem; color: #0f223d;">${i < 10 ? '0'+i : i}</span>
-                        <span style="font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
-                    </div>
-                    <textarea onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
-                              placeholder="Escrever compromisso...">${textoNota}</textarea>
+            <div id="tab-agenda" class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                    <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
+                    <div id="container-seletor-ano" style="display: flex; gap: 8px;"></div>
                 </div>
-            `;
-        }
-    }
 
-    function salvarNotaPostit(ano, mes, dia, texto) {
-        const chaveKey = `${ano}-${mes}-${dia}`;
-        agendaDados[chaveKey] = texto;
-        carregarCalendario(ano, mes);
-    }
+                <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;"></div>
 
-    // Inicialização da Agenda
-    renderizarSeletorAnos();
-    renderizarMesesDoAno();
-    carregarCalendario(2026, 7); // Inicia em Agosto de 2026
-</script>
+                <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;"></div>
+            </div>
+
+            <style>
+                .btn-mes-agenda {
+                    padding: 8px 16px;
+                    cursor: pointer;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 6px;
+                    background: white;
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                    transition: all 0.2s;
+                    color: #334155;
+                }
+                .btn-mes-agenda:hover { background: #e2e8f0; }
+                .btn-mes-agenda.ativo {
+                    background: #0f223d !important;
+                    color: white !important;
+                    border-color: #0f223d !important;
+                }
+
+                .btn-ano-agenda {
+                    padding: 8px 18px;
+                    cursor: pointer;
+                    border: 1px solid var(--primary);
+                    border-radius: 6px;
+                    background: white;
+                    font-weight: bold;
+                    color: var(--primary);
+                    transition: all 0.2s;
+                }
+                .btn-ano-agenda.ativo-ano {
+                    background: var(--primary);
+                    color: white;
+                }
+
+                .dia-postit {
+                    padding: 14px;
+                    min-height: 120px;
+                    border-radius: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+                    transition: all 0.25s ease;
+                    border: 1px solid rgba(0,0,0,0.1);
+                    position: relative;
+                }
+                .dia-postit:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+                }
+                .dia-postit:focus-within {
+                    transform: scale(1.15) translateY(-5px);
+                    z-index: 50;
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+                    border-color: #0f223d;
+                }
+                .dia-postit textarea {
+                    border: none;
+                    background: transparent;
+                    resize: none;
+                    width: 100%;
+                    height: 100%;
+                    font-size: 0.85rem;
+                    font-family: 'Inter', sans-serif;
+                    color: #0f172a;
+                    outline: none;
+                }
+            </style>
 
             <!-- Módulo: Faturamento -->
             <div id="tab-faturamento" class="card">
@@ -705,6 +731,13 @@
             <div id="tab-atividades-concluidas" class="card">
                 <h3>Atividades Concluídas</h3>
                 <p>Histórico de tarefas já finalizadas com sucesso.</p>
+            </div>
+
+            <!-- MÓDULO: LEMBRETES (POPUP DE 5 SEGUNDOS COM BOTÃO SAIR) -->
+            <div id="tab-lembretes" class="card">
+                <h3>Central de Lembretes e Notificações</h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Visualização de compromissos e prazos agendados para os próximos 7 dias.</p>
+                <div id="lista-lembretes-ativos" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
 
             <!-- MÓDULO EXCLUSIVO MASTER: CRIAR LOGIN -->
@@ -731,6 +764,15 @@
                 <div id="resultado-criacao-login" class="resultado" style="display:none;"></div>
             </div>
         </div>
+    </div>
+
+    <!-- POPUP FLUTUANTE DE NOTIFICAÇÃO GLOBAL (5 Segundos + Botão Sair) -->
+    <div id="popup-notificacao" style="display: none; position: fixed; bottom: 30px; right: 30px; background: #0f223d; color: white; padding: 20px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 9999; max-width: 350px; border-left: 5px solid #fca5a5;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 0.95rem;">⚠️ Atenção: Prazos Próximos!</strong>
+            <button onclick="fecharNotificacaoPopup()" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold;">Sair</button>
+        </div>
+        <p id="texto-notificacao-popup" style="font-size: 0.85rem; margin: 0; color: #f1f5f9; line-height: 1.4;"></p>
     </div>
 
     <!-- 4. SCRIPTS DE CONTROLO -->
@@ -842,6 +884,10 @@
             const abaAlvo = document.getElementById('tab-' + nomeAba);
             if (abaAlvo) abaAlvo.classList.add('active-tab');
             if (elementoBotao) elementoBotao.classList.add('active');
+
+            if (nomeAba === 'lembretes') {
+                verificarPrazosEAlimentarLembretes();
+            }
         }
 
         async function criarAcessoParaOutraPessoa() {
@@ -880,14 +926,99 @@
             }
         }
 
-        async function cadastrarEmpresa() {
-            const nome = document.getElementById('empresa-nome').value;
-            const cnpj = document.getElementById('empresa-cnpj').value;
-            const resDiv = document.getElementById('resultado-empresa');
-            resDiv.style.display = 'block';
-            resDiv.innerText = "Sucesso! Cliente salvo com ID de registo.";
+        /* --- SUB-ABAS DE CLIENTES E PRESTADORES DE SERVIÇO --- */
+        function mudarSubAbaClientes(subAbaId) {
+            document.getElementById('sub-clientes-cad').style.display = (subAbaId === 'sub-clientes-cad') ? 'block' : 'none';
+            document.getElementById('sub-prestador-cad').style.display = (subAbaId === 'sub-prestador-cad') ? 'block' : 'none';
+
+            document.getElementById('btn-sub-cli').className = `btn-sub-aba ${subAbaId === 'sub-clientes-cad' ? 'ativo-sub' : ''}`;
+            document.getElementById('btn-sub-pres').className = `btn-sub-aba ${subAbaId === 'sub-prestador-cad' ? 'ativo-sub' : ''}`;
         }
-        // Array local para simular a tabela de produtos do stock
+
+        function verificarBoletoPrestador(metodo) {
+            const containerBoleto = document.getElementById('container-boleto-exp');
+            containerBoleto.style.display = (metodo === 'Boleto') ? 'block' : 'none';
+        }
+
+        const listaClientes = [];
+        const listaPrestadores = [];
+
+        function salvarCliente(event) {
+            event.preventDefault();
+            const nome = document.getElementById('cli-nome').value.trim();
+            const doc = document.getElementById('cli-doc').value.trim();
+            const atividade = document.getElementById('cli-atividade').value.trim();
+            const valor = document.getElementById('cli-valor').value.trim();
+            const pagamento = document.getElementById('cli-pagamento').value;
+            const data = document.getElementById('cli-data').value;
+
+            listaClientes.push({ nome, doc, atividade, valor, pagamento, data });
+            document.getElementById('form-cliente').reset();
+            atualizarTabelaClientes();
+            alert("Cliente cadastrado com sucesso!");
+        }
+
+        function atualizarTabelaClientes() {
+            const tbody = document.getElementById('tabela-clientes-corpo');
+            if (listaClientes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>`;
+                return;
+            }
+            let html = "";
+            listaClientes.forEach(c => {
+                html += `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 10px;">${c.nome}</td>
+                        <td style="padding: 10px;">${c.doc}</td>
+                        <td style="padding: 10px;">${c.atividade}</td>
+                        <td style="padding: 10px;">R$ ${parseFloat(c.valor).toFixed(2)}</td>
+                        <td style="padding: 10px;">${c.pagamento}</td>
+                        <td style="padding: 10px;">${c.data}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function salvarPrestador(event) {
+            event.preventDefault();
+            const nome = document.getElementById('pres-nome').value.trim();
+            const doc = document.getElementById('pres-doc').value.trim();
+            const atividade = document.getElementById('pres-atividade').value.trim();
+            const valor = document.getElementById('pres-valor').value.trim();
+            const pagamento = document.getElementById('pres-pagamento').value;
+            const expBoleto = (pagamento === 'Boleto') ? document.getElementById('pres-exp-boleto').value : '-';
+
+            listaPrestadores.push({ nome, doc, atividade, valor, pagamento, expBoleto });
+            document.getElementById('form-prestador').reset();
+            document.getElementById('container-boleto-exp').style.display = 'none';
+            atualizarTabelaPrestadores();
+            alert("Prestador de serviço registado com sucesso!");
+        }
+
+        function atualizarTabelaPrestadores() {
+            const tbody = document.getElementById('tabela-prestadores-corpo');
+            if (listaPrestadores.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>`;
+                return;
+            }
+            let html = "";
+            listaPrestadores.forEach(p => {
+                html += `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 10px;">${p.nome}</td>
+                        <td style="padding: 10px;">${p.doc}</td>
+                        <td style="padding: 10px;">${p.atividade}</td>
+                        <td style="padding: 10px;">R$ ${parseFloat(p.valor).toFixed(2)}</td>
+                        <td style="padding: 10px;">${p.pagamento}</td>
+                        <td style="padding: 10px;">${p.expBoleto}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        /* --- GESTÃO DE ESTOQUE --- */
         let listaProdutos = [];
 
         function salvarProdutoEstoque() {
@@ -895,13 +1026,11 @@
             const qtd = document.getElementById("produto-qtd").value.trim();
             const validade = document.getElementById("produto-validade").value;
 
-            // Validação obrigatória dos dois campos principais
             if (!nome || !qtd) {
                 alert("O preenchimento do Nome do Produto e da Quantidade é obrigatório!");
                 return;
             }
 
-            // Adiciona o produto na lista
             listaProdutos.push({
                 id: Date.now(),
                 nome: nome,
@@ -909,7 +1038,6 @@
                 validade: validade ? validade.split('-').reverse().join('/') : 'Não informada'
             });
 
-            // Limpa os campos
             document.getElementById("produto-nome").value = "";
             document.getElementById("produto-qtd").value = "";
             document.getElementById("produto-validade").value = "";
@@ -957,7 +1085,6 @@
                 return;
             }
 
-            // Mensagem solicitada contendo exatamente a quantidade de produtos selecionados
             document.getElementById("mensagem-modal-exclusao").innerText = `Deseja realmente excluir os ${quantidadeSelecionada} produto(s) selecionado(s)?`;
             document.getElementById("modal-exclusao").style.display = "flex";
         }
@@ -970,16 +1097,171 @@
             const checkboxes = document.querySelectorAll('.produto-checkbox:checked');
             const idsParaExcluir = Array.from(checkboxes).map(cb => parseInt(cb.value));
 
-            // Filtra a lista removendo os selecionados
             listaProdutos = listaProdutos.filter(prod => !idsParaExcluir.includes(prod.id));
 
             fecharModalExclusao();
             renderizarTabelaProdutos();
 
-            // Reseta o checkbox principal
             const selectAll = document.getElementById("selectAll");
             if (selectAll) selectAll.checked = false;
         }
+
+        /* --- AGENDA POST-IT --- */
+        const agendaDados = {};
+        let anoAtualGlobal = 2026;
+        let mesAtualGlobal = 7;
+
+        const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+        const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+        function renderizarSeletorAnos() {
+            const containerAno = document.getElementById("container-seletor-ano");
+            containerAno.innerHTML = `
+                <button onclick="mudarAno(2026)" class="btn-ano-agenda ${anoAtualGlobal === 2026 ? 'ativo-ano' : ''}">2026</button>
+                <button onclick="mudarAno(2027)" class="btn-ano-agenda ${anoAtualGlobal === 2027 ? 'ativo-ano' : ''}">2027</button>
+            `;
+        }
+
+        function mudarAno(ano) {
+            anoAtualGlobal = ano;
+            mesAtualGlobal = 0;
+            renderizarSeletorAnos();
+            renderizarMesesDoAno();
+            carregarCalendario(ano, mesAtualGlobal);
+        }
+
+        function renderizarMesesDoAno() {
+            const navMeses = document.getElementById("nav-meses");
+            navMeses.innerHTML = "";
+
+            nomesMeses.forEach((nomeMes, index) => {
+                const btn = document.createElement("button");
+                btn.className = `btn-mes-agenda ${mesAtualGlobal === index ? 'ativo' : ''}`;
+                btn.innerText = nomeMes;
+                btn.onclick = () => {
+                    mesAtualGlobal = index;
+                    renderizarMesesDoAno();
+                    carregarCalendario(anoAtualGlobal, mesAtualGlobal);
+                };
+                navMeses.appendChild(btn);
+            });
+        }
+
+        function carregarCalendario(ano, mesIndex) {
+            const container = document.getElementById("calendario-postit");
+            container.innerHTML = "";
+
+            const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
+            const hoje = new Date();
+            hoje.setHours(0,0,0,0);
+
+            for (let i = 1; i <= diasNoMes; i++) {
+                const dataDia = new Date(ano, mesIndex, i);
+                dataDia.setHours(0,0,0,0);
+
+                const nomeDiaSemana = diasSemanaNomes[dataDia.getDay()];
+                const chaveKey = `${ano}-${mesIndex}-${i}`;
+                const textoNota = agendaDados[chaveKey] || "";
+
+                let corFundo = "#ffffff";
+
+                const diffTime = dataDia - hoje;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (dataDia < hoje) {
+                    corFundo = "#86efac";
+                } else if (textoNota.trim() !== "") {
+                    if (diffDays <= 1) {
+                        corFundo = "#fca5a5";
+                    } else {
+                        corFundo = "#93c5fd";
+                    }
+                }
+
+                container.innerHTML += `
+                    <div class="dia-postit" style="background-color: ${corFundo};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 700; font-size: 0.95rem; color: #0f223d;">${i < 10 ? '0'+i : i}</span>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
+                        </div>
+                        <textarea onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
+                                  placeholder="Escrever compromisso...">${textoNota}</textarea>
+                    </div>
+                `;
+            }
+        }
+
+        function salvarNotaPostit(ano, mes, dia, texto) {
+            const chaveKey = `${ano}-${mes}-${dia}`;
+            agendaDados[chaveKey] = texto;
+            carregarCalendario(ano, mes);
+        }
+
+        /* --- CENTRAL DE LEMBRETES E NOTIFICAÇÃO POPUP GLOBAL (5 SEG) --- */
+        function verificarPrazosEAlimentarLembretes() {
+            const containerLembretes = document.getElementById('lista-lembretes-ativos');
+            if (!containerLembretes) return;
+            containerLembretes.innerHTML = "";
+
+            const hoje = new Date();
+            hoje.setHours(0,0,0,0);
+            let alertasProximos = [];
+
+            for (const [chave, nota] of Object.entries(agendaDados)) {
+                if (nota && nota.trim() !== "") {
+                    const partes = chave.split('-');
+                    const dataNota = new Date(partes[0], partes[1], partes[2]);
+                    dataNota.setHours(0,0,0,0);
+
+                    const diffTime = dataNota - hoje;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays >= 0 && diffDays <= 7) {
+                        const textoAlerta = `Compromisso para ${partes[2]}/${parseInt(partes[1])+1}/${partes[0]} (Faltam ${diffDays} dia(s)): "${nota}"`;
+                        alertasProximos.push(textoAlerta);
+
+                        containerLembretes.innerHTML += `
+                            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px;">
+                                <strong style="color: #991b1b;">Prazo Próximo (${diffDays} dia(s))</strong>
+                                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #1e293b;">${nota} - <b>Data: ${partes[2]}/${parseInt(partes[1])+1}/${partes[0]}</b></p>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            if (containerLembretes.innerHTML === "") {
+                containerLembretes.innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">Nenhum prazo ou compromisso crítico agendado para os próximos 7 dias.</p>`;
+            } else if (alertasProximos.length > 0) {
+                mostrarPopupNotificacao(alertasProximos[0]);
+            }
+        }
+
+        let timeoutPopup = null;
+        function mostrarPopupNotificacao(mensagem) {
+            const popup = document.getElementById('popup-notificacao');
+            const texto = document.getElementById('texto-notificacao-popup');
+            if (!popup || !texto) return;
+            texto.innerText = mensagem;
+            popup.style.display = 'block';
+
+            if (timeoutPopup) clearTimeout(timeoutPopup);
+            timeoutPopup = setTimeout(() => {
+                fecharNotificacaoPopup();
+            }, 5000);
+        }
+
+        function fecharNotificacaoPopup() {
+            const popup = document.getElementById('popup-notificacao');
+            if (popup) popup.style.display = 'none';
+            if (timeoutPopup) clearTimeout(timeoutPopup);
+        }
+
+        // Inicializações
+        renderizarSeletorAnos();
+        renderizarMesesDoAno();
+        carregarCalendario(2026, 7);
+        setTimeout(verificarPrazosEAlimentarLembretes, 1500);
     </script>
 </body>
 </html>
