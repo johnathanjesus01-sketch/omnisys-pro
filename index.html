@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0f223d;       /* Azul Marinho */
+            --primary: #0f223d;
             --accent: #2563eb;
-            --bg-color: #0f172a;      /* Fundo da página mais escuro */
+            --bg-color: #0f172a;
             --card-bg: #ffffff;
             --border-color: #cbd5e1;
             --success: #16a34a;
@@ -24,7 +24,6 @@
             padding: 0;
         }
 
-        /* --- TELAS DE AUTENTICAÇÃO (LOGIN E CADASTRO) --- */
         .auth-screen {
             display: flex;
             justify-content: center;
@@ -147,7 +146,6 @@
         }
         .btn-back:hover { text-decoration: underline; }
 
-        /* --- PAINEL PRINCIPAL COM MENU LATERAL (SIDEBAR) --- */
         #dashboard-container {
             display: none;
             min-height: 100vh;
@@ -312,7 +310,6 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* Estilos dos botões de Sub-abas de Clientes/Prestadores */
         .btn-sub-aba {
             padding: 8px 16px;
             cursor: pointer;
@@ -330,7 +327,7 @@
             border-color: var(--primary);
         }
 
-        /* Calendário Fixo com 7 Colunas Exatas (Padrão Real) */
+        /* Calendário Real com 7 Colunas Fixas */
         #calendario-postit {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -394,11 +391,11 @@
         </div>
     </div>
 
-    <!-- 2. TELA DE CADASTRO COMPLETA (LGPD & DADOS) -->
+    <!-- 2. TELA DE CADASTRO -->
     <div id="register-screen" class="auth-screen" style="display: none;">
         <div class="login-card">
             <h2 style="color: var(--primary); margin-top: 0; font-size: 1.3rem;">Cadastre-se no Omnisys Pro</h2>
-            <p style="font-size: 0.83rem; color: #64748b; margin-bottom: 15px;">Ambiente seguro e protegido por sigilo comercial e leis aplicáveis (LGPD e CDC).</p>
+            <p style="font-size: 0.83rem; color: #64748b; margin-bottom: 15px;">Ambiente seguro e protegido por sigilo comercial.</p>
 
             <div class="form-group">
                 <label for="reg-nome">Nome Completo ou Razão Social</label>
@@ -428,16 +425,16 @@
             <div class="terms-group">
                 <input type="checkbox" id="reg-termos">
                 <label for="reg-termos" style="display:inline; font-weight:normal; font-size:0.8rem; cursor:pointer;">
-                    Declaro que li e concordo com os <strong>Termos de Confidencialidade e Privacidade</strong> sob as leis aplicáveis (LGPD).
+                    Concordo com os <strong>Termos de Confidencialidade e LGPD</strong>.
                 </label>
             </div>
 
-            <button class="btn-action" onclick="executarCadastro()">Concluir Cadastro Seguro</button>
+            <button class="btn-action" onclick="executarCadastro()">Concluir Cadastro</button>
             <button class="btn-back" onclick="mostrarTelaLogin()">← Voltar para o Login</button>
         </div>
     </div>
 
-    <!-- 3. PAINEL PRINCIPAL COM MENU LATERAL -->
+    <!-- 3. PAINEL PRINCIPAL -->
     <div id="dashboard-container">
         <aside>
             <div class="sidebar-brand">
@@ -449,7 +446,6 @@
                 <li><button onclick="mudarAba('estoque', this)" id="btn-estoque">📦 Estoque</button></li>
                 <li><button onclick="mudarAba('agenda', this)" id="btn-agenda">📅 Agenda</button></li>
                 <li><button onclick="mudarAba('faturamento', this)" id="btn-faturamento">💰 Faturamento</button></li>
-
                 <li>
                     <button onclick="mudarAba('atividades', this)" id="btn-atividades">📋 Atividades</button>
                     <ul class="submenu">
@@ -457,11 +453,7 @@
                         <li><button onclick="mudarAba('atividades-concluidas', this)" id="btn-atividades-concluidas">✅ Concluídas</button></li>
                     </ul>
                 </li>
-
-                <!-- ABA DE LEMBRETES -->
                 <li><button onclick="mudarAba('lembretes', this)" id="btn-lembretes" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">🔔 Lembretes</button></li>
-
-                <!-- OPÇÃO EXCLUSIVA DO MASTER PARA CRIAR NOVO LOGIN -->
                 <li id="menu-item-criacao" style="display: none; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                     <button onclick="mudarAba('criar-login', this)" id="btn-criar-login" style="background: #1e3a8a; color: white; font-weight: bold;">🔑 Criar Novo Acesso</button>
                 </li>
@@ -479,106 +471,34 @@
                 </div>
             </div>
 
-            <!-- Módulo: Clientes (Com Sub-abas de Cabeçalho e Prestadores com Boleto) -->
+            <!-- Módulo: Clientes & Prestadores -->
             <div id="tab-clientes" class="card active-tab">
                 <h3>Gestão de Clientes e Prestadores</h3>
 
-                <!-- Cabeçalho de Botões (Sub-abas) -->
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
                     <button onclick="mudarSubAbaClientes('sub-clientes-cad')" id="btn-sub-cli" class="btn-sub-aba ativo-sub">Cadastro de Clientes</button>
                     <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
-<!-- [Mantenha todo o seu código anterior e apenas substitua o trecho abaixo] -->
 
-<!-- Módulo: Clientes (Atualizado com campo Celular) -->
-<!-- ... (dentro de form-cliente, adicione este novo div) ... -->
-<div>
-    <label>Celular / WhatsApp:</label>
-    <input type="text" id="cli-celular" placeholder="(00) 00000-0000">
-</div>
-
-<!-- Módulo: Prestadores (Atualizado com campo Celular) -->
-<!-- ... (dentro de form-prestador, adicione este novo div) ... -->
-<div>
-    <label>Celular / WhatsApp:</label>
-    <input type="text" id="pres-celular" placeholder="(00) 00000-0000">
-</div>
-
-<!-- Aba Atividades (Atualizada com Menu de Filtro) -->
-
-    <h3 style="color: var(--primary);">Atividades</h3>
-    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <button onclick="filtrarAtividades('clientes')" class="btn-sub-aba">Clientes</button>
-        <button onclick="filtrarAtividades('prestadores')" class="btn-sub-aba">Prestadores</button>
-    </div>
-    <div id="container-atividades-lista">
-        <!-- Aqui aparecerão os dados filtrados -->
-    </div>
-</div>
-
-<script>
-    // 1. Lógica do TAB no Post-it (Corrigida)
-    function tratarTeclas(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        event.target.blur(); // Salva e sai do foco
-    }
-    if (event.key === "Tab") {
-        event.preventDefault();
-        const start = event.target.selectionStart;
-        const end = event.target.selectionEnd;
-        event.target.value = event.target.value.substring(0, start) + "    " + event.target.value.substring(end);
-        event.target.selectionStart = event.target.selectionEnd = start + 4;
-    }
-}
-
-    // 2. Lógica para separar em Atividades
-    function filtrarAtividades(tipo) {
-        const container = document.getElementById('container-atividades-lista');
-        container.innerHTML = `<h4>Listagem de ${tipo.toUpperCase()}</h4>`;
-
-        const lista = (tipo === 'clientes') ? listaClientes : listaPrestadores;
-
-        if (lista.length === 0) {
-            container.innerHTML += "<p>Nenhuma atividade encontrada.</p>";
-            return;
-        }
-
-        lista.forEach(item => {
-            container.innerHTML += `
-                <div style="border: 1px solid #e2e8f0; padding: 10px; margin-bottom: 5px; border-radius: 6px;">
-                    <strong>${item.nome}</strong> - Cel: ${item.celular || 'Não informado'} - Atividade: ${item.atividade}
-                </div>
-            `;
-        });
-    }
-
-    // 3. Atualize o salvarCliente e salvarPrestador para capturar o novo campo:
-    function salvarCliente(event) {
-        event.preventDefault();
-        listaClientes.push({
-            nome: document.getElementById('cli-nome').value,
-            celular: document.getElementById('cli-celular').value,
-            // ... resto dos campos
-        });
-        // ...
-    }
-</script>
                 <!-- Sub-aba 1: Cadastro de Clientes -->
                 <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
                     <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
                     <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
                         <div>
                             <label>Nome Empresa / Física:</label>
-                            <input type="text" id="cli-nome" placeholder="Ex: Empresa X ou João da Silva" required>
+                            <input type="text" id="cli-nome" placeholder="Ex: Empresa X" required>
                         </div>
                         <div>
                             <label>CNPJ / CPF:</label>
                             <input type="text" id="cli-doc" placeholder="00.000.000/0001-00" required>
                         </div>
                         <div>
+                            <label>Celular / WhatsApp:</label>
+                            <input type="text" id="cli-celular" placeholder="(00) 00000-0000" required>
+                        </div>
+                        <div>
                             <label>Atividade a Realizar:</label>
-                            <input type="text" id="cli-atividade" placeholder="Ex: Consultoria / Instalação" required>
+                            <input type="text" id="cli-atividade" placeholder="Ex: Consultoria" required>
                         </div>
                         <div>
                             <label>Valor (R$):</label>
@@ -593,7 +513,7 @@
                                 <option value="Cartão de Débito">Cartão de Débito</option>
                             </select>
                         </div>
-                        <div>
+                        <div style="grid-column: span 2;">
                             <label>Data de Execução / Entrega:</label>
                             <input type="date" id="cli-data" required>
                         </div>
@@ -607,14 +527,15 @@
                                 <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Nome</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Celular</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Atividade</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Pagamento</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Data Entrega</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Data</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-clientes-corpo">
-                                <tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>
+                                <tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -631,6 +552,10 @@
                         <div>
                             <label>CNPJ / CPF:</label>
                             <input type="text" id="pres-doc" placeholder="00.000.000/0001-00" required>
+                        </div>
+                        <div>
+                            <label>Celular / WhatsApp:</label>
+                            <input type="text" id="pres-celular" placeholder="(00) 00000-0000" required>
                         </div>
                         <div>
                             <label>Atividade Solicitada:</label>
@@ -651,7 +576,6 @@
                             </select>
                         </div>
 
-                        <!-- Caixinha dinâmica para data de expiração se for Boleto -->
                         <div id="container-boleto-exp" style="display: none; grid-column: span 2;">
                             <label style="color: #b91c1c; font-weight: bold;">Data de Expiração do Boleto:</label>
                             <input type="date" id="pres-exp-boleto" style="border-color: #fca5a5; background: #fef2f2;">
@@ -667,14 +591,15 @@
                                 <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Nome</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Celular</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Atividade</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Orçamento</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Método Pagamento</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Expiração Boleto</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Método</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Expiração</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-prestadores-corpo">
-                                <tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>
+                                <tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -684,164 +609,82 @@
             <!-- Módulo: Estoque -->
             <div id="tab-estoque" class="card">
                 <h3>Gerenciamento de Estoque</h3>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre, controle e gerencie os itens do inventário.</p>
-
-                <!-- Formulário de Novo Produto -->
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre e controle os itens do inventário.</p>
                 <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
-                    <h4 style="margin-top: 0; color: var(--primary); font-size: 1rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Novo Produto</h4>
-
-                    <label>Nome do Produto (Obrigatório):</label>
-                    <input type="text" id="produto-nome" placeholder="Ex: Produto X ou Peça Y" required>
-
-                    <label>Quantidade do Produto (Obrigatório):</label>
-                    <input type="number" id="produto-qtd" placeholder="0" min="1" required>
-
-                    <label>Validade do Produto (Opcional):</label>
+                    <label>Nome do Produto:</label>
+                    <input type="text" id="produto-nome" placeholder="Ex: Produto X">
+                    <label>Quantidade:</label>
+                    <input type="number" id="produto-qtd" placeholder="0">
+                    <label>Validade:</label>
                     <input type="date" id="produto-validade">
-
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button class="btn-form" style="margin-top:0; background-color: var(--success);" onclick="salvarProdutoEstoque()">Salvar Produto</button>
-                    </div>
+                    <button class="btn-form" style="background-color: var(--success);" onclick="salvarProdutoEstoque()">Salvar Produto</button>
                 </div>
-
-                <!-- Lista de Produtos Cadastrados com Seleção para Exclusão -->
-                <div style="margin-top: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h4 style="margin: 0; color: var(--primary); font-size: 1rem;">Produtos em Stock</h4>
-                        <button onclick="confirmarExclusaoSelecionados()" style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">Excluir Selecionados</button>
-                    </div>
-
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 6px; text-align: left; font-size: 0.9rem;">
-                            <thead>
-                                <tr style="background: #f1f5f9; color: var(--primary); border-bottom: 1px solid #e2e8f0;">
-                                    <th style="padding: 10px; width: 40px; text-align: center;"><input type="checkbox" id="selectAll" onclick="selecionarTodosProdutos(this)"></th>
-                                    <th style="padding: 10px;">Nome do Produto</th>
-                                    <th style="padding: 10px;">Quantidade</th>
-                                    <th style="padding: 10px;">Validade</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabela-produtos-corpo">
-                                <tr>
-                                    <td colspan="4" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto cadastrado ainda.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
                 <div id="resultado-estoque" class="resultado" style="display:none;"></div>
             </div>
 
-            <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO PERSONALIZADO -->
-            <div id="modal-exclusao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-                <div style="background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                    <h3 style="color: #dc2626; margin-top: 0;">Confirmação de Exclusão</h3>
-                    <p id="mensagem-modal-exclusao" style="font-size: 0.95rem; color: #334155; margin: 20px 0; line-height: 1.5;"></p>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <button onclick="fecharModalExclusao()" style="background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
-                        <button onclick="executarExclusaoProdutos()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">OK</button>
+            <!-- Módulo: Agenda -->
+            <div id="tab-agenda" class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                    <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
+                    <div id="container-seletor-ano" style="display: flex; gap: 8px;"></div>
+                </div>
+
+                <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;"></div>
+                <div id="calendario-postit"></div>
+            </div>
+
+            <!-- Módulo: Atividades (Com abas superiores Clientes e Prestadores) -->
+            <div id="tab-atividades" class="card">
+                <h3 style="color: var(--primary);">Controle de Atividades</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                    <button onclick="mudarSubAbaAtividades('atividades-clientes')" id="btn-atv-cli" class="btn-sub-aba ativo-sub">Clientes</button>
+                    <button onclick="mudarSubAbaAtividades('atividades-prestadores')" id="btn-atv-pres" class="btn-sub-aba">Prestadores</button>
+                </div>
+
+                <div id="sub-atv-clientes">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">Atividades de Clientes</h4>
+                    <div id="lista-atividades-clientes" style="display: flex; flex-direction: column; gap: 8px;">
+                        <p style="color: #64748b;">Nenhum cliente registado ainda.</p>
+                    </div>
+                </div>
+
+                <div id="sub-atv-prestadores" style="display: none;">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">Atividades de Prestadores</h4>
+                    <div id="lista-atividades-prestadores" style="display: flex; flex-direction: column; gap: 8px;">
+                        <p style="color: #64748b;">Nenhum prestador registado ainda.</p>
                     </div>
                 </div>
             </div>
 
-            #calendario-postit { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding: 15px; }
-.dia-postit { padding: 10px; min-height: 100px; border-radius: 8px; border: 1px solid #ddd; background: #fff; position: relative; }
-.dia-postit textarea { border: none; width: 100%; height: 80px; resize: none; outline: none; }
-
-            <style>
-                .btn-mes-agenda {
-                    padding: 8px 16px;
-                    cursor: pointer;
-                    border: 1px solid #cbd5e1;
-                    border-radius: 6px;
-                    background: white;
-                    font-weight: 600;
-                    font-size: 0.85rem;
-                    transition: all 0.2s;
-                    color: #334155;
-                }
-                .btn-mes-agenda:hover { background: #e2e8f0; }
-                .btn-mes-agenda.ativo {
-                    background: #0f223d !important;
-                    color: white !important;
-                    border-color: #0f223d !important;
-                }
-
-                .btn-ano-agenda {
-                    padding: 8px 18px;
-                    cursor: pointer;
-                    border: 1px solid var(--primary);
-                    border-radius: 6px;
-                    background: white;
-                    font-weight: bold;
-                    color: var(--primary);
-                    transition: all 0.2s;
-                }
-                .btn-ano-agenda.ativo-ano {
-                    background: var(--primary);
-                    color: white;
-                }
-            </style>
-
-            <!-- Módulo: Faturamento -->
-            <div id="tab-faturamento" class="card">
-                <h3>Faturamento e Financeiro</h3>
-                <p>Controlo financeiro e transações.</p>
-            </div>
-
-            <!-- Módulo: Atividades -->
-            <div id="tab-atividades" class="card">
-                <h3>Controle de Atividades e Tarefas</h3>
-                <p>Visão geral de todas as tarefas.</p>
-            </div>
-
-            <!-- Sub-aba: Pendentes -->
             <div id="tab-atividades-pendentes" class="card">
                 <h3>Atividades Pendentes</h3>
-                <p>Lista de tarefas que aguardam execução.</p>
             </div>
-
-            <!-- Sub-aba: Concluídas -->
             <div id="tab-atividades-concluidas" class="card">
                 <h3>Atividades Concluídas</h3>
-                <p>Histórico de tarefas já finalizadas com sucesso.</p>
             </div>
 
-            <!-- MÓDULO: LEMBRETES (POPUP DE 5 SEGUNDOS COM BOTÃO SAIR) -->
+            <!-- Módulo: Lembretes -->
             <div id="tab-lembretes" class="card">
-                <h3>Central de Lembretes e Notificações</h3>
-                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Visualização de compromissos e prazos agendados para os próximos 7 dias.</p>
+                <h3>Central de Lembretes e Prazos</h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Prazos agendados para os próximos 7 dias.</p>
                 <div id="lista-lembretes-ativos" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
 
-            <!-- MÓDULO EXCLUSIVO MASTER: CRIAR LOGIN -->
+            <!-- Módulo Criar Novo Acesso (Master) -->
             <div id="tab-criar-login" class="card">
                 <h3>Criar Login para Novo Utilizador</h3>
-                <p style="font-size: 0.9rem; color: #64748b;">Gere credenciais de acesso direto para equipas ou novos parceiros.</p>
-
-                <label>Nome do Novo Utilizador:</label>
-                <input type="text" id="novo-nome" placeholder="Nome completo">
-
-                <label>E-mail de Acesso:</label>
-                <input type="email" id="novo-email" placeholder="email@empresa.com">
-
-                <label>Senha Temporária:</label>
-                <input type="password" id="novo-senha" placeholder="Definir senha inicial">
-
-                <label>Nível de Permissão:</label>
-                <select id="novo-nivel">
-                    <option value="usuario">Utilizador Padrão</option>
-                    <option value="adminMaster">Administrador Master</option>
-                </select>
-
-                <button class="btn-form" onclick="criarAcessoParaOutraPessoa()">Gerar e Salvar Novo Acesso</button>
-                <div id="resultado-criacao-login" class="resultado" style="display:none;"></div>
+                <label>Nome:</label>
+                <input type="text" id="novo-nome">
+                <label>E-mail:</label>
+                <input type="email" id="novo-email">
+                <label>Senha:</label>
+                <input type="password" id="novo-senha">
+                <button class="btn-form" onclick="criarAcessoParaOutraPessoa()">Salvar Novo Acesso</button>
             </div>
         </div>
     </div>
 
-    <!-- POPUP FLUTUANTE DE NOTIFICAÇÃO GLOBAL (5 Segundos + Botão Sair) -->
+    <!-- POPUP FLUTUANTE DE NOTIFICAÇÃO -->
     <div id="popup-notificacao" style="display: none; position: fixed; bottom: 30px; right: 30px; background: #0f223d; color: white; padding: 20px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 9999; max-width: 350px; border-left: 5px solid #fca5a5;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <strong style="font-size: 0.95rem;">⚠️ Atenção: Prazos Próximos!</strong>
@@ -850,7 +693,6 @@
         <p id="texto-notificacao-popup" style="font-size: 0.85rem; margin: 0; color: #f1f5f9; line-height: 1.4;"></p>
     </div>
 
-    <!-- 4. SCRIPTS DE CONTROLO -->
     <script>
         function mostrarTelaCadastro() {
             document.getElementById("login-screen").style.display = "none";
@@ -862,97 +704,24 @@
             document.getElementById("login-screen").style.display = "flex";
         }
 
-        function validarCPFCNPJ(doc) {
-            const numeros = doc.replace(/\D/g, '');
-            return numeros.length === 11 || numeros.length === 14;
-        }
-
-        async function executarCadastro() {
-            const nome = document.getElementById("reg-nome").value.trim();
-            const documento = document.getElementById("reg-documento").value.trim();
-            const email = document.getElementById("reg-email").value.trim();
-            const celular = document.getElementById("reg-celular").value.trim();
-            const senha = document.getElementById("reg-senha").value.trim();
-            const termos = document.getElementById("reg-termos").checked;
-
-            if (!nome || !documento || !email || !celular || !senha) {
-                alert("Por favor, preencha todos os campos do cadastro.");
-                return;
-            }
-            if (!validarCPFCNPJ(documento)) {
-                alert("O CPF ou CNPJ informado é inválido.");
-                return;
-            }
-            if (!termos) {
-                alert("Você deve aceitar os Termos de Confidencialidade e LGPD.");
-                return;
-            }
-
-            try {
-                const response = await fetch("/api/usuarios/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ nome: nome, email: email, password: senha, role: "usuario" })
-                });
-
-                if (response.ok) {
-                    alert("Cadastro realizado com sucesso! Faça login com suas credenciais.");
-                    mostrarTelaLogin();
-                } else {
-                    const errorData = await response.json();
-                    alert("Erro no cadastro: " + (errorData.detail || "Tente novamente."));
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Erro de conexão ao salvar o registo.");
-            }
-        }
-
-        async function fazerLogin() {
+        function fazerLogin() {
             const emailInput = document.getElementById("login-usuario").value.trim();
             const senhaInput = document.getElementById("login-senha").value.trim();
-
             if (!emailInput || !senhaInput) {
-                alert("Preencha o e-mail/documento e a senha!");
+                alert("Preencha o e-mail e a senha!");
                 return;
             }
-
-            try {
-                const response = await fetch("/api/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: emailInput, password: senhaInput })
-                });
-
-                if (response.ok) {
-                    const usuario = await response.json();
-
-                    document.getElementById("login-screen").style.display = "none";
-                    document.getElementById("dashboard-container").style.display = "block";
-
-                    document.getElementById("user-email").innerText = usuario.email;
-                    document.getElementById("user-role").innerText = usuario.role;
-
-                    if (usuario.role === "adminMaster") {
-                        document.getElementById("badge-master").style.display = "block";
-                        document.getElementById("menu-item-criacao").style.display = "block";
-                    } else {
-                        document.getElementById("badge-master").style.display = "none";
-                        document.getElementById("menu-item-criacao").style.display = "none";
-                    }
-                } else {
-                    alert("E-mail ou senha incorretos!");
-                }
-            } catch (error) {
-                console.error("Erro no login:", error);
-                alert("Erro de conexão com o servidor FastAPI.");
-            }
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("dashboard-container").style.display = "block";
+            document.getElementById("user-email").innerText = emailInput;
+            document.getElementById("user-role").innerText = "adminMaster";
+            document.getElementById("badge-master").style.display = "block";
+            document.getElementById("menu-item-criacao").style.display = "block";
         }
 
         function mudarAba(nomeAba, elementoBotao) {
             const cards = document.querySelectorAll('.card');
             cards.forEach(card => card.classList.remove('active-tab'));
-
             const botoes = document.querySelectorAll('.sidebar-menu button, .submenu button');
             botoes.forEach(btn => btn.classList.remove('active'));
 
@@ -963,45 +732,11 @@
             if (nomeAba === 'lembretes') {
                 verificarPrazosEAlimentarLembretes();
             }
-        }
-
-        async function criarAcessoParaOutraPessoa() {
-            const nome = document.getElementById("novo-nome").value.trim();
-            const email = document.getElementById("novo-email").value.trim();
-            const senha = document.getElementById("novo-senha").value.trim();
-            const nivel = document.getElementById("novo-nivel").value;
-
-            if (!nome || !email || !senha) {
-                alert("Preencha todos os campos do novo acesso!");
-                return;
-            }
-
-            try {
-                const response = await fetch("/api/usuarios/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ nome: nome, email: email, password: senha, role: nivel })
-                });
-
-                const resDiv = document.getElementById("resultado-criacao-login");
-                resDiv.style.display = "block";
-
-                if (response.ok) {
-                    resDiv.innerText = `Sucesso! Novo login criado para ${email} (${nivel}).`;
-                    document.getElementById("novo-nome").value = "";
-                    document.getElementById("novo-email").value = "";
-                    document.getElementById("novo-senha").value = "";
-                } else {
-                    const erroData = await response.json();
-                    resDiv.innerText = "Erro ao criar utilizador: " + (erroData.detail || "Verifique os dados.");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Erro de comunicação com o servidor.");
+            if (nomeAba === 'atividades') {
+                atualizarListasAtividades();
             }
         }
 
-        /* --- SUB-ABAS DE CLIENTES E PRESTADORES DE SERVIÇO --- */
         function mudarSubAbaClientes(subAbaId) {
             const subCli = document.getElementById('sub-clientes-cad');
             const subPres = document.getElementById('sub-prestador-cad');
@@ -1021,6 +756,25 @@
             }
         }
 
+        function mudarSubAbaAtividades(subId) {
+            const atvCli = document.getElementById('sub-atv-clientes');
+            const atvPres = document.getElementById('sub-atv-prestadores');
+            const btnAtvCli = document.getElementById('btn-atv-cli');
+            const btnAtvPres = document.getElementById('btn-atv-pres');
+
+            if (subId === 'atividades-clientes') {
+                if (atvCli) atvCli.style.display = 'block';
+                if (atvPres) atvPres.style.display = 'none';
+                if (btnAtvCli) btnAtvCli.className = 'btn-sub-aba ativo-sub';
+                if (btnAtvPres) btnAtvPres.className = 'btn-sub-aba';
+            } else {
+                if (atvCli) atvCli.style.display = 'none';
+                if (atvPres) atvPres.style.display = 'block';
+                if (btnAtvCli) btnAtvCli.className = 'btn-sub-aba';
+                if (btnAtvPres) btnAtvPres.className = 'btn-sub-aba ativo-sub';
+            }
+        }
+
         function verificarBoletoPrestador(metodo) {
             const containerBoleto = document.getElementById('container-boleto-exp');
             if (containerBoleto) {
@@ -1033,14 +787,15 @@
 
         function salvarCliente(event) {
             event.preventDefault();
-            const nome = document.getElementById('cli-nome').value.trim();
-            const doc = document.getElementById('cli-doc').value.trim();
-            const atividade = document.getElementById('cli-atividade').value.trim();
-            const valor = document.getElementById('cli-valor').value.trim();
-            const pagamento = document.getElementById('cli-pagamento').value;
-            const data = document.getElementById('cli-data').value;
-
-            listaClientes.push({ nome, doc, atividade, valor, pagamento, data });
+            listaClientes.push({
+                nome: document.getElementById('cli-nome').value.trim(),
+                doc: document.getElementById('cli-doc').value.trim(),
+                celular: document.getElementById('cli-celular').value.trim(),
+                atividade: document.getElementById('cli-atividade').value.trim(),
+                valor: document.getElementById('cli-valor').value.trim(),
+                pagamento: document.getElementById('cli-pagamento').value,
+                data: document.getElementById('cli-data').value
+            });
             document.getElementById('form-cliente').reset();
             atualizarTabelaClientes();
             alert("Cliente cadastrado com sucesso!");
@@ -1050,158 +805,75 @@
             const tbody = document.getElementById('tabela-clientes-corpo');
             if (!tbody) return;
             if (listaClientes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente registado.</td></tr>`;
                 return;
             }
-            let html = "";
-            listaClientes.forEach(c => {
-                html += `
-                    <tr style="border-bottom: 1px solid #e2e8f0;">
-                        <td style="padding: 10px;">${c.nome}</td>
-                        <td style="padding: 10px;">${c.doc}</td>
-                        <td style="padding: 10px;">${c.atividade}</td>
-                        <td style="padding: 10px;">R$ ${parseFloat(c.valor).toFixed(2)}</td>
-                        <td style="padding: 10px;">${c.pagamento}</td>
-                        <td style="padding: 10px;">${c.data}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
+            tbody.innerHTML = listaClientes.map(c => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px;">${c.nome}</td>
+                    <td style="padding: 10px;">${c.doc}</td>
+                    <td style="padding: 10px;">${c.celular}</td>
+                    <td style="padding: 10px;">${c.atividade}</td>
+                    <td style="padding: 10px;">R$ ${parseFloat(c.valor).toFixed(2)}</td>
+                    <td style="padding: 10px;">${c.pagamento}</td>
+                    <td style="padding: 10px;">${c.data}</td>
+                </tr>
+            `).join('');
         }
 
         function salvarPrestador(event) {
             event.preventDefault();
-            const nome = document.getElementById('pres-nome').value.trim();
-            const doc = document.getElementById('pres-doc').value.trim();
-            const atividade = document.getElementById('pres-atividade').value.trim();
-            const valor = document.getElementById('pres-valor').value.trim();
             const pagamento = document.getElementById('pres-pagamento').value;
-            const expBoleto = (pagamento === 'Boleto') ? document.getElementById('pres-exp-boleto').value : '-';
-
-            listaPrestadores.push({ nome, doc, atividade, valor, pagamento, expBoleto });
+            listaPrestadores.push({
+                nome: document.getElementById('pres-nome').value.trim(),
+                doc: document.getElementById('pres-doc').value.trim(),
+                celular: document.getElementById('pres-celular').value.trim(),
+                atividade: document.getElementById('pres-atividade').value.trim(),
+                valor: document.getElementById('pres-valor').value.trim(),
+                pagamento: pagamento,
+                expBoleto: (pagamento === 'Boleto') ? document.getElementById('pres-exp-boleto').value : '-'
+            });
             document.getElementById('form-prestador').reset();
-            const containerBoleto = document.getElementById('container-boleto-exp');
-            if (containerBoleto) containerBoleto.style.display = 'none';
+            document.getElementById('container-boleto-exp').style.display = 'none';
             atualizarTabelaPrestadores();
-            alert("Prestador de serviço registado com sucesso!");
+            alert("Prestador registado com sucesso!");
         }
 
         function atualizarTabelaPrestadores() {
             const tbody = document.getElementById('tabela-prestadores-corpo');
             if (!tbody) return;
             if (listaPrestadores.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador registado.</td></tr>`;
                 return;
             }
-            let html = "";
-            listaPrestadores.forEach(p => {
-                html += `
-                    <tr style="border-bottom: 1px solid #e2e8f0;">
-                        <td style="padding: 10px;">${p.nome}</td>
-                        <td style="padding: 10px;">${p.doc}</td>
-                        <td style="padding: 10px;">${p.atividade}</td>
-                        <td style="padding: 10px;">R$ ${parseFloat(p.valor).toFixed(2)}</td>
-                        <td style="padding: 10px;">${p.pagamento}</td>
-                        <td style="padding: 10px;">${p.expBoleto}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
+            tbody.innerHTML = listaPrestadores.map(p => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px;">${p.nome}</td>
+                    <td style="padding: 10px;">${p.doc}</td>
+                    <td style="padding: 10px;">${p.celular}</td>
+                    <td style="padding: 10px;">${p.atividade}</td>
+                    <td style="padding: 10px;">R$ ${parseFloat(p.valor).toFixed(2)}</td>
+                    <td style="padding: 10px;">${p.pagamento}</td>
+                    <td style="padding: 10px;">${p.expBoleto}</td>
+                </tr>
+            `).join('');
         }
 
-        /* --- GESTÃO DE ESTOQUE --- */
-        let listaProdutos = [];
+        function atualizarListasAtividades() {
+            const contCli = document.getElementById('lista-atividades-clientes');
+            const contPres = document.getElementById('lista-atividades-prestadores');
 
-        function salvarProdutoEstoque() {
-            const nome = document.getElementById("produto-nome").value.trim();
-            const qtd = document.getElementById("produto-qtd").value.trim();
-            const validade = document.getElementById("produto-validade").value;
+            contCli.innerHTML = listaClientes.length === 0 ? '<p style="color: #64748b;">Nenhum cliente registado.</p>' :
+                listaClientes.map(c => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${c.nome}</strong> | Celular: ${c.celular} | Atividade: ${c.atividade} | Entrega: ${c.data}</div>`).join('');
 
-            if (!nome || !qtd) {
-                alert("O preenchimento do Nome do Produto e da Quantidade é obrigatório!");
-                return;
-            }
-
-            listaProdutos.push({
-                id: Date.now(),
-                nome: nome,
-                qtd: parseInt(qtd),
-                validade: validade ? validade.split('-').reverse().join('/') : 'Não informada'
-            });
-
-            document.getElementById("produto-nome").value = "";
-            document.getElementById("produto-qtd").value = "";
-            document.getElementById("produto-validade").value = "";
-
-            renderizarTabelaProdutos();
-
-            const resDiv = document.getElementById("resultado-estoque");
-            resDiv.style.display = "block";
-            resDiv.innerText = `Sucesso! Produto "${nome}" guardado no stock.`;
-            setTimeout(() => { resDiv.style.display = "none"; }, 3000);
+            contPres.innerHTML = listaPrestadores.length === 0 ? '<p style="color: #64748b;">Nenhum prestador registado.</p>' :
+                listaPrestadores.map(p => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | Pagamento: ${p.pagamento}</div>`).join('');
         }
 
-        function renderizarTabelaProdutos() {
-            const tbody = document.getElementById("tabela-produtos-corpo");
-            if (listaProdutos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto cadastrado ainda.</td></tr>`;
-                return;
-            }
-
-            let html = "";
-            listaProdutos.forEach(prod => {
-                html += `
-                    <tr style="border-bottom: 1px solid #e2e8f0;">
-                        <td style="padding: 10px; text-align: center;"><input type="checkbox" class="produto-checkbox" value="${prod.id}"></td>
-                        <td style="padding: 10px; font-weight: 500;">${prod.nome}</td>
-                        <td style="padding: 10px;">${prod.qtd}</td>
-                        <td style="padding: 10px;">${prod.validade}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function selecionarTodosProdutos(masterCheckbox) {
-            const checkboxes = document.querySelectorAll('.produto-checkbox');
-            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-        }
-
-        function confirmarExclusaoSelecionados() {
-            const checkboxes = document.querySelectorAll('.produto-checkbox:checked');
-            const quantidadeSelecionada = checkboxes.length;
-
-            if (quantidadeSelecionada === 0) {
-                alert("Selecione pelo menos um produto para excluir.");
-                return;
-            }
-
-            document.getElementById("mensagem-modal-exclusao").innerText = `Deseja realmente excluir os ${quantidadeSelecionada} produto(s) selecionado(s)?`;
-            document.getElementById("modal-exclusao").style.display = "flex";
-        }
-
-        function fecharModalExclusao() {
-            document.getElementById("modal-exclusao").style.display = "none";
-        }
-
-        function executarExclusaoProdutos() {
-            const checkboxes = document.querySelectorAll('.produto-checkbox:checked');
-            const idsParaExcluir = Array.from(checkboxes).map(cb => parseInt(cb.value));
-
-            listaProdutos = listaProdutos.filter(prod => !idsParaExcluir.includes(prod.id));
-
-            fecharModalExclusao();
-            renderizarTabelaProdutos();
-
-            const selectAll = document.getElementById("selectAll");
-            if (selectAll) selectAll.checked = false;
-        }
-
-        /* --- AGENDA POST-IT COM 7 COLUNAS E TECLAS ENTER/TAB --- */
+        /* --- AGENDA POST-IT (7 COLUNAS & TAB/ENTER) --- */
         const agendaDados = {};
         let anoAtualGlobal = 2026;
         let mesAtualGlobal = 7;
-
         const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
         const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -1224,7 +896,6 @@
         function renderizarMesesDoAno() {
             const navMeses = document.getElementById("nav-meses");
             navMeses.innerHTML = "";
-
             nomesMeses.forEach((nomeMes, index) => {
                 const btn = document.createElement("button");
                 btn.className = `btn-mes-agenda ${mesAtualGlobal === index ? 'ativo' : ''}`;
@@ -1241,7 +912,6 @@
         function carregarCalendario(ano, mesIndex) {
             const container = document.getElementById("calendario-postit");
             container.innerHTML = "";
-
             const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
             const hoje = new Date();
             hoje.setHours(0,0,0,0);
@@ -1249,11 +919,9 @@
             for (let i = 1; i <= diasNoMes; i++) {
                 const dataDia = new Date(ano, mesIndex, i);
                 dataDia.setHours(0,0,0,0);
-
                 const nomeDiaSemana = diasSemanaNomes[dataDia.getDay()];
                 const chaveKey = `${ano}-${mesIndex}-${i}`;
                 const textoNota = agendaDados[chaveKey] || "";
-
                 let corFundo = "#ffffff";
 
                 const diffTime = dataDia - hoje;
@@ -1262,11 +930,7 @@
                 if (dataDia < hoje) {
                     corFundo = "#86efac";
                 } else if (textoNota.trim() !== "") {
-                    if (diffDays <= 1) {
-                        corFundo = "#fca5a5";
-                    } else {
-                        corFundo = "#93c5fd";
-                    }
+                    corFundo = (diffDays <= 1) ? "#fca5a5" : "#93c5fd";
                 }
 
                 container.innerHTML += `
@@ -1276,7 +940,7 @@
                             <span style="font-size: 0.7rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
                         </div>
                         <textarea
-                           <textarea onkeydown="tratarTeclas(event)" onblur="salvarNotaPostit(...)">...</textarea>
+                            onkeydown="tratarTeclas(event)"
                             onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
                             placeholder="...">${textoNota}</textarea>
                     </div>
@@ -1285,12 +949,10 @@
         }
 
         function tratarTeclas(event) {
-            // Tecla ENTER confirma/salva (tira o foco)
             if (event.key === "Enter") {
                 event.preventDefault();
-                event.target.blur();
+                event.target.blur(); // Salva e tira o foco
             }
-            // Tecla TAB insere indentação/espaçamento dentro do post-it em vez de trocar de campo
             if (event.key === "Tab") {
                 event.preventDefault();
                 const start = event.target.selectionStart;
@@ -1306,12 +968,11 @@
             carregarCalendario(ano, mes);
         }
 
-        /* --- CENTRAL DE LEMBRETES E NOTIFICAÇÃO POPUP GLOBAL (5 SEG) --- */
+        /* --- CENTRAL DE LEMBRETES & POPUP (5 SEG) --- */
         function verificarPrazosEAlimentarLembretes() {
             const containerLembretes = document.getElementById('lista-lembretes-ativos');
             if (!containerLembretes) return;
             containerLembretes.innerHTML = "";
-
             const hoje = new Date();
             hoje.setHours(0,0,0,0);
             let alertasProximos = [];
@@ -1321,14 +982,12 @@
                     const partes = chave.split('-');
                     const dataNota = new Date(partes[0], partes[1], partes[2]);
                     dataNota.setHours(0,0,0,0);
-
                     const diffTime = dataNota - hoje;
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                     if (diffDays >= 0 && diffDays <= 7) {
                         const textoAlerta = `Compromisso para ${partes[2]}/${parseInt(partes[1])+1}/${partes[0]} (Faltam ${diffDays} dia(s)): "${nota}"`;
                         alertasProximos.push(textoAlerta);
-
                         containerLembretes.innerHTML += `
                             <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px;">
                                 <strong style="color: #991b1b;">Prazo Próximo (${diffDays} dia(s))</strong>
@@ -1340,7 +999,7 @@
             }
 
             if (containerLembretes.innerHTML === "") {
-                containerLembretes.innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">Nenhum prazo ou compromisso crítico agendado para os próximos 7 dias.</p>`;
+                containerLembretes.innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">Nenhum compromisso para os próximos 7 dias.</p>`;
             } else if (alertasProximos.length > 0) {
                 mostrarPopupNotificacao(alertasProximos[0]);
             }
@@ -1353,11 +1012,8 @@
             if (!popup || !texto) return;
             texto.innerText = mensagem;
             popup.style.display = 'block';
-
             if (timeoutPopup) clearTimeout(timeoutPopup);
-            timeoutPopup = setTimeout(() => {
-                fecharNotificacaoPopup();
-            }, 5000);
+            timeoutPopup = setTimeout(() => { fecharNotificacaoPopup(); }, 5000);
         }
 
         function fecharNotificacaoPopup() {
