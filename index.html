@@ -327,16 +327,16 @@
             border-color: var(--primary);
         }
 
-        /* Calendário Real com 7 Colunas Fixas */
+        /* Calendário Real com 7 Colunas Fixas e Post-its Expansíveis */
         #calendario-postit {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 12px;
             padding: 15px;
         }
         .dia-postit {
             padding: 12px;
-            min-height: 110px;
+            min-height: 120px;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
@@ -350,22 +350,28 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
+        /* Post-it expande bastante e fica por cima ao clicar/escrever para ver múltiplas notas e horários */
         .dia-postit:focus-within {
-            transform: scale(1.15) translateY(-5px);
-            z-index: 50;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            transform: scale(1.18) translateY(-10px);
+            z-index: 100;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             border-color: #0f223d;
+            min-height: 200px;
         }
         .dia-postit textarea {
             border: none;
             background: transparent;
             resize: none;
             width: 100%;
-            height: 100%;
+            height: 80px;
             font-size: 0.85rem;
             font-family: 'Inter', sans-serif;
             color: #0f172a;
             outline: none;
+            transition: height 0.25s ease;
+        }
+        .dia-postit:focus-within textarea {
+            height: 150px; /* Aumenta a área de texto ao clicar */
         }
     </style>
 </head>
@@ -480,7 +486,7 @@
                     <button onclick="mudarSubAbaClientes('sub-prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
                 </div>
 
-                <!-- Sub-aba 1: Cadastro de Clientes -->
+                <!-- Sub-aba 1: Cadastro de Clientes (Com Data Início e Data Entrega) -->
                 <div id="sub-clientes-cad" class="sub-conteudo-cli" style="display: block;">
                     <h4 style="margin-bottom: 12px; color: var(--primary);">Registar Novo Cliente</h4>
                     <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
@@ -497,14 +503,18 @@
                             <input type="text" id="cli-celular" placeholder="(00) 00000-0000" required>
                         </div>
                         <div>
-                            <label>Atividade a Realizar:</label>
-                            <input type="text" id="cli-atividade" placeholder="Ex: Consultoria" required>
-                        </div>
-                        <div>
                             <label>Valor (R$):</label>
                             <input type="number" step="0.01" id="cli-valor" placeholder="0.00" required>
                         </div>
                         <div>
+                            <label>Data de Início:</label>
+                            <input type="date" id="cli-data-inicio" required>
+                        </div>
+                        <div>
+                            <label>Data de Entrega:</label>
+                            <input type="date" id="cli-data-entrega" required>
+                        </div>
+                        <div style="grid-column: span 2;">
                             <label>Forma de Pagamento:</label>
                             <select id="cli-pagamento">
                                 <option value="Pix">Pix</option>
@@ -512,10 +522,6 @@
                                 <option value="Cartão de Crédito">Cartão de Crédito</option>
                                 <option value="Cartão de Débito">Cartão de Débito</option>
                             </select>
-                        </div>
-                        <div style="grid-column: span 2;">
-                            <label>Data de Execução / Entrega:</label>
-                            <input type="date" id="cli-data" required>
                         </div>
                         <button type="submit" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Cliente</button>
                     </form>
@@ -528,10 +534,10 @@
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Nome</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Celular</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Atividade</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Início</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Entrega</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor</th>
                                     <th style="padding: 10px; border: 1px solid #e2e8f0;">Pagamento</th>
-                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Data</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-clientes-corpo">
@@ -633,7 +639,7 @@
                 <div id="calendario-postit"></div>
             </div>
 
-            <!-- Módulo: Atividades (Com abas superiores Clientes e Prestadores) -->
+            <!-- Módulo: Atividades (Com formato Início ... até Entrega ...) -->
             <div id="tab-atividades" class="card">
                 <h3 style="color: var(--primary);">Controle de Atividades</h3>
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
@@ -791,10 +797,10 @@
                 nome: document.getElementById('cli-nome').value.trim(),
                 doc: document.getElementById('cli-doc').value.trim(),
                 celular: document.getElementById('cli-celular').value.trim(),
-                atividade: document.getElementById('cli-atividade').value.trim(),
+                dataInicio: document.getElementById('cli-data-inicio').value,
+                dataEntrega: document.getElementById('cli-data-entrega').value,
                 valor: document.getElementById('cli-valor').value.trim(),
-                pagamento: document.getElementById('cli-pagamento').value,
-                data: document.getElementById('cli-data').value
+                pagamento: document.getElementById('cli-pagamento').value
             });
             document.getElementById('form-cliente').reset();
             atualizarTabelaClientes();
@@ -813,10 +819,10 @@
                     <td style="padding: 10px;">${c.nome}</td>
                     <td style="padding: 10px;">${c.doc}</td>
                     <td style="padding: 10px;">${c.celular}</td>
-                    <td style="padding: 10px;">${c.atividade}</td>
+                    <td style="padding: 10px;">${c.dataInicio}</td>
+                    <td style="padding: 10px;">${c.dataEntrega}</td>
                     <td style="padding: 10px;">R$ ${parseFloat(c.valor).toFixed(2)}</td>
                     <td style="padding: 10px;">${c.pagamento}</td>
-                    <td style="padding: 10px;">${c.data}</td>
                 </tr>
             `).join('');
         }
@@ -863,14 +869,15 @@
             const contCli = document.getElementById('lista-atividades-clientes');
             const contPres = document.getElementById('lista-atividades-prestadores');
 
+            // Formato solicitado: "Início: [data] até Entrega: [data]"
             contCli.innerHTML = listaClientes.length === 0 ? '<p style="color: #64748b;">Nenhum cliente registado.</p>' :
-                listaClientes.map(c => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${c.nome}</strong> | Celular: ${c.celular} | Atividade: ${c.atividade} | Entrega: ${c.data}</div>`).join('');
+                listaClientes.map(c => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${c.nome}</strong> | Celular: ${c.celular} | Início: ${c.dataInicio} até Entrega: ${c.dataEntrega}</div>`).join('');
 
             contPres.innerHTML = listaPrestadores.length === 0 ? '<p style="color: #64748b;">Nenhum prestador registado.</p>' :
                 listaPrestadores.map(p => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | Pagamento: ${p.pagamento}</div>`).join('');
         }
 
-        /* --- AGENDA POST-IT (7 COLUNAS & TAB/ENTER) --- */
+        /* --- AGENDA POST-IT (7 COLUNAS & TAB PARA PULAR LINHA) --- */
         const agendaDados = {};
         let anoAtualGlobal = 2026;
         let mesAtualGlobal = 7;
@@ -949,15 +956,17 @@
         }
 
         function tratarTeclas(event) {
+            // Tecla ENTER confirma/salva (tira o foco)
             if (event.key === "Enter") {
                 event.preventDefault();
-                event.target.blur(); // Salva e tira o foco
+                event.target.blur();
             }
+            // Tecla TAB insere quebra de linha (pula para baixo) para permitir múltiplos horários e anotações
             if (event.key === "Tab") {
                 event.preventDefault();
                 const start = event.target.selectionStart;
                 const end = event.target.selectionEnd;
-                event.target.value = event.target.value.substring(0, start) + "\t" + event.target.value.substring(end);
+                event.target.value = event.target.value.substring(0, start) + "\n" + event.target.value.substring(end);
                 event.target.selectionStart = event.target.selectionEnd = start + 1;
             }
         }
@@ -968,7 +977,6 @@
             carregarCalendario(ano, mes);
         }
 
-        /* --- CENTRAL DE LEMBRETES & POPUP (5 SEG) --- */
         function verificarPrazosEAlimentarLembretes() {
             const containerLembretes = document.getElementById('lista-lembretes-ativos');
             if (!containerLembretes) return;
@@ -1022,7 +1030,6 @@
             if (timeoutPopup) clearTimeout(timeoutPopup);
         }
 
-        // Inicializações
         renderizarSeletorAnos();
         renderizarMesesDoAno();
         carregarCalendario(2026, 7);
