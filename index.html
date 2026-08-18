@@ -218,23 +218,6 @@
             font-weight: 600;
         }
 
-        .submenu {
-            list-style: none;
-            padding-left: 20px;
-            margin: 4px 0 10px 0;
-        }
-
-        .submenu button {
-            padding: 8px 12px;
-            font-size: 0.85rem;
-            color: #94a3b8;
-        }
-
-        .submenu button:hover, .submenu button.active {
-            color: white;
-            background: rgba(255,255,255,0.05);
-        }
-
         .main-content {
             margin-left: var(--sidebar-width);
             padding: 30px;
@@ -331,7 +314,7 @@
             border-color: var(--primary);
         }
 
-        /* Calendário Real com 7 Colunas Fixas e Post-its Expansíveis */
+        /* Calendário Real com 7 Colunas Fixas (Dom a Sáb) e Post-its Expansíveis */
         #calendario-postit {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -455,13 +438,7 @@
                 <li><button onclick="mudarAba('estoque', this)" id="btn-estoque">📦 Estoque</button></li>
                 <li><button onclick="mudarAba('agenda', this)" id="btn-agenda">📅 Agenda</button></li>
                 <li><button onclick="mudarAba('faturamento', this)" id="btn-faturamento">💰 Faturamento</button></li>
-                <li>
-                    <button onclick="mudarAba('atividades', this)" id="btn-atividades">📋 Atividades</button>
-                    <ul class="submenu">
-                        <li><button onclick="mudarAba('atividades-pendentes', this)" id="btn-atividades-pendentes">⏳ Pendentes</button></li>
-                        <li><button onclick="mudarAba('atividades-concluidas', this)" id="btn-atividades-concluidas">✅ Concluídas</button></li>
-                    </ul>
-                </li>
+                <li><button onclick="mudarAba('atividades', this)" id="btn-atividades">📋 Atividades</button></li>
                 <li><button onclick="mudarAba('lembretes', this)" id="btn-lembretes" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">🔔 Lembretes</button></li>
                 <li id="menu-item-criacao" style="display: none; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                     <button onclick="mudarAba('criar-login', this)" id="btn-criar-login" style="background: #1e3a8a; color: white; font-weight: bold;">🔑 Criar Novo Acesso</button>
@@ -657,34 +634,27 @@
                 <div id="calendario-postit"></div>
             </div>
 
-            <!-- Módulo: Atividades -->
+            <!-- Módulo: Atividades (Com abas superiores Clientes/Prestadores na mesma linha e 3 sub-filtros cada) -->
             <div id="tab-atividades" class="card">
-                <h3 style="color: var(--primary);">Controle de Atividades</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-                    <button onclick="mudarSubAbaAtividades('atividades-clientes')" id="btn-atv-cli" class="btn-sub-aba ativo-sub">Clientes</button>
-                    <button onclick="mudarSubAbaAtividades('atividades-prestadores')" id="btn-atv-pres" class="btn-sub-aba">Prestadores</button>
-                </div>
-
-                <div id="sub-atv-clientes">
-                    <h4 style="color: var(--primary); margin-bottom: 10px;">Atividades de Clientes</h4>
-                    <div id="lista-atividades-clientes" style="display: flex; flex-direction: column; gap: 8px;">
-                        <p style="color: #64748b;">Nenhum cliente registado ainda.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                    <h3 style="margin: 0; color: var(--primary);">Controle de Atividades</h3>
+                    <!-- Botões principais na mesma linha -->
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="mudarSubAbaAtividadesPrincipal('clientes')" id="btn-main-atv-cli" class="btn-sub-aba ativo-sub">Clientes</button>
+                        <button onclick="mudarSubAbaAtividadesPrincipal('prestadores')" id="btn-main-atv-pres" class="btn-sub-aba">Prestadores</button>
                     </div>
                 </div>
 
-                <div id="sub-atv-prestadores" style="display: none;">
-                    <h4 style="color: var(--primary); margin-bottom: 10px;">Atividades de Prestadores</h4>
-                    <div id="lista-atividades-prestadores" style="display: flex; flex-direction: column; gap: 8px;">
-                        <p style="color: #64748b;">Nenhum prestador registado ainda.</p>
-                    </div>
+                <!-- Sub-abas de Filtro (Atividades do Dia, Pendentes, Concluídas) -->
+                <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                    <button onclick="mudarFiltroAtividade('dia')" id="btn-filtro-dia" class="btn-sub-aba ativo-sub">Atividades do Dia</button>
+                    <button onclick="mudarFiltroAtividade('pendentes')" id="btn-filtro-pendentes" class="btn-sub-aba">Atividades Pendentes</button>
+                    <button onclick="mudarFiltroAtividade('concluidas')" id="btn-filtro-concluidas" class="btn-sub-aba">Atividades Concluídas</button>
                 </div>
-            </div>
 
-            <div id="tab-atividades-pendentes" class="card">
-                <h3>Atividades Pendentes</h3>
-            </div>
-            <div id="tab-atividades-concluidas" class="card">
-                <h3>Atividades Concluídas</h3>
+                <div id="lista-atividades-container" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Preenchido dinamicamente -->
+                </div>
             </div>
 
             <!-- Módulo: Lembretes -->
@@ -755,7 +725,7 @@
         function mudarAba(nomeAba, elementoBotao) {
             const cards = document.querySelectorAll('.card');
             cards.forEach(card => card.classList.remove('active-tab'));
-            const botoes = document.querySelectorAll('.sidebar-menu button, .submenu button');
+            const botoes = document.querySelectorAll('.sidebar-menu button');
             botoes.forEach(btn => btn.classList.remove('active'));
 
             const abaAlvo = document.getElementById('tab-' + nomeAba);
@@ -789,23 +759,23 @@
             }
         }
 
-        function mudarSubAbaAtividades(subId) {
-            const atvCli = document.getElementById('sub-atv-clientes');
-            const atvPres = document.getElementById('sub-atv-prestadores');
-            const btnAtvCli = document.getElementById('btn-atv-cli');
-            const btnAtvPres = document.getElementById('btn-atv-pres');
+        // Variáveis de controle para as Atividades
+        let tipoAtividadeAtual = 'clientes'; // 'clientes' ou 'prestadores'
+        let filtroAtividadeAtual = 'dia';     // 'dia', 'pendentes' ou 'concluidas'
 
-            if (subId === 'atividades-clientes') {
-                if (atvCli) atvCli.style.display = 'block';
-                if (atvPres) atvPres.style.display = 'none';
-                if (btnAtvCli) btnAtvCli.className = 'btn-sub-aba ativo-sub';
-                if (btnAtvPres) btnAtvPres.className = 'btn-sub-aba';
-            } else {
-                if (atvCli) atvCli.style.display = 'none';
-                if (atvPres) atvPres.style.display = 'block';
-                if (btnAtvCli) btnAtvCli.className = 'btn-sub-aba';
-                if (btnAtvPres) btnAtvPres.className = 'btn-sub-aba ativo-sub';
-            }
+        function mudarSubAbaAtividadesPrincipal(tipo) {
+            tipoAtividadeAtual = tipo;
+            document.getElementById('btn-main-atv-cli').className = `btn-sub-aba ${tipo === 'clientes' ? 'ativo-sub' : ''}`;
+            document.getElementById('btn-main-atv-pres').className = `btn-sub-aba ${tipo === 'prestadores' ? 'ativo-sub' : ''}`;
+            atualizarListasAtividades();
+        }
+
+        function mudarFiltroAtividade(filtro) {
+            filtroAtividadeAtual = filtro;
+            document.getElementById('btn-filtro-dia').className = `btn-sub-aba ${filtro === 'dia' ? 'ativo-sub' : ''}`;
+            document.getElementById('btn-filtro-pendentes').className = `btn-sub-aba ${filtro === 'pendentes' ? 'ativo-sub' : ''}`;
+            document.getElementById('btn-filtro-concluidas').className = `btn-sub-aba ${filtro === 'concluidas' ? 'ativo-sub' : ''}`;
+            atualizarListasAtividades();
         }
 
         function verificarBoletoPrestador(metodo) {
@@ -992,21 +962,69 @@
         }
 
         function atualizarListasAtividades() {
-            const contCli = document.getElementById('lista-atividades-clientes');
-            const contPres = document.getElementById('lista-atividades-prestadores');
+            const container = document.getElementById('lista-atividades-container');
+            if (!container) return;
 
-            contCli.innerHTML = listaClientes.length === 0 ? '<p style="color: #64748b;">Nenhum cliente registado.</p>' :
-                listaClientes.map(c => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${c.nome}</strong> | Celular: ${c.celular} | Início: ${c.dataInicio} até Entrega: ${c.dataEntrega}</div>`).join('');
+            const hojeStr = new Date().toISOString().split('T')[0];
+            let htmlConteudo = "";
 
-            contPres.innerHTML = listaPrestadores.length === 0 ? '<p style="color: #64748b;">Nenhum prestador registado.</p>' :
-                listaPrestadores.map(p => `<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;"><strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | <b>Início:</b> ${p.dataInicio} às ${p.horario} ${p.expBoleto !== '-' ? `| <b>Venc. Boleto:</b> ${p.expBoleto}` : ''}</div>`).join('');
+            if (tipoAtividadeAtual === 'clientes') {
+                if (listaClientes.length === 0) {
+                    container.innerHTML = '<p style="color: #64748b;">Nenhum cliente registado.</p>';
+                    return;
+                }
+
+                const filtrados = listaClientes.filter(c => {
+                    if (filtroAtividadeAtual === 'dia') return c.dataInicio === hojeStr || c.dataEntrega === hojeStr;
+                    if (filtroAtividadeAtual === 'pendentes') return c.dataEntrega >= hojeStr;
+                    if (filtroAtividadeAtual === 'concluidas') return c.dataEntrega < hojeStr;
+                    return true;
+                });
+
+                if (filtrados.length === 0) {
+                    container.innerHTML = `<p style="color: #64748b;">Nenhum registo encontrado para "${filtroAtividadeAtual}".</p>`;
+                    return;
+                }
+
+                htmlConteudo = filtrados.map(c => `
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;">
+                        <strong>${c.nome}</strong> | Celular: ${c.celular} | Início: ${c.dataInicio} até Entrega: ${c.dataEntrega}
+                    </div>
+                `).join('');
+
+            } else {
+                if (listaPrestadores.length === 0) {
+                    container.innerHTML = '<p style="color: #64748b;">Nenhum prestador registado.</p>';
+                    return;
+                }
+
+                const filtrados = listaPrestadores.filter(p => {
+                    if (filtroAtividadeAtual === 'dia') return p.dataInicio === hojeStr;
+                    if (filtroAtividadeAtual === 'pendentes') return p.dataInicio >= hojeStr;
+                    if (filtroAtividadeAtual === 'concluidas') return p.dataInicio < hojeStr;
+                    return true;
+                });
+
+                if (filtrados.length === 0) {
+                    container.innerHTML = `<p style="color: #64748b;">Nenhum registo encontrado para "${filtroAtividadeAtual}".</p>`;
+                    return;
+                }
+
+                htmlConteudo = filtrados.map(p => `
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;">
+                        <strong>${p.nome}</strong> | Celular: ${p.celular} | Atividade: ${p.atividade} | <b>Início:</b> ${p.dataInicio} às ${p.horario} ${p.expBoleto !== '-' ? `| <b>Venc. Boleto:</b> ${p.expBoleto}` : ''}
+                    </div>
+                `).join('');
+            }
+
+            container.innerHTML = htmlConteudo;
         }
 
-        /* --- AGENDA POST-IT (7 COLUNAS & TAB PARA PULAR LINHA) --- */
+        /* --- AGENDA POST-IT (7 COLUNAS: DOMINGO A SÁBADO) --- */
         let anoAtualGlobal = 2026;
         let mesAtualGlobal = 7;
         const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
-        const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+        const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]; // Começa no Domingo
 
         function renderizarSeletorAnos() {
             const containerAno = document.getElementById("container-seletor-ano");
@@ -1043,9 +1061,16 @@
         function carregarCalendario(ano, mesIndex) {
             const container = document.getElementById("calendario-postit");
             container.innerHTML = "";
+
+            const primeiroDiaDoMes = new Date(ano, mesIndex, 1).getDay(); // 0 = Domingo, 1 = Segunda, etc.
             const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
             const hoje = new Date();
             hoje.setHours(0,0,0,0);
+
+            // Espaços vazios iniciais para alinhar o primeiro dia da semana corretamente (Domingo)
+            for (let espaco = 0; espaco < primeiroDiaDoMes; espaco++) {
+                container.innerHTML += `<div style="visibility: hidden;"></div>`;
+            }
 
             for (let i = 1; i <= diasNoMes; i++) {
                 const dataDia = new Date(ano, mesIndex, i);
