@@ -3,477 +3,983 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omnisys Pro - SaaS Platform</title>
+    <title>Omnisys Pro - Gestão Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0f223d;
-            --bg-main: #f8fafc;
+            --primary: #0f223d;       /* Azul Marinho */
+            --accent: #2563eb;
+            --bg-color: #0f172a;      /* Fundo da página mais escuro */
             --card-bg: #ffffff;
-            --text-main: #1e293b;
+            --border-color: #cbd5e1;
+            --success: #16a34a;
+            --sidebar-width: 260px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar */
-        .sidebar { width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .sidebar h2 { font-size: 1.25rem; margin-bottom: 30px; letter-spacing: 0.5px; }
-        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; transition: all 0.2s; display: block; }
-        .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #334155;
+            margin: 0;
+            padding: 0;
+        }
 
-        /* Main Content */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        /* --- TELAS DE AUTENTICAÇÃO (LOGIN E CADASTRO) --- */
+        .auth-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            padding: 20px 0;
+        }
 
-        /* Estilos da Agenda */
-        .btn-mes-agenda { padding: 8px 16px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 6px; background: white; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; color: #334155; }
-        .btn-mes-agenda:hover { background: #e2e8f0; }
-        .btn-mes-agenda.ativo { background: #0f223d !important; color: white !important; border-color: #0f223d !important; }
+        .login-card {
+            background: var(--card-bg);
+            padding: 45px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            border: 1px solid #334155;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        .btn-ano-agenda { padding: 8px 18px; cursor: pointer; border: 1px solid var(--primary); border-radius: 6px; background: white; font-weight: bold; color: var(--primary); transition: all 0.2s; }
-        .btn-ano-agenda.ativo-ano { background: var(--primary); color: white; }
+        .exact-image-logo {
+            width: 100%;
+            max-width: 260px;
+            height: auto;
+            margin: 0 auto 25px auto;
+            border-radius: 8px;
+            display: block;
+            object-fit: contain;
+        }
 
-        .dia-postit { padding: 14px; min-height: 120px; border-radius: 10px; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: all 0.25s ease; border: 1px solid rgba(0,0,0,0.1); position: relative; }
-        .dia-postit:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-        .dia-postit:focus-within { transform: scale(1.15) translateY(-5px); z-index: 50; box-shadow: 0 15px 35px rgba(0,0,0,0.25); border-color: #0f223d; }
-        .dia-postit textarea { border: none; background: transparent; resize: none; width: 100%; height: 100%; font-size: 0.85rem; font-family: 'Inter', sans-serif; color: #0f172a; outline: none; }
+        .form-group {
+            text-align: left;
+            margin-bottom: 16px;
+            width: 100%;
+        }
 
-        /* Sub-abas Clientes */
-        .btn-sub-aba { padding: 8px 16px; cursor: pointer; border: 1px solid #cbd5e1; border-radius: 6px; background: white; font-weight: 600; font-size: 0.85rem; color: #334155; }
-        .btn-sub-aba.ativo-sub { background: var(--primary); color: white; border-color: var(--primary); }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background: #fafafa;
+        }
+
+        .terms-group {
+            display: flex;
+            align-items: flex-start;
+            text-align: left;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 0.82rem;
+            color: #475569;
+            line-height: 1.4;
+            width: 100%;
+        }
+
+        .terms-group input[type="checkbox"] {
+            margin-top: 2px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .btn-action {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            margin-top: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .btn-action:hover { background-color: #1e3a8a; }
+
+        .btn-register {
+            background-color: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .btn-register:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-back {
+            background-color: transparent;
+            color: #64748b;
+            border: none;
+            padding: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        .btn-back:hover { text-decoration: underline; }
+
+        /* --- PAINEL PRINCIPAL COM MENU LATERAL (SIDEBAR) --- */
+        #dashboard-container {
+            display: none;
+            min-height: 100vh;
+            background-color: #f4f5f7;
+        }
+
+        aside {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo {
+            width: 100%;
+            max-width: 150px;
+            height: auto;
+            border-radius: 6px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 10px;
+            margin: 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 6px;
+        }
+
+        .sidebar-menu button {
+            width: 100%;
+            background: transparent;
+            color: #cbd5e1;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu button:hover, .sidebar-menu button.active {
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .submenu {
+            list-style: none;
+            padding-left: 20px;
+            margin: 4px 0 10px 0;
+        }
+
+        .submenu button {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .submenu button:hover, .submenu button.active {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            box-sizing: border-box;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            margin-bottom: 25px;
+            display: none;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card.active-tab { display: block; }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.85rem; color: var(--primary); }
+        .card input, .card select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .btn-form {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 1rem;
+        }
+        .btn-form:hover { background-color: #1d4ed8; }
+
+        .resultado {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--accent);
+            border: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Menu Lateral (Mantido 100% com todas as opções originais) -->
-    <div class="sidebar">
-        <h2>Omnisys Pro</h2>
-        <a href="#" onclick="mudarAba('dashboard')" id="menu-dashboard" class="active">Dashboard</a>
-        <a href="#" onclick="mudarAba('clientes')" id="menu-clientes">Clientes</a>
-        <a href="#" onclick="mudarAba('estoque')" id="menu-estoque">Estoque</a>
-        <a href="#" onclick="mudarAba('agenda')" id="menu-agenda">Agenda</a>
-        <a href="#" onclick="mudarAba('faturamento')" id="menu-faturamento">Faturamento</a>
-        <a href="#" onclick="mudarAba('atividades')" id="menu-atividades">Atividades</a>
-        <a href="#" style="padding-left: 25px; font-size: 0.85rem;" onclick="mudarAba('atividades-pendentes')" id="menu-atividades-pendentes">⏳ Pendentes</a>
-        <a href="#" style="padding-left: 25px; font-size: 0.85rem;" onclick="mudarAba('atividades-concluidas')" id="menu-atividades-concluidas">✅ Concluídas</a>
-        <a href="#" onclick="mudarAba('lembretes')" id="menu-lembretes" style="margin-top: 15px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4);">🔔 Lembretes</a>
-        <a href="#" onclick="mudarAba('novo-acesso')" id="menu-novo-acesso" style="margin-top: auto;">Criar Novo Acesso</a>
-    </div>
+    <!-- 1. TELA DE LOGIN -->
+    <div id="login-screen" class="auth-screen">
+        <div class="login-card">
+            <img src="/static/logo-login.jpg" alt="Logo Omnisys Pro" class="exact-image-logo">
 
-    <!-- Conteúdo Principal -->
-    <div class="main-content">
-
-        <!-- Barra de Utilizador ativa -->
-        <div class="card" style="padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div><strong>Utilizador:</strong> master@omnisys.com | <strong>Nível:</strong> adminMaster</div>
-            <div style="background: #fef08a; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: #854d0e;">👑 Master Ativo</div>
-        </div>
-
-        <!-- Módulo: Dashboard -->
-        <div id="tab-dashboard" class="card">
-            <h3 style="color: var(--primary); margin-bottom: 10px;">Visão Geral</h3>
-            <p style="color: #64748b;">Bem-vindo ao painel de controlo principal do Omnisys Pro.</p>
-        </div>
-
-        <!-- Módulo: Clientes (Atualizado com sub-abas solicitadas e Prestadores com boleto) -->
-        <div id="tab-clientes" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Gestão de Clientes e Prestadores</h3>
-
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                <button onclick="mudarSubAbaClientes('clientes-cad')" id="btn-sub-cli" class="btn-sub-aba ativo-sub">Cadastro de Clientes</button>
-                <button onclick="mudarSubAbaClientes('prestador-cad')" id="btn-sub-pres" class="btn-sub-aba">Prestador de Serviço</button>
+            <div class="form-group">
+                <label for="login-usuario">E-mail ou CNPJ/CPF</label>
+                <input type="text" id="login-usuario" placeholder="Digite seu e-mail">
             </div>
 
-            <!-- Sub-aba 1: Cadastro de Clientes -->
-            <div id="sub-clientes-cad" class="sub-conteudo-cli">
-                <h4 style="margin-bottom: 15px;">Registar Novo Cliente</h4>
-                <form id="form-cliente" onsubmit="salvarCliente(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
-                    <input type="text" id="cli-nome" placeholder="Nome Empresa / Física" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <input type="text" id="cli-doc" placeholder="CNPJ / CPF" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <input type="text" id="cli-atividade" placeholder="Atividade a realizar" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <input type="number" step="0.01" id="cli-valor" placeholder="Valor (R$)" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <select id="cli-pagamento" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                        <option value="Pix">Pix</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão de Crédito">Cartão de Crédito</option>
-                        <option value="Cartão de Débito">Cartão de Débito</option>
-                    </select>
-                    <input type="date" id="cli-data" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <button type="submit" style="grid-column: span 2; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Guardar Cliente</button>
-                </form>
+            <div class="form-group">
+                <label for="login-senha">Senha</label>
+                <input type="password" id="login-senha" placeholder="Sua senha">
+            </div>
 
-                <h4 style="margin-bottom: 10px;">Lista de Clientes Registados</h4>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-                        <thead>
-                            <tr style="background: #f1f5f9; text-align: left;">
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Nome</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Atividade</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Valor</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Pagamento</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Data Entrega</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-clientes-corpo"></tbody>
-                    </table>
+            <button class="btn-action" onclick="fazerLogin()">Acessar Sistema</button>
+            <button class="btn-register" onclick="mostrarTelaCadastro()">Criar Conta / Cadastre-se</button>
+        </div>
+    </div>
+
+    <!-- 2. TELA DE CADASTRO COMPLETA (LGPD & DADOS) -->
+    <div id="register-screen" class="auth-screen" style="display: none;">
+        <div class="login-card">
+            <h2 style="color: var(--primary); margin-top: 0; font-size: 1.3rem;">Cadastre-se no Omnisys Pro</h2>
+            <p style="font-size: 0.83rem; color: #64748b; margin-bottom: 15px;">Ambiente seguro e protegido por sigilo comercial e leis aplicáveis (LGPD e CDC).</p>
+
+            <div class="form-group">
+                <label for="reg-nome">Nome Completo ou Razão Social</label>
+                <input type="text" id="reg-nome" placeholder="Ex: João da Silva">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-documento">CPF ou CNPJ</label>
+                <input type="text" id="reg-documento" placeholder="Apenas números">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-email">E-mail de Acesso</label>
+                <input type="email" id="reg-email" placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-celular">Número de Celular / WhatsApp</label>
+                <input type="text" id="reg-celular" placeholder="(00) 90000-0000">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-senha">Senha de Acesso</label>
+                <input type="password" id="reg-senha" placeholder="Crie uma senha segura">
+            </div>
+
+            <div class="terms-group">
+                <input type="checkbox" id="reg-termos">
+                <label for="reg-termos" style="display:inline; font-weight:normal; font-size:0.8rem; cursor:pointer;">
+                    Declaro que li e concordo com os <strong>Termos de Confidencialidade e Privacidade</strong> sob as leis aplicáveis (LGPD).
+                </label>
+            </div>
+
+            <button class="btn-action" onclick="executarCadastro()">Concluir Cadastro Seguro</button>
+            <button class="btn-back" onclick="mostrarTelaLogin()">← Voltar para o Login</button>
+        </div>
+    </div>
+
+    <!-- 3. PAINEL PRINCIPAL COM MENU LATERAL -->
+    <div id="dashboard-container">
+        <aside>
+            <div class="sidebar-brand">
+                <img src="/static/logo-login.jpg" alt="Logo Omnisys Pro" class="sidebar-logo">
+            </div>
+
+            <ul class="sidebar-menu">
+                <li><button onclick="mudarAba('clientes', this)" id="btn-clientes" class="active">👥 Clientes</button></li>
+                <li><button onclick="mudarAba('estoque', this)" id="btn-estoque">📦 Estoque</button></li>
+                <li><button onclick="mudarAba('agenda', this)" id="btn-agenda">📅 Agenda</button></li>
+                <li><button onclick="mudarAba('faturamento', this)" id="btn-faturamento">💰 Faturamento</button></li>
+
+                <li>
+                    <button onclick="mudarAba('atividades', this)" id="btn-atividades">📋 Atividades</button>
+                    <ul class="submenu">
+                        <li><button onclick="mudarAba('atividades-pendentes', this)" id="btn-atividades-pendentes">⏳ Pendentes</button></li>
+                        <li><button onclick="mudarAba('atividades-concluidas', this)" id="btn-atividades-concluidas">✅ Concluídas</button></li>
+                    </ul>
+                </li>
+
+                <!-- OPÇÃO EXCLUSIVA DO MASTER PARA CRIAR NOVO LOGIN -->
+                <li id="menu-item-criacao" style="display: none; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <button onclick="mudarAba('criar-login', this)" id="btn-criar-login" style="background: #1e3a8a; color: white; font-weight: bold;">🔑 Criar Novo Acesso</button>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div>
+                    <strong>Utilizador:</strong> <span id="user-email"></span> |
+                    <strong>Nível:</strong> <span id="user-role"></span>
+                </div>
+                <div id="badge-master" style="display: none; background: #e0e7ff; padding: 5px 12px; border-radius: 6px;">
+                    <span style="font-size: 0.85rem; font-weight: bold; color: #1e40af;">👑 Master Ativo</span>
                 </div>
             </div>
 
-            <!-- Sub-aba 2: Prestador de Serviço -->
-            <div id="sub-prestador-cad" class="sub-conteudo-cli" style="display: none;">
-                <h4 style="margin-bottom: 15px;">Registar Prestador de Serviço / Orçamento</h4>
-                <form id="form-prestador" onsubmit="salvarPrestador(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
-                    <input type="text" id="pres-nome" placeholder="Nome Empresa / Física" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <input type="text" id="pres-doc" placeholder="CNPJ / CPF" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <input type="text" id="pres-atividade" placeholder="Atividade solicitada" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    <input type="number" step="0.01" id="pres-valor" placeholder="Valor do Orçamento (R$)" required style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <!-- Módulo: Clientes -->
+            <div id="tab-clientes" class="card active-tab">
+                <h3>Gestão de Clientes</h3>
+                <label>Nome Fantasia / Cliente:</label>
+                <input type="text" id="empresa-nome" placeholder="Ex: Clínica Sorriso ou Oficina Central">
+                <label>CNPJ / CPF:</label>
+                <input type="text" id="empresa-cnpj" placeholder="00.000.000/0001-00">
+                <button class="btn-form" onclick="cadastrarEmpresa()">Salvar Cliente</button>
+                <div id="resultado-empresa" class="resultado" style="display:none;"></div>
+            </div>
 
-                    <select id="pres-pagamento" onchange="verificarBoleto(this.value)" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                        <option value="Pix">Pix</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão de Crédito">Cartão de Crédito</option>
-                        <option value="Cartão de Débito">Cartão de Débito</option>
-                        <option value="Boleto">Boleto</option>
-                    </select>
+          <!-- Módulo: Estoque (Atualizado com Gestão de Produtos) -->
+            <div id="tab-estoque" class="card">
+                <h3>Gerenciamento de Estoque</h3>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre, controle e gerencie os itens do inventário.</p>
 
-                    <div id="container-boleto-exp" style="display: none; flex-direction: column;">
-                        <label style="font-size: 0.75rem; font-weight: bold; color: #64748b;">Data de Expiração do Boleto:</label>
-                        <input type="date" id="pres-exp-boleto" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <!-- Formulário de Novo Produto -->
+                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+                    <h4 style="margin-top: 0; color: var(--primary); font-size: 1rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Novo Produto</h4>
+
+                    <label>Nome do Produto (Obrigatório):</label>
+                    <input type="text" id="produto-nome" placeholder="Ex: Produto X ou Peça Y" required>
+
+                    <label>Quantidade do Produto (Obrigatório):</label>
+                    <input type="number" id="produto-qtd" placeholder="0" min="1" required>
+
+                    <label>Validade do Produto (Opcional):</label>
+                    <input type="date" id="produto-validade">
+
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn-form" style="margin-top:0; background-color: var(--success);" onclick="salvarProdutoEstoque()">Salvar Produto</button>
+                    </div>
+                </div>
+
+                <!-- Lista de Produtos Cadastrados com Seleção para Exclusão -->
+                <div style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: var(--primary); font-size: 1rem;">Produtos em Stock</h4>
+                        <button onclick="confirmarExclusaoSelecionados()" style="background-color: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">Excluir Selecionados</button>
                     </div>
 
-                    <button type="submit" style="grid-column: span 2; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Guardar Prestador</button>
-                </form>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 6px; text-align: left; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="background: #f1f5f9; color: var(--primary); border-bottom: 1px solid #e2e8f0;">
+                                    <th style="padding: 10px; width: 40px; text-align: center;"><input type="checkbox" id="selectAll" onclick="selecionarTodosProdutos(this)"></th>
+                                    <th style="padding: 10px;">Nome do Produto</th>
+                                    <th style="padding: 10px;">Quantidade</th>
+                                    <th style="padding: 10px;">Validade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-produtos-corpo">
+                                <!-- Os produtos salvos aparecem aqui dinamicamente -->
+                                <tr>
+                                    <td colspan="4" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto cadastrado ainda.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-                <h4 style="margin-bottom: 10px;">Lista de Prestadores Registados</h4>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-                        <thead>
-                            <tr style="background: #f1f5f9; text-align: left;">
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Nome</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">CNPJ/CPF</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Atividade</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Valor Orçamento</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Método Pagamento</th>
-                                <th style="padding: 8px; border: 1px solid #e2e8f0;">Expiração Boleto</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-prestadores-corpo"></tbody>
-                    </table>
+                <div id="resultado-estoque" class="resultado" style="display:none;"></div>
+            </div>
+
+            <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO PERSONALIZADO -->
+            <div id="modal-exclusao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+                <div style="background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <h3 style="color: #dc2626; margin-top: 0;">Confirmação de Exclusão</h3>
+                    <p id="mensagem-modal-exclusao" style="font-size: 0.95rem; color: #334155; margin: 20px 0; line-height: 1.5;"></p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="fecharModalExclusao()" style="background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                        <button onclick="executarExclusaoProdutos()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">OK</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Módulo: Estoque -->
-        <div id="tab-estoque" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Controlo de Estoque</h3>
-            <p style="color: #64748b;">Gestão integrada de produtos.</p>
+            <!-- Módulo: Agenda -->
+           <!-- Módulo: Agenda (Calendário Dinâmico) -->
+<!-- Módulo: Agenda (Calendário Profissional Post-it) -->
+<!-- Módulo: Agenda (Calendário Profissional Post-it com Zoom e Cores Vivas) -->
+<div id="tab-agenda" class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+        <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
+        <div id="container-seletor-ano" style="display: flex; gap: 8px;">
+            <!-- Navegação de Anos gerada dinamicamente -->
         </div>
-
-        <!-- Módulo: Agenda -->
-        <div id="tab-agenda" class="card" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-                <h3 style="margin: 0; color: var(--primary);">Agenda de Compromissos</h3>
-                <div id="container-seletor-ano" style="display: flex; gap: 8px;"></div>
-            </div>
-            <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;"></div>
-            <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;"></div>
-        </div>
-
-        <!-- Módulo: Faturamento -->
-        <div id="tab-faturamento" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Faturamento e Financeiro</h3>
-            <p style="color: #64748b;">Controlo financeiro e transações.</p>
-        </div>
-
-        <!-- Módulo: Atividades / Pendentes / Concluídas -->
-        <div id="tab-atividades" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Atividades Gerais</h3>
-            <p style="color: #64748b;">Painel geral de tarefas.</p>
-        </div>
-        <div id="tab-atividades-pendentes" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Atividades Pendentes</h3>
-        </div>
-        <div id="tab-atividades-concluidas" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Atividades Concluídas</h3>
-        </div>
-
-        <!-- Módulo: Lembretes -->
-        <div id="tab-lembretes" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Central de Lembretes e Prazos</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Compromissos e prazos que vencem nos próximos 7 dias.</p>
-            <div id="lista-lembretes-ativos" style="display: flex; flex-direction: column; gap: 10px;"></div>
-        </div>
-
-        <!-- Módulo: Criar Novo Acesso -->
-        <div id="tab-novo-acesso" class="card" style="display: none;">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">Criar Novo Acesso</h3>
-            <p style="color: #64748b;">Gestão de utilizadores do sistema.</p>
-        </div>
-
     </div>
 
-    <!-- Popup Flutuante de Notificação (5 segundos com botão Sair) -->
-    <div id="popup-notificacao" style="display: none; position: fixed; bottom: 30px; right: 30px; background: #0f223d; color: white; padding: 20px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 9999; max-width: 350px; border-left: 5px solid #fca5a5;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="font-size: 0.95rem;">⚠️ Atenção: Prazos Próximos!</strong>
-            <button onclick="fecharNotificacaoPopup()" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold;">Sair</button>
-        </div>
-        <p id="texto-notificacao-popup" style="font-size: 0.85rem; margin: 0; color: #f1f5f9; line-height: 1.4;"></p>
+    <!-- Seleção de Meses do Ano Ativo -->
+    <div id="nav-meses" style="display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;">
+        <!-- Meses injetados via JS -->
     </div>
 
-    <script>
-        // Controlo de Abas Principais (Mantendo todas as originais)
-        function mudarAba(abaId) {
-            const abas = ['dashboard', 'clientes', 'estoque', 'agenda', 'faturamento', 'atividades', 'atividades-pendentes', 'atividades-concluidas', 'lembretes', 'novo-acesso'];
-            abas.forEach(a => {
-                const el = document.getElementById(`tab-${a}`);
-                const menu = document.getElementById(`menu-${a}`);
-                if (el) el.style.display = (a === abaId) ? 'block' : 'none';
-                if (menu) menu.className = (a === abaId) ? 'active' : '';
-            });
-            if (abaId === 'lembretes') {
-                verificarPrazosEAlimentarLembretes();
-            }
-        }
+    <!-- Área do Calendário Post-it Estilizado -->
+    <div id="calendario-postit" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 15px;">
+        <!-- Gerado via JS -->
+    </div>
+</div>
 
-        // Lógica da Agenda Post-it
-        const agendaDados = {};
-        let anoAtualGlobal = 2026;
-        let mesAtualGlobal = 7; // Agosto
+<style>
+    .btn-mes-agenda {
+        padding: 8px 16px;
+        cursor: pointer;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        color: #334155;
+    }
+    .btn-mes-agenda:hover { background: #e2e8f0; }
+    .btn-mes-agenda.ativo {
+        background: #0f223d !important;
+        color: white !important;
+        border-color: #0f223d !important;
+    }
 
-        const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
-        const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+    .btn-ano-agenda {
+        padding: 8px 18px;
+        cursor: pointer;
+        border: 1px solid var(--primary);
+        border-radius: 6px;
+        background: white;
+        font-weight: bold;
+        color: var(--primary);
+        transition: all 0.2s;
+    }
+    .btn-ano-agenda.ativo-ano {
+        background: var(--primary);
+        color: white;
+    }
 
-        function renderizarSeletorAnos() {
-            const containerAno = document.getElementById("container-seletor-ano");
-            if (!containerAno) return;
-            containerAno.innerHTML = `
-                <button onclick="mudarAno(2026)" class="btn-ano-agenda ${anoAtualGlobal === 2026 ? 'ativo-ano' : ''}">2026</button>
-                <button onclick="mudarAno(2027)" class="btn-ano-agenda ${anoAtualGlobal === 2027 ? 'ativo-ano' : ''}">2027</button>
-            `;
-        }
+    /* Post-its com cores bem fortes e efeito zoom fluido ao focar/escrever */
+    .dia-postit {
+        padding: 14px;
+        min-height: 120px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: all 0.25s ease;
+        border: 1px solid rgba(0,0,0,0.1);
+        position: relative;
+    }
+    .dia-postit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    /* Efeito de saltar para a frente e ficar maior quando focado/clicado */
+    .dia-postit:focus-within {
+        transform: scale(1.15) translateY(-5px);
+        z-index: 50;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        border-color: #0f223d;
+    }
+    .dia-postit textarea {
+        border: none;
+        background: transparent;
+        resize: none;
+        width: 100%;
+        height: 100%;
+        font-size: 0.85rem;
+        font-family: 'Inter', sans-serif;
+        color: #0f172a;
+        outline: none;
+    }
+</style>
 
-        function mudarAno(ano) {
-            anoAtualGlobal = ano;
-            mesAtualGlobal = 0;
-            renderizarSeletorAnos();
-            renderizarMesesDoAno();
-            carregarCalendario(ano, mesAtualGlobal);
-        }
+<script>
+    const agendaDados = {}; // Registo de notas por ano-mes-dia
+    let anoAtualGlobal = 2026;
+    let mesAtualGlobal = 7; // Agosto (0 a 11)
 
-        function renderizarMesesDoAno() {
-            const navMeses = document.getElementById("nav-meses");
-            if (!navMeses) return;
-            navMeses.innerHTML = "";
+    const nomesMeses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+    const diasSemanaNomes = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-            nomesMeses.forEach((nomeMes, index) => {
-                const btn = document.createElement("button");
-                btn.className = `btn-mes-agenda ${mesAtualGlobal === index ? 'ativo' : ''}`;
-                btn.innerText = nomeMes;
-                btn.onclick = () => {
-                    mesAtualGlobal = index;
-                    renderizarMesesDoAno();
-                    carregarCalendario(anoAtualGlobal, mesAtualGlobal);
-                };
-                navMeses.appendChild(btn);
-            });
-        }
+    function renderizarSeletorAnos() {
+        const containerAno = document.getElementById("container-seletor-ano");
+        containerAno.innerHTML = `
+            <button onclick="mudarAno(2026)" class="btn-ano-agenda ${anoAtualGlobal === 2026 ? 'ativo-ano' : ''}">2026</button>
+            <button onclick="mudarAno(2027)" class="btn-ano-agenda ${anoAtualGlobal === 2027 ? 'ativo-ano' : ''}">2027</button>
+        `;
+    }
 
-        function carregarCalendario(ano, mesIndex) {
-            const container = document.getElementById("calendario-postit");
-            if (!container) return;
-            container.innerHTML = "";
-
-            const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
-            const hoje = new Date();
-            hoje.setHours(0,0,0,0);
-
-            for (let i = 1; i <= diasNoMes; i++) {
-                const dataDia = new Date(ano, mesIndex, i);
-                dataDia.setHours(0,0,0,0);
-
-                const nomeDiaSemana = diasSemanaNomes[dataDia.getDay()];
-                const chaveKey = `${ano}-${mesIndex}-${i}`;
-                const textoNota = agendaDados[chaveKey] || "";
-
-                let corFundo = "#ffffff";
-
-                const diffTime = dataDia - hoje;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                if (dataDia < hoje) {
-                    corFundo = "#86efac"; // Verde vivo
-                } else if (textoNota.trim() !== "") {
-                    if (diffDays <= 1) {
-                        corFundo = "#fca5a5"; // Vermelho vivo
-                    } else {
-                        corFundo = "#93c5fd"; // Azul vivo
-                    }
-                }
-
-                container.innerHTML += `
-                    <div class="dia-postit" style="background-color: ${corFundo};">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-weight: 700; font-size: 0.95rem; color: #0f223d;">${i < 10 ? '0'+i : i}</span>
-                            <span style="font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
-                        </div>
-                        <textarea onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
-                                  placeholder="Escrever compromisso...">${textoNota}</textarea>
-                    </div>
-                `;
-            }
-        }
-
-        function salvarNotaPostit(ano, mes, dia, texto) {
-            const chaveKey = `${ano}-${mes}-${dia}`;
-            agendaDados[chaveKey] = texto;
-            carregarCalendario(ano, mes);
-        }
-
-        // Lógica de Clientes e Prestadores
-        const listaClientes = [];
-        const listaPrestadores = [];
-
-        function mudarSubAbaClientes(subAbaId) {
-            document.getElementById('sub-clientes-cad').style.display = (subAbaId === 'sub-clientes-cad') ? 'block' : 'none';
-            document.getElementById('sub-prestador-cad').style.display = (subAbaId === 'sub-prestador-cad') ? 'block' : 'none';
-
-            document.getElementById('btn-sub-cli').className = `btn-sub-aba ${subAbaId === 'sub-clientes-cad' ? 'ativo-sub' : ''}`;
-            document.getElementById('btn-sub-pres').className = `btn-sub-aba ${subAbaId === 'sub-prestador-cad' ? 'ativo-sub' : ''}`;
-        }
-
-        function verificarBoleto(valorMetodo) {
-            const containerBoleto = document.getElementById('container-boleto-exp');
-            containerBoleto.style.display = (valorMetodo === 'Boleto') ? 'flex' : 'none';
-        }
-
-        function salvarCliente(event) {
-            event.preventDefault();
-            listaClientes.push({
-                nome: document.getElementById('cli-nome').value,
-                doc: document.getElementById('cli-doc').value,
-                atividade: document.getElementById('cli-atividade').value,
-                valor: document.getElementById('cli-valor').value,
-                pagamento: document.getElementById('cli-pagamento').value,
-                data: document.getElementById('cli-data').value
-            });
-            document.getElementById('form-cliente').reset();
-            atualizarTabelaClientes();
-        }
-
-        function atualizarTabelaClientes() {
-            const tbody = document.getElementById('tabela-clientes-corpo');
-            tbody.innerHTML = "";
-            listaClientes.forEach(c => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${c.nome}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${c.doc}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${c.atividade}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">R$ ${parseFloat(c.valor).toFixed(2)}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${c.pagamento}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${c.data}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        function salvarPrestador(event) {
-            event.preventDefault();
-            const metodo = document.getElementById('pres-pagamento').value;
-            listaPrestadores.push({
-                nome: document.getElementById('pres-nome').value,
-                doc: document.getElementById('pres-doc').value,
-                atividade: document.getElementById('pres-atividade').value,
-                valor: document.getElementById('pres-valor').value,
-                pagamento: metodo,
-                expBoleto: metodo === 'Boleto' ? document.getElementById('pres-exp-boleto').value : '-'
-            });
-            document.getElementById('form-prestador').reset();
-            document.getElementById('container-boleto-exp').style.display = 'none';
-            atualizarTabelaPrestadores();
-        }
-
-        function atualizarTabelaPrestadores() {
-            const tbody = document.getElementById('tabela-prestadores-corpo');
-            tbody.innerHTML = "";
-            listaPrestadores.forEach(p => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${p.nome}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${p.doc}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${p.atividade}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">R$ ${parseFloat(p.valor).toFixed(2)}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${p.pagamento}</td>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${p.expBoleto}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        // Sistema de Lembretes e Notificações (Próximos 7 dias)
-        function verificarPrazosEAlimentarLembretes() {
-            const containerLembretes = document.getElementById('lista-lembretes-ativos');
-            if (!containerLembretes) return;
-            containerLembretes.innerHTML = "";
-
-            const hoje = new Date();
-            hoje.setHours(0,0,0,0);
-            let alertasProximos = [];
-
-            for (const [chave, nota] of Object.entries(agendaDados)) {
-                if (nota && nota.trim() !== "") {
-                    const partes = chave.split('-'); // ano-mes-dia
-                    const dataNota = new Date(partes[0], partes[1], partes[2]);
-                    dataNota.setHours(0,0,0,0);
-
-                    const diffTime = dataNota - hoje;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                    if (diffDays >= 0 && diffDays <= 7) {
-                        alertasProximos.push(`Compromisso para ${partes[2]}/${parseInt(partes[1])+1}/${partes[0]} (Faltam ${diffDays} dia(s)): "${nota}"`);
-                        containerLembretes.innerHTML += `
-                            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px;">
-                                <strong style="color: #991b1b;">Prazo Próximo (${diffDays} dia(s))</strong>
-                                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #1e293b;">${nota} - <b>Data: ${partes[2]}/${parseInt(partes[1])+1}/${partes[0]}</b></p>
-                            </div>
-                        `;
-                    }
-                }
-            }
-
-            if (containerLembretes.innerHTML === "") {
-                containerLembretes.innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">Nenhum prazo ou compromisso crítico agendado para os próximos 7 dias.</p>`;
-            } else if (alertasProximos.length > 0) {
-                mostrarPopupNotificacao(alertasProximos[0]);
-            }
-        }
-
-        let timeoutPopup = null;
-        function mostrarPopupNotificacao(mensagem) {
-            const popup = document.getElementById('popup-notificacao');
-            const texto = document.getElementById('texto-notificacao-popup');
-            if (!popup || !texto) return;
-            texto.innerText = mensagem;
-            popup.style.display = 'block';
-
-            if (timeoutPopup) clearTimeout(timeoutPopup);
-            timeoutPopup = setTimeout(() => {
-                fecharNotificacaoPopup();
-            }, 5000);
-        }
-
-        function fecharNotificacaoPopup() {
-            const popup = document.getElementById('popup-notificacao');
-            if (popup) popup.style.display = 'none';
-            if (timeoutPopup) clearTimeout(timeoutPopup);
-        }
-
-        // Inicialização Global
+    function mudarAno(ano) {
+        anoAtualGlobal = ano;
+        mesAtualGlobal = 0;
         renderizarSeletorAnos();
         renderizarMesesDoAno();
-        carregarCalendario(2026, 7); // Inicia em Agosto de 2026
-        setTimeout(verificarPrazosEAlimentarLembretes, 1500);
+        carregarCalendario(ano, mesAtualGlobal);
+    }
+
+    function renderizarMesesDoAno() {
+        const navMeses = document.getElementById("nav-meses");
+        navMeses.innerHTML = "";
+
+        nomesMeses.forEach((nomeMes, index) => {
+            const btn = document.createElement("button");
+            btn.className = `btn-mes-agenda ${mesAtualGlobal === index ? 'ativo' : ''}`;
+            btn.innerText = nomeMes;
+            btn.onclick = () => {
+                mesAtualGlobal = index;
+                renderizarMesesDoAno();
+                carregarCalendario(anoAtualGlobal, mesAtualGlobal);
+            };
+            navMeses.appendChild(btn);
+        });
+    }
+
+    function carregarCalendario(ano, mesIndex) {
+        const container = document.getElementById("calendario-postit");
+        container.innerHTML = "";
+
+        const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+
+        for (let i = 1; i <= diasNoMes; i++) {
+            const dataDia = new Date(ano, mesIndex, i);
+            dataDia.setHours(0,0,0,0);
+
+            const nomeDiaSemana = diasSemanaNomes[dataDia.getDay()];
+            const chaveKey = `${ano}-${mesIndex}-${i}`;
+            const textoNota = agendaDados[chaveKey] || "";
+
+            let corFundo = "#ffffff"; // Branco limpo padrão
+
+            const diffTime = dataDia - hoje;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (dataDia < hoje) {
+                corFundo = "#86efac"; // Verde bem vivo e forte (Passado)
+            } else if (textoNota.trim() !== "") {
+                if (diffDays <= 1) {
+                    corFundo = "#fca5a5"; // Vermelho bem vivo e forte (Hoje ou falta 1 dia)
+                } else {
+                    corFundo = "#93c5fd"; // Azul bem vivo e forte (Faltam 2 ou mais dias)
+                }
+            }
+
+            container.innerHTML += `
+                <div class="dia-postit" style="background-color: ${corFundo};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-weight: 700; font-size: 0.95rem; color: #0f223d;">${i < 10 ? '0'+i : i}</span>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase;">${nomeDiaSemana}</span>
+                    </div>
+                    <textarea onblur="salvarNotaPostit(${ano}, ${mesIndex}, ${i}, this.value)"
+                              placeholder="Escrever compromisso...">${textoNota}</textarea>
+                </div>
+            `;
+        }
+    }
+
+    function salvarNotaPostit(ano, mes, dia, texto) {
+        const chaveKey = `${ano}-${mes}-${dia}`;
+        agendaDados[chaveKey] = texto;
+        carregarCalendario(ano, mes);
+    }
+
+    // Inicialização da Agenda
+    renderizarSeletorAnos();
+    renderizarMesesDoAno();
+    carregarCalendario(2026, 7); // Inicia em Agosto de 2026
+</script>
+
+            <!-- Módulo: Faturamento -->
+            <div id="tab-faturamento" class="card">
+                <h3>Faturamento e Financeiro</h3>
+                <p>Controlo financeiro e transações.</p>
+            </div>
+
+            <!-- Módulo: Atividades -->
+            <div id="tab-atividades" class="card">
+                <h3>Controle de Atividades e Tarefas</h3>
+                <p>Visão geral de todas as tarefas.</p>
+            </div>
+
+            <!-- Sub-aba: Pendentes -->
+            <div id="tab-atividades-pendentes" class="card">
+                <h3>Atividades Pendentes</h3>
+                <p>Lista de tarefas que aguardam execução.</p>
+            </div>
+
+            <!-- Sub-aba: Concluídas -->
+            <div id="tab-atividades-concluidas" class="card">
+                <h3>Atividades Concluídas</h3>
+                <p>Histórico de tarefas já finalizadas com sucesso.</p>
+            </div>
+
+            <!-- MÓDULO EXCLUSIVO MASTER: CRIAR LOGIN -->
+            <div id="tab-criar-login" class="card">
+                <h3>Criar Login para Novo Utilizador</h3>
+                <p style="font-size: 0.9rem; color: #64748b;">Gere credenciais de acesso direto para equipas ou novos parceiros.</p>
+
+                <label>Nome do Novo Utilizador:</label>
+                <input type="text" id="novo-nome" placeholder="Nome completo">
+
+                <label>E-mail de Acesso:</label>
+                <input type="email" id="novo-email" placeholder="email@empresa.com">
+
+                <label>Senha Temporária:</label>
+                <input type="password" id="novo-senha" placeholder="Definir senha inicial">
+
+                <label>Nível de Permissão:</label>
+                <select id="novo-nivel">
+                    <option value="usuario">Utilizador Padrão</option>
+                    <option value="adminMaster">Administrador Master</option>
+                </select>
+
+                <button class="btn-form" onclick="criarAcessoParaOutraPessoa()">Gerar e Salvar Novo Acesso</button>
+                <div id="resultado-criacao-login" class="resultado" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. SCRIPTS DE CONTROLO -->
+    <script>
+        function mostrarTelaCadastro() {
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("register-screen").style.display = "flex";
+        }
+
+        function mostrarTelaLogin() {
+            document.getElementById("register-screen").style.display = "none";
+            document.getElementById("login-screen").style.display = "flex";
+        }
+
+        function validarCPFCNPJ(doc) {
+            const numeros = doc.replace(/\D/g, '');
+            return numeros.length === 11 || numeros.length === 14;
+        }
+
+        async function executarCadastro() {
+            const nome = document.getElementById("reg-nome").value.trim();
+            const documento = document.getElementById("reg-documento").value.trim();
+            const email = document.getElementById("reg-email").value.trim();
+            const celular = document.getElementById("reg-celular").value.trim();
+            const senha = document.getElementById("reg-senha").value.trim();
+            const termos = document.getElementById("reg-termos").checked;
+
+            if (!nome || !documento || !email || !celular || !senha) {
+                alert("Por favor, preencha todos os campos do cadastro.");
+                return;
+            }
+            if (!validarCPFCNPJ(documento)) {
+                alert("O CPF ou CNPJ informado é inválido.");
+                return;
+            }
+            if (!termos) {
+                alert("Você deve aceitar os Termos de Confidencialidade e LGPD.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/usuarios/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome: nome, email: email, password: senha, role: "usuario" })
+                });
+
+                if (response.ok) {
+                    alert("Cadastro realizado com sucesso! Faça login com suas credenciais.");
+                    mostrarTelaLogin();
+                } else {
+                    const errorData = await response.json();
+                    alert("Erro no cadastro: " + (errorData.detail || "Tente novamente."));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de conexão ao salvar o registo.");
+            }
+        }
+
+        async function fazerLogin() {
+            const emailInput = document.getElementById("login-usuario").value.trim();
+            const senhaInput = document.getElementById("login-senha").value.trim();
+
+            if (!emailInput || !senhaInput) {
+                alert("Preencha o e-mail/documento e a senha!");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: emailInput, password: senhaInput })
+                });
+
+                if (response.ok) {
+                    const usuario = await response.json();
+
+                    document.getElementById("login-screen").style.display = "none";
+                    document.getElementById("dashboard-container").style.display = "block";
+
+                    document.getElementById("user-email").innerText = usuario.email;
+                    document.getElementById("user-role").innerText = usuario.role;
+
+                    if (usuario.role === "adminMaster") {
+                        document.getElementById("badge-master").style.display = "block";
+                        document.getElementById("menu-item-criacao").style.display = "block";
+                    } else {
+                        document.getElementById("badge-master").style.display = "none";
+                        document.getElementById("menu-item-criacao").style.display = "none";
+                    }
+                } else {
+                    alert("E-mail ou senha incorretos!");
+                }
+            } catch (error) {
+                console.error("Erro no login:", error);
+                alert("Erro de conexão com o servidor FastAPI.");
+            }
+        }
+
+        function mudarAba(nomeAba, elementoBotao) {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => card.classList.remove('active-tab'));
+
+            const botoes = document.querySelectorAll('.sidebar-menu button, .submenu button');
+            botoes.forEach(btn => btn.classList.remove('active'));
+
+            const abaAlvo = document.getElementById('tab-' + nomeAba);
+            if (abaAlvo) abaAlvo.classList.add('active-tab');
+            if (elementoBotao) elementoBotao.classList.add('active');
+        }
+
+        async function criarAcessoParaOutraPessoa() {
+            const nome = document.getElementById("novo-nome").value.trim();
+            const email = document.getElementById("novo-email").value.trim();
+            const senha = document.getElementById("novo-senha").value.trim();
+            const nivel = document.getElementById("novo-nivel").value;
+
+            if (!nome || !email || !senha) {
+                alert("Preencha todos os campos do novo acesso!");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/usuarios/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome: nome, email: email, password: senha, role: nivel })
+                });
+
+                const resDiv = document.getElementById("resultado-criacao-login");
+                resDiv.style.display = "block";
+
+                if (response.ok) {
+                    resDiv.innerText = `Sucesso! Novo login criado para ${email} (${nivel}).`;
+                    document.getElementById("novo-nome").value = "";
+                    document.getElementById("novo-email").value = "";
+                    document.getElementById("novo-senha").value = "";
+                } else {
+                    const erroData = await response.json();
+                    resDiv.innerText = "Erro ao criar utilizador: " + (erroData.detail || "Verifique os dados.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de comunicação com o servidor.");
+            }
+        }
+
+        async function cadastrarEmpresa() {
+            const nome = document.getElementById('empresa-nome').value;
+            const cnpj = document.getElementById('empresa-cnpj').value;
+            const resDiv = document.getElementById('resultado-empresa');
+            resDiv.style.display = 'block';
+            resDiv.innerText = "Sucesso! Cliente salvo com ID de registo.";
+        }
+        // Array local para simular a tabela de produtos do stock
+        let listaProdutos = [];
+
+        function salvarProdutoEstoque() {
+            const nome = document.getElementById("produto-nome").value.trim();
+            const qtd = document.getElementById("produto-qtd").value.trim();
+            const validade = document.getElementById("produto-validade").value;
+
+            // Validação obrigatória dos dois campos principais
+            if (!nome || !qtd) {
+                alert("O preenchimento do Nome do Produto e da Quantidade é obrigatório!");
+                return;
+            }
+
+            // Adiciona o produto na lista
+            listaProdutos.push({
+                id: Date.now(),
+                nome: nome,
+                qtd: parseInt(qtd),
+                validade: validade ? validade.split('-').reverse().join('/') : 'Não informada'
+            });
+
+            // Limpa os campos
+            document.getElementById("produto-nome").value = "";
+            document.getElementById("produto-qtd").value = "";
+            document.getElementById("produto-validade").value = "";
+
+            renderizarTabelaProdutos();
+
+            const resDiv = document.getElementById("resultado-estoque");
+            resDiv.style.display = "block";
+            resDiv.innerText = `Sucesso! Produto "${nome}" guardado no stock.`;
+            setTimeout(() => { resDiv.style.display = "none"; }, 3000);
+        }
+
+        function renderizarTabelaProdutos() {
+            const tbody = document.getElementById("tabela-produtos-corpo");
+            if (listaProdutos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto cadastrado ainda.</td></tr>`;
+                return;
+            }
+
+            let html = "";
+            listaProdutos.forEach(prod => {
+                html += `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 10px; text-align: center;"><input type="checkbox" class="produto-checkbox" value="${prod.id}"></td>
+                        <td style="padding: 10px; font-weight: 500;">${prod.nome}</td>
+                        <td style="padding: 10px;">${prod.qtd}</td>
+                        <td style="padding: 10px;">${prod.validade}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function selecionarTodosProdutos(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.produto-checkbox');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+
+        function confirmarExclusaoSelecionados() {
+            const checkboxes = document.querySelectorAll('.produto-checkbox:checked');
+            const quantidadeSelecionada = checkboxes.length;
+
+            if (quantidadeSelecionada === 0) {
+                alert("Selecione pelo menos um produto para excluir.");
+                return;
+            }
+
+            // Mensagem solicitada contendo exatamente a quantidade de produtos selecionados
+            document.getElementById("mensagem-modal-exclusao").innerText = `Deseja realmente excluir os ${quantidadeSelecionada} produto(s) selecionado(s)?`;
+            document.getElementById("modal-exclusao").style.display = "flex";
+        }
+
+        function fecharModalExclusao() {
+            document.getElementById("modal-exclusao").style.display = "none";
+        }
+
+        function executarExclusaoProdutos() {
+            const checkboxes = document.querySelectorAll('.produto-checkbox:checked');
+            const idsParaExcluir = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+            // Filtra a lista removendo os selecionados
+            listaProdutos = listaProdutos.filter(prod => !idsParaExcluir.includes(prod.id));
+
+            fecharModalExclusao();
+            renderizarTabelaProdutos();
+
+            // Reseta o checkbox principal
+            const selectAll = document.getElementById("selectAll");
+            if (selectAll) selectAll.checked = false;
+        }
     </script>
 </body>
 </html>
