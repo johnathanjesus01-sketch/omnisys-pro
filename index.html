@@ -603,20 +603,25 @@
                 </div>
             </div>
 
-            <!-- Módulo: Estoque com Leitor de Código de Barras e Câmera -->
+            <!-- Módulo: Estoque com Leitor de Código de Barras e Busca Universal Automática -->
             <div id="tab-estoque" class="card">
                 <h3>Gerenciamento de Estoque</h3>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Utilize leitor externo ou câmera para capturar o Código Universal (EAN) dos produtos.</p>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Insira o código EAN para puxar o nome automaticamente da central universal.</p>
 
                 <form id="form-estoque" onsubmit="salvarProdutoEstoque(event)" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: flex-end;">
                     <input type="hidden" id="prod-edit-index" value="-1">
 
-                    <div style="grid-column: span 2;">
-                        <label>Código Universal / EAN (Leitor ou Digitação):</label>
+                    <div style="grid-column: span 3;">
+                        <label>Código Universal / EAN (Leitor ou Digitação + Enter):</label>
                         <div style="display: flex; gap: 8px;">
-                            <input type="text" id="produto-codigo" placeholder="Ex: 7891000100103" style="flex: 1;">
-                            <button type="button" onclick="iniciarLeitorCamera()" style="background: #0f223d; color: white; border: none; padding: 0 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;" title="Escanear com a Câmera">📷 Câmera</button>
+                            <input type="text" id="produto-codigo" placeholder="Ex: 7891000100103" onchange="buscarProdutoUniversal(this.value)" onkeypress="if(event.key==='Enter'){event.preventDefault(); buscarProdutoUniversal(this.value);}" style="flex: 1; font-weight: bold; color: #2563eb;">
+                            <button type="button" onclick="iniciarLeitorCamera()" style="background: #0f223d; color: white; border: none; padding: 0 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;" title="Escanear com a Câmera">📷 Câmera</button>
                         </div>
+                    </div>
+
+                    <div style="grid-column: span 3;">
+                        <label>Nome do Produto (Puxado da Central Universal):</label>
+                        <input type="text" id="produto-nome" placeholder="Aguardando leitura do código..." readonly style="background: #e2e8f0; font-weight: 600; color: #0f223d;" required>
                     </div>
 
                     <div>
@@ -624,17 +629,12 @@
                         <input type="number" id="produto-qtd" placeholder="0" required>
                     </div>
 
-                    <div style="grid-column: span 2;">
-                        <label>Nome do Produto:</label>
-                        <input type="text" id="produto-nome" placeholder="Ex: Refrigerante Cola 2L" required>
-                    </div>
-
                     <div>
                         <label>Validade:</label>
                         <input type="date" id="produto-validade">
                     </div>
 
-                    <div style="grid-column: span 3;">
+                    <div>
                         <label>Subgrupo / Categoria:</label>
                         <select id="produto-subgrupo" onchange="verificarSubgrupoPersonalizado(this.value)">
                             <option value="Geral">Geral (Sem subgrupo específico)</option>
@@ -873,9 +873,41 @@
             localStorage.setItem('omnisys_agenda', JSON.stringify(agendaDados));
         }
 
-        // --- GESTÃO DE ESTOQUE & LEITOR DE CÓDIGO DE BARRAS ---
+        // --- BUSCA AUTOMÁTICA NA CENTRAL UNIVERSAL E LEITOR ---
         let subgrupoFiltroAtual = 'Todos';
         let html5QrCodeScanner = null;
+
+        async function buscarProdutoUniversal(codigo) {
+            const codigoLimpo = codigo.trim();
+            const inputNome = document.getElementById('produto-nome');
+            if (!codigoLimpo) return;
+
+            inputNome.value = "Consultando central universal...";
+
+            try {
+                // Consulta gratuita na API pública global Open Food Facts (Open Database EAN)
+                const resposta = await fetch(`https://world.openfoodfacts.org/api/v0/product/${codigoLimpo}.json`);
+                const dados = await resposta.json();
+
+                if (dados.status === 1 && dados.product) {
+                    let nomeProduto = dados.product.product_name || dados.product.generic_name || dados.product.product_name_pt;
+                    if (nomeProduto) {
+                        inputNome.value = nomeProduto;
+                        return;
+                    }
+                }
+
+                // Se não encontrar na base universal, permite digitar ou atribui código genérico identificado
+                inputNome.value = "Produto EAN: " + codigoLimpo + " (Nome não cadastrado na central)";
+                inputNome.removeAttribute("readonly");
+                inputNome.style.background = "#ffffff";
+                inputNome.focus();
+            } catch (erro) {
+                inputNome.value = "Produto EAN: " + codigoLimpo;
+                inputNome.removeAttribute("readonly");
+                inputNome.style.background = "#ffffff";
+            }
+        }
 
         function iniciarLeitorCamera() {
             const modalCam = document.getElementById('modal-camera');
@@ -893,11 +925,9 @@
                 (decodedText, decodedResult) => {
                     document.getElementById('produto-codigo').value = decodedText;
                     pararLeitorCamera();
-                    alert("Código de barras lido com sucesso: " + decodedText);
+                    buscarProdutoUniversal(decodedText);
                 },
-                (errorMessage) => {
-                    // Erros de leitura quadro a quadro são ignorados para fluidez
-                }
+                (errorMessage) => {}
             ).catch(err => {
                 alert("Erro ao iniciar a câmera: " + err);
                 modalCam.style.display = 'none';
@@ -947,6 +977,8 @@
             }
 
             document.getElementById('form-estoque').reset();
+            document.getElementById('produto-nome').setAttribute("readonly", true);
+            document.getElementById('produto-nome').style.background = "#e2e8f0";
             document.getElementById('container-subgrupo-personalizado').style.display = 'none';
             salvarDadosLocal();
             atualizarTabelaEstoque();
@@ -957,6 +989,8 @@
             document.getElementById('prod-edit-index').value = index;
             document.getElementById('produto-codigo').value = p.codigo !== 'S/ Código' ? p.codigo : '';
             document.getElementById('produto-nome').value = p.nome;
+            document.getElementById('produto-nome').removeAttribute("readonly");
+            document.getElementById('produto-nome').style.background = "#ffffff";
             document.getElementById('produto-qtd').value = p.qtd;
             document.getElementById('produto-validade').value = p.validade !== '-' ? p.validade : '';
 
