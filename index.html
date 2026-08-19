@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Omnisys Pro - Gestão Inteligente</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Biblioteca para Leitura de Código de Barras via Câmera -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         :root {
             --primary: #0f223d;
@@ -601,26 +603,38 @@
                 </div>
             </div>
 
-            <!-- Módulo: Estoque com Subgrupos Predeterminados + Personalizar -->
+            <!-- Módulo: Estoque com Leitor de Código de Barras e Câmera -->
             <div id="tab-estoque" class="card">
                 <h3>Gerenciamento de Estoque</h3>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Cadastre e controle os itens do inventário divididos por categorias e subgrupos.</p>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Utilize leitor externo ou câmera para capturar o Código Universal (EAN) dos produtos.</p>
 
                 <form id="form-estoque" onsubmit="salvarProdutoEstoque(event)" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: flex-end;">
                     <input type="hidden" id="prod-edit-index" value="-1">
-                    <div>
-                        <label>Nome do Produto:</label>
-                        <input type="text" id="produto-nome" placeholder="Ex: Produto X" required>
+
+                    <div style="grid-column: span 2;">
+                        <label>Código Universal / EAN (Leitor ou Digitação):</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="produto-codigo" placeholder="Ex: 7891000100103" style="flex: 1;">
+                            <button type="button" onclick="iniciarLeitorCamera()" style="background: #0f223d; color: white; border: none; padding: 0 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;" title="Escanear com a Câmera">📷 Câmera</button>
+                        </div>
                     </div>
+
                     <div>
                         <label>Quantidade:</label>
                         <input type="number" id="produto-qtd" placeholder="0" required>
                     </div>
+
+                    <div style="grid-column: span 2;">
+                        <label>Nome do Produto:</label>
+                        <input type="text" id="produto-nome" placeholder="Ex: Refrigerante Cola 2L" required>
+                    </div>
+
                     <div>
                         <label>Validade:</label>
                         <input type="date" id="produto-validade">
                     </div>
-                    <div>
+
+                    <div style="grid-column: span 3;">
                         <label>Subgrupo / Categoria:</label>
                         <select id="produto-subgrupo" onchange="verificarSubgrupoPersonalizado(this.value)">
                             <option value="Geral">Geral (Sem subgrupo específico)</option>
@@ -633,13 +647,23 @@
                             <option value="Personalizado">Outro (Personalizar)...</option>
                         </select>
                     </div>
-                    <div id="container-subgrupo-personalizado" style="display: none; grid-column: span 2;">
+
+                    <div id="container-subgrupo-personalizado" style="display: none; grid-column: span 3;">
                         <label style="color: #2563eb; font-weight: bold;">Digite o Nome do Subgrupo Personalizado:</label>
                         <input type="text" id="produto-subgrupo-custom" placeholder="Ex: Peças Especiais" style="border-color: #93c5fd; background: #eff6ff;">
                     </div>
 
-                    <button type="submit" id="btn-salvar-produto" class="btn-form" style="grid-column: span 3; background-color: var(--success); margin-top: 5px;">Salvar Produto</button>
+                    <button type="submit" id="btn-salvar-produto" class="btn-form" style="grid-column: span 3; background-color: var(--success); margin-top: 5px;">Salvar Produto no Estoque</button>
                 </form>
+
+                <!-- Modal de Câmera para Leitura -->
+                <div id="modal-camera" style="display: none; background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="color: white; font-size: 0.95rem;">Aponte a câmera para o código de barras</strong>
+                        <button type="button" onclick="pararLeitorCamera()" style="background: #dc2626; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Fechar Câmera</button>
+                    </div>
+                    <div id="reader" style="width: 100%; max-width: 400px; margin: 0 auto; background: black; border-radius: 6px;"></div>
+                </div>
 
                 <!-- Abas de Subgrupos de Estoque -->
                 <div id="container-subgrupos-estoque" style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
@@ -650,6 +674,7 @@
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
                         <thead>
                             <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
+                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Código EAN</th>
                                 <th style="padding: 10px; border: 1px solid #e2e8f0;">Produto</th>
                                 <th style="padding: 10px; border: 1px solid #e2e8f0;">Quantidade</th>
                                 <th style="padding: 10px; border: 1px solid #e2e8f0;">Validade</th>
@@ -658,7 +683,7 @@
                             </tr>
                         </thead>
                         <tbody id="tabela-estoque-corpo">
-                            <tr><td colspan="5" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto registado no estoque.</td></tr>
+                            <tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto registado no estoque.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -763,6 +788,7 @@
         }
 
         function mudarAba(nomeAba, elementoBotao) {
+            pararLeitorCamera();
             const cards = document.querySelectorAll('.card');
             cards.forEach(card => card.classList.remove('active-tab'));
             const botoes = document.querySelectorAll('.sidebar-menu button');
@@ -847,11 +873,53 @@
             localStorage.setItem('omnisys_agenda', JSON.stringify(agendaDados));
         }
 
-        // --- GESTÃO DE ESTOQUE ---
+        // --- GESTÃO DE ESTOQUE & LEITOR DE CÓDIGO DE BARRAS ---
         let subgrupoFiltroAtual = 'Todos';
+        let html5QrCodeScanner = null;
+
+        function iniciarLeitorCamera() {
+            const modalCam = document.getElementById('modal-camera');
+            modalCam.style.display = 'block';
+
+            if (!html5QrCodeScanner) {
+                html5QrCodeScanner = new Html5Qrcode("reader");
+            }
+
+            const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+
+            html5QrCodeScanner.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText, decodedResult) => {
+                    document.getElementById('produto-codigo').value = decodedText;
+                    pararLeitorCamera();
+                    alert("Código de barras lido com sucesso: " + decodedText);
+                },
+                (errorMessage) => {
+                    // Erros de leitura quadro a quadro são ignorados para fluidez
+                }
+            ).catch(err => {
+                alert("Erro ao iniciar a câmera: " + err);
+                modalCam.style.display = 'none';
+            });
+        }
+
+        function pararLeitorCamera() {
+            const modalCam = document.getElementById('modal-camera');
+            if (html5QrCodeScanner && modalCam.style.display === 'block') {
+                html5QrCodeScanner.stop().then(() => {
+                    modalCam.style.display = 'none';
+                }).catch(err => {
+                    modalCam.style.display = 'none';
+                });
+            } else {
+                modalCam.style.display = 'none';
+            }
+        }
 
         function salvarProdutoEstoque(event) {
             event.preventDefault();
+            pararLeitorCamera();
             const indexEdit = parseInt(document.getElementById('prod-edit-index').value);
 
             let subgrupoSelecionado = document.getElementById('produto-subgrupo').value;
@@ -861,6 +929,7 @@
             }
 
             const dadosProduto = {
+                codigo: document.getElementById('produto-codigo').value.trim() || 'S/ Código',
                 nome: document.getElementById('produto-nome').value.trim(),
                 qtd: document.getElementById('produto-qtd').value.trim(),
                 validade: document.getElementById('produto-validade').value || '-',
@@ -873,7 +942,7 @@
             } else {
                 listaEstoque[indexEdit] = dadosProduto;
                 document.getElementById('prod-edit-index').value = "-1";
-                document.getElementById('btn-salvar-produto').innerText = "Salvar Produto";
+                document.getElementById('btn-salvar-produto').innerText = "Salvar Produto no Estoque";
                 alert("Produto atualizado com sucesso!");
             }
 
@@ -886,6 +955,7 @@
         function editarProduto(index) {
             const p = listaEstoque[index];
             document.getElementById('prod-edit-index').value = index;
+            document.getElementById('produto-codigo').value = p.codigo !== 'S/ Código' ? p.codigo : '';
             document.getElementById('produto-nome').value = p.nome;
             document.getElementById('produto-qtd').value = p.qtd;
             document.getElementById('produto-validade').value = p.validade !== '-' ? p.validade : '';
@@ -936,12 +1006,13 @@
             });
 
             if (filtrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto encontrado nesta categoria.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum produto encontrado nesta categoria.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtrados.map(p => `
                 <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px; font-family: monospace; font-weight: bold; color: #2563eb;">${p.codigo}</td>
                     <td style="padding: 10px;">${p.nome}</td>
                     <td style="padding: 10px;">${p.qtd}</td>
                     <td style="padding: 10px;">${p.validade}</td>
