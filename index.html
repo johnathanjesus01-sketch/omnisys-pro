@@ -759,6 +759,38 @@
 
                 <!-- Sub-visão 2: Histórico de Clientes (Concluídos) -->
                 <div id="sub-fat-clientes" class="sub-conteudo-fat" style="display: none;">
+                    <!-- LAYOUT POWER BI STYLE (KPI CARDS PARA CLIENTES) -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                        <div style="background: linear-gradient(135deg, #0f223d, #1e3a8a); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Faturamento Bruto (Entradas)</span>
+                            <h2 id="kpi-cli-bruto" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #16a34a, #15803d); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Valor Líquido Clientes</span>
+                            <h2 id="kpi-cli-liquido" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
+                        <div id="card-kpi-cli-imposto" style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">IR Retido Clientes</span>
+                            <h2 id="kpi-cli-imposto" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICOS POWER BI STYLE PARA CLIENTES -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                        <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                            <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Receita por Forma de Pagamento</h4>
+                            <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="chartMetodosCli"></canvas>
+                            </div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                            <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Bruto vs Líquido de Clientes</h4>
+                            <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="chartComparativoCli"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
                     <h4 style="margin-bottom: 10px; color: var(--primary);">Histórico Individual de Faturamento (Clientes Concluídos)</h4>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
@@ -781,6 +813,30 @@
 
                 <!-- Sub-visão 3: Histórico de Prestadores (Despesas) -->
                 <div id="sub-fat-prestadores" class="sub-conteudo-fat" style="display: none;">
+                    <!-- LAYOUT POWER BI STYLE (KPI CARDS PARA PRESTADORES) -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                        <div style="background: linear-gradient(135deg, #b91c1c, #991b1b); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Total Despesas (Prestadores)</span>
+                            <h2 id="kpi-pres-despesas" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICOS POWER BI STYLE PARA PRESTADORES -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                        <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                            <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Despesas por Forma de Pagamento</h4>
+                            <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="chartMetodosPres"></canvas>
+                            </div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                            <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Resumo de Saídas (Prestadores)</h4>
+                            <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="chartComparativoPres"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
                     <h4 style="margin-bottom: 10px; color: var(--primary);">Histórico Individual de Despesas (Prestadores Concluídos)</h4>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
@@ -955,6 +1011,7 @@
                 subPrestadores.style.display = 'block';
                 btnPrestadores.className = 'btn-sub-aba ativo-sub';
             }
+            atualizarDashboardFaturamento();
         }
 
         let tipoAtividadeAtual = 'clientes';
@@ -965,15 +1022,18 @@
             leituraComIRAtiva = !leituraComIRAtiva;
             const btnIR = document.getElementById('btn-toggle-ir');
             const cardImposto = document.getElementById('card-kpi-imposto');
+            const cardCliImposto = document.getElementById('card-kpi-cli-imposto');
 
             if (leituraComIRAtiva) {
                 btnIR.innerText = "🟢 Leitura com IR: ATIVADA";
                 btnIR.style.background = "#16a34a";
-                cardImposto.style.display = "block";
+                if (cardImposto) cardImposto.style.display = "block";
+                if (cardCliImposto) cardCliImposto.style.display = "block";
             } else {
                 btnIR.innerText = "🔴 Leitura com IR: DESATIVADA";
                 btnIR.style.background = "#dc2626";
-                cardImposto.style.display = "none";
+                if (cardImposto) cardImposto.style.display = "none";
+                if (cardCliImposto) cardCliImposto.style.display = "none";
             }
             atualizarDashboardFaturamento();
         }
@@ -1037,6 +1097,10 @@
 
         let chartMetodosInstance = null;
         let chartComparativoInstance = null;
+        let chartMetodosCliInstance = null;
+        let chartComparativoCliInstance = null;
+        let chartMetodosPresInstance = null;
+        let chartComparativoPresInstance = null;
 
         function atualizarDashboardFaturamento() {
             const tbodyClientes = document.getElementById('tabela-faturamento-clientes-corpo');
@@ -1049,6 +1113,7 @@
             let totalBrutoEntrada = 0;
             let totalDespesas = 0;
             const somatorioMetodos = { 'Pix': 0, 'Dinheiro': 0, 'Cartão de Débito': 0, 'Cartão de Crédito': 0 };
+            const somatorioMetodosPres = { 'Pix': 0, 'Dinheiro': 0, 'Cartão de Débito': 0, 'Cartão de Crédito': 0, 'Boleto': 0 };
 
             clientesConcluidos.forEach(c => {
                 const val = parseFloat(c.valor) || 0;
@@ -1059,7 +1124,11 @@
             });
 
             prestadoresConcluidos.forEach(p => {
-                totalDespesas += parseFloat(p.valor) || 0;
+                const val = parseFloat(p.valor) || 0;
+                totalDespesas += val;
+                if (somatorioMetodosPres[p.pagamento] !== undefined) {
+                    somatorioMetodosPres[p.pagamento] += val;
+                }
             });
 
             let totalIR = 0;
@@ -1071,10 +1140,23 @@
             const totalLiquidoEntrada = totalBrutoEntrada - totalIR;
             const saldoFinalLiquido = totalLiquidoEntrada - totalDespesas;
 
+            // Atualiza KPIs Painel Geral
             document.getElementById('kpi-bruto').innerText = `R$ ${totalBrutoEntrada.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             document.getElementById('kpi-despesas').innerText = `R$ ${totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             document.getElementById('kpi-liquido').innerText = `R$ ${saldoFinalLiquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             document.getElementById('kpi-imposto').innerText = `R$ ${totalIR.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+            // Atualiza KPIs Histórico de Clientes
+            const elCliBruto = document.getElementById('kpi-cli-bruto');
+            const elCliLiquido = document.getElementById('kpi-cli-liquido');
+            const elCliImposto = document.getElementById('kpi-cli-imposto');
+            if (elCliBruto) elCliBruto.innerText = `R$ ${totalBrutoEntrada.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            if (elCliLiquido) elCliLiquido.innerText = `R$ ${totalLiquidoEntrada.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            if (elCliImposto) elCliImposto.innerText = `R$ ${totalIR.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+            // Atualiza KPIs Histórico de Prestadores
+            const elPresDespesas = document.getElementById('kpi-pres-despesas');
+            if (elPresDespesas) elPresDespesas.innerText = `R$ ${totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
             // Tabela 1: Histórico de Clientes
             if (clientesConcluidos.length === 0) {
@@ -1117,61 +1199,186 @@
                 }).join('');
             }
 
-            renderizarGraficosPowerBI(somatorioMetodos, totalBrutoEntrada, totalDespesas, saldoFinalLiquido);
+            // Renderiza gráficos para a aba ativa
+            const subGeralVisivel = document.getElementById('sub-fat-geral').style.display !== 'none';
+            const subCliVisivel = document.getElementById('sub-fat-clientes').style.display !== 'none';
+            const subPresVisivel = document.getElementById('sub-fat-prestadores').style.display !== 'none';
+
+            if (subGeralVisivel) {
+                renderizarGraficosGeral(somatorioMetodos, totalBrutoEntrada, totalDespesas, saldoFinalLiquido);
+            } else if (subCliVisivel) {
+                renderizarGraficosClientes(somatorioMetodos, totalBrutoEntrada, totalLiquidoEntrada);
+            } else if (subPresVisivel) {
+                renderizarGraficosPrestadores(somatorioMetodosPres, totalDespesas);
+            }
         }
 
         function destruirGraficos() {
             if (chartMetodosInstance) { chartMetodosInstance.destroy(); chartMetodosInstance = null; }
             if (chartComparativoInstance) { chartComparativoInstance.destroy(); chartComparativoInstance = null; }
+            if (chartMetodosCliInstance) { chartMetodosCliInstance.destroy(); chartMetodosCliInstance = null; }
+            if (chartComparativoCliInstance) { chartComparativoCliInstance.destroy(); chartComparativoCliInstance = null; }
+            if (chartMetodosPresInstance) { chartMetodosPresInstance.destroy(); chartMetodosPresInstance = null; }
+            if (chartComparativoPresInstance) { chartComparativoPresInstance.destroy(); chartComparativoPresInstance = null; }
         }
 
-        function renderizarGraficosPowerBI(metodos, bruto, despesas, liquido) {
+        function renderizarGraficosGeral(metodos, bruto, despesas, liquido) {
             destruirGraficos();
 
-            const ctxMetodos = document.getElementById('chartMetodos').getContext('2d');
-            chartMetodosInstance = new Chart(ctxMetodos, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(metodos),
-                    datasets: [{
-                        data: Object.values(metodos),
-                        backgroundColor: ['#2563eb', '#16a34a', '#d97706', '#9333ea'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } }
-                    }
-                }
-            });
-
-            const ctxComparativo = document.getElementById('chartComparativo').getContext('2d');
-            chartComparativoInstance = new Chart(ctxComparativo, {
-                type: 'bar',
-                data: {
-                    labels: ['Entradas (Bruto)', 'Saídas (Despesas)', 'Saldo Líquido'],
-                    datasets: [{
-                        data: [bruto, despesas, liquido],
-                        backgroundColor: ['#16a34a', '#dc2626', '#2563eb'],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
+            const ctxMetodos = document.getElementById('chartMetodos');
+            if (ctxMetodos) {
+                chartMetodosInstance = new Chart(ctxMetodos.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(metodos),
+                        datasets: [{
+                            data: Object.values(metodos),
+                            backgroundColor: ['#2563eb', '#16a34a', '#d97706', '#9333ea'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
                     },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                        x: { grid: { display: false } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } }
+                        }
                     }
-                }
-            });
+                });
+            }
+
+            const ctxComparativo = document.getElementById('chartComparativo');
+            if (ctxComparativo) {
+                chartComparativoInstance = new Chart(ctxComparativo.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Entradas (Bruto)', 'Saídas (Despesas)', 'Saldo Líquido'],
+                        datasets: [{
+                            data: [bruto, despesas, liquido],
+                            backgroundColor: ['#16a34a', '#dc2626', '#2563eb'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderizarGraficosClientes(metodos, bruto, liquido) {
+            destruirGraficos();
+
+            const ctxMetodosCli = document.getElementById('chartMetodosCli');
+            if (ctxMetodosCli) {
+                chartMetodosCliInstance = new Chart(ctxMetodosCli.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(metodos),
+                        datasets: [{
+                            data: Object.values(metodos),
+                            backgroundColor: ['#2563eb', '#16a34a', '#d97706', '#9333ea'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } }
+                        }
+                    }
+                });
+            }
+
+            const ctxComparativoCli = document.getElementById('chartComparativoCli');
+            if (ctxComparativoCli) {
+                chartComparativoCliInstance = new Chart(ctxComparativoCli.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Faturamento Bruto', 'Faturamento Líquido'],
+                        datasets: [{
+                            data: [bruto, liquido],
+                            backgroundColor: ['#0f223d', '#16a34a'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderizarGraficosPrestadores(metodos, despesas) {
+            destruirGraficos();
+
+            const ctxMetodosPres = document.getElementById('chartMetodosPres');
+            if (ctxMetodosPres) {
+                chartMetodosPresInstance = new Chart(ctxMetodosPres.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(metodos),
+                        datasets: [{
+                            data: Object.values(metodos),
+                            backgroundColor: ['#2563eb', '#16a34a', '#d97706', '#9333ea', '#dc2626'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } }
+                        }
+                    }
+                });
+            }
+
+            const ctxComparativoPres = document.getElementById('chartComparativoPres');
+            if (ctxComparativoPres) {
+                chartComparativoPresInstance = new Chart(ctxComparativoPres.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Total Saídas (Prestadores)'],
+                        datasets: [{
+                            data: [despesas],
+                            backgroundColor: ['#dc2626'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
         }
 
         // --- BUSCA AUTOMÁTICA NA CENTRAL UNIVERSAL E LEITOR ---
