@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Omnisys Pro - Gestão Inteligente</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Biblioteca para Leitura de Código de Barras via Câmera -->
+    <!-- Biblioteca para Leitura de Código de Barras e QR Code via Câmera -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <!-- Biblioteca para Gráficos Power BI Style (Chart.js) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -538,7 +538,26 @@
 
                 <!-- Sub-aba 2: Prestador de Serviço -->
                 <div id="sub-prestador-cad" class="sub-conteudo-cli" style="display: none;">
-                    <h4 id="titulo-form-prestador" style="margin-bottom: 12px; color: var(--primary);">Registar Prestador de Serviço / Orçamento</h4>
+                    <h4 id="titulo-form-prestador" style="margin-bottom: 12px; color: var(--primary);">Registar Prestador de Serviço / Orçamento / Despesa</h4>
+
+                    <!-- BOTÕES DE LEITURA RÁPIDA (BOLETO / CHAVE NF-E) -->
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
+                        <span style="font-weight: bold; font-size: 0.85rem; color: var(--primary);">⚡ Preenchimento Rápido por Documento / Código:</span>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="button" onclick="iniciarLeitorCameraPrestador()" style="background: #0f223d; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">📷 Escanear Boleto / QR Code</button>
+                            <input type="text" id="input-chave-nfe" placeholder="Ou cole a Chave de Acesso da NF-e (44 dígitos)" onchange="processarChaveNFe(this.value)" style="flex: 1; min-width: 280px; padding: 8px; font-size: 0.85rem;">
+                        </div>
+                    </div>
+
+                    <!-- Modal de Câmera para Prestadores -->
+                    <div id="modal-camera-prestador" style="display: none; background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="color: white; font-size: 0.95rem;">Aponte para o Código de Barras do Boleto ou QR Code da Nota</strong>
+                            <button type="button" onclick="pararLeitorCameraPrestador()" style="background: #dc2626; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Fechar Câmera</button>
+                        </div>
+                        <div id="reader-prestador" style="width: 100%; max-width: 400px; margin: 0 auto; background: black; border-radius: 6px;"></div>
+                    </div>
+
                     <form id="form-prestador" onsubmit="salvarPrestador(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
                         <input type="hidden" id="pres-edit-index" value="-1">
                         <div>
@@ -554,8 +573,8 @@
                             <input type="text" id="pres-celular" placeholder="(00) 00000-0000" required>
                         </div>
                         <div>
-                            <label>Atividade Solicitada:</label>
-                            <input type="text" id="pres-atividade" placeholder="Ex: Manutenção" required>
+                            <label>Atividade Solicitada / Descrição:</label>
+                            <input type="text" id="pres-atividade" placeholder="Ex: Manutenção / Compra" required>
                         </div>
                         <div>
                             <label>Data de Início da Atividade:</label>
@@ -566,7 +585,7 @@
                             <input type="time" id="pres-horario" required>
                         </div>
                         <div>
-                            <label>Valor Orçamento (R$):</label>
+                            <label>Valor Despesa / Orçamento (R$):</label>
                             <input type="number" step="0.01" id="pres-valor" placeholder="0.00" required>
                         </div>
                         <div>
@@ -585,10 +604,10 @@
                             <input type="date" id="pres-exp-boleto" style="border-color: #fca5a5; background: #fef2f2;">
                         </div>
 
-                        <button type="submit" id="btn-salvar-prestador" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Prestador</button>
+                        <button type="submit" id="btn-salvar-prestador" class="btn-form" style="grid-column: span 2; margin-top: 5px;">Guardar Prestador / Despesa</button>
                     </form>
 
-                    <h4 style="margin-bottom: 10px; color: var(--primary);">Lista de Prestadores Registados</h4>
+                    <h4 style="margin-bottom: 10px; color: var(--primary);">Lista de Prestadores e Despesas Registadas</h4>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
                             <thead>
@@ -944,6 +963,7 @@
 
         function mudarAba(nomeAba, elementoBotao) {
             pararLeitorCamera();
+            pararLeitorCameraPrestador();
             const cards = document.querySelectorAll('.card');
             cards.forEach(card => card.classList.remove('active-tab'));
             const botoes = document.querySelectorAll('.sidebar-menu button');
@@ -1064,6 +1084,105 @@
             const containerCustom = document.getElementById('container-subgrupo-personalizado');
             if (containerCustom) {
                 containerCustom.style.display = (valor === 'Personalizado') ? 'block' : 'none';
+            }
+        }
+
+        // --- PROCESSAMENTO INTELIGENTE DE BOLETOS E CHAVES NF-E PARA PRESTADORES ---
+        let html5QrCodeScannerPrestador = null;
+
+        function iniciarLeitorCameraPrestador() {
+            const modalCam = document.getElementById('modal-camera-prestador');
+            modalCam.style.display = 'block';
+
+            if (!html5QrCodeScannerPrestador) {
+                html5QrCodeScannerPrestador = new Html5Qrcode("reader-prestador");
+            }
+
+            const config = { fps: 10, qrbox: { width: 280, height: 160 } };
+
+            html5QrCodeScannerPrestador.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText, decodedResult) => {
+                    pararLeitorCameraPrestador();
+                    processarDadosLidosDocumento(decodedText);
+                },
+                (errorMessage) => {}
+            ).catch(err => {
+                alert("Erro ao iniciar a câmera: " + err);
+                modalCam.style.display = 'none';
+            });
+        }
+
+        function pararLeitorCameraPrestador() {
+            const modalCam = document.getElementById('modal-camera-prestador');
+            if (html5QrCodeScannerPrestador && modalCam.style.display === 'block') {
+                html5QrCodeScannerPrestador.stop().then(() => {
+                    modalCam.style.display = 'none';
+                }).catch(err => {
+                    modalCam.style.display = 'none';
+                });
+            } else {
+                modalCam.style.display = 'none';
+            }
+        }
+
+        function processarChaveNFe(chave) {
+            const chaveLimpa = chave.trim();
+            if (chaveLimpa.length === 44) {
+                // Extrai o CNPJ da chave (posições 6 a 20)
+                const cnpjEmitente = chaveLimpa.substring(6, 20);
+                const cnpjFormatado = cnpjEmitente.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+
+                document.getElementById('pres-doc').value = cnpjFormatado;
+                document.getElementById('pres-nome').value = `Fornecedor CNPJ: ${cnpjFormatado}`;
+                document.getElementById('pres-atividade').value = "Nota Fiscal Eletrônica (NF-e)";
+                alert("Chave de Acesso lida com sucesso! CNPJ preenchido.");
+            } else {
+                alert("A chave de acesso da NF-e deve conter exatamente 44 dígitos.");
+            }
+        }
+
+        function processarDadosLidosDocumento(texto) {
+            const codigo = texto.trim();
+
+            // Se for URL de QR Code de Nota Fiscal (NFC-e / Sefaz)
+            if (codigo.includes("http") && codigo.includes("chNFe=")) {
+                const urlParams = new URLSearchParams(codigo.split('?')[1]);
+                const chNFe = urlParams.get('chNFe');
+                if (chNFe) {
+                    document.getElementById('input-chave-nfe').value = chNFe;
+                    processarChaveNFe(chNFe);
+                    return;
+                }
+            }
+
+            // Se for Chave de Acesso direta (44 dígitos)
+            if (codigo.length === 44 && /^\d+$/.test(codigo)) {
+                document.getElementById('input-chave-nfe').value = codigo;
+                processarChaveNFe(codigo);
+                return;
+            }
+
+            // Se for código de barras de boleto bancário padrão FEBRABAN (geralmente 44 ou 48 caracteres)
+            if (codigo.length >= 44) {
+                document.getElementById('pres-pagamento').value = 'Boleto';
+                verificarBoletoPrestador('Boleto');
+                document.getElementById('pres-atividade').value = "Pagamento de Boleto Escaneado";
+
+                // Tenta extrair o valor (últimos 10 dígitos do boleto representam o valor em centavos)
+                try {
+                    const trechoValor = codigo.slice(-10);
+                    const valorCentavos = parseInt(trechoValor, 10);
+                    if (!isNaN(valorCentavos) && valorCentavos > 0) {
+                        const valorReal = (valorCentavos / 100).toFixed(2);
+                        document.getElementById('pres-valor').value = valorReal;
+                    }
+                } catch(e) {}
+
+                alert("Boleto escaneado com sucesso! Método ajustado para Boleto e valor estimado extraído.");
+            } else {
+                alert("Código lido: " + codigo);
             }
         }
 
@@ -1669,15 +1788,15 @@
 
             if (indexEdit === -1) {
                 listaPrestadores.push(dadosPrestador);
-                alert("Prestador registado com sucesso!");
+                alert("Prestador / Despesa registado com sucesso!");
             } else {
                 dadosPrestador.status = listaPrestadores[indexEdit].status || 'pendente';
                 dadosPrestador.motivoPendente = listaPrestadores[indexEdit].motivoPendente || '';
                 listaPrestadores[indexEdit] = dadosPrestador;
                 document.getElementById('pres-edit-index').value = "-1";
-                document.getElementById('titulo-form-prestador').innerText = "Registar Prestador de Serviço / Orçamento";
-                document.getElementById('btn-salvar-prestador').innerText = "Guardar Prestador";
-                alert("Prestador atualizado com sucesso!");
+                document.getElementById('titulo-form-prestador').innerText = "Registar Prestador de Serviço / Orçamento / Despesa";
+                document.getElementById('btn-salvar-prestador').innerText = "Guardar Prestador / Despesa";
+                alert("Prestador / Despesa atualizado com sucesso!");
             }
 
             document.getElementById('form-prestador').reset();
