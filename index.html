@@ -449,8 +449,14 @@
                     <strong>Utilizador:</strong> <span id="user-email"></span> |
                     <strong>Nível:</strong> <span id="user-role"></span>
                 </div>
-                <div id="badge-master" style="display: none; background: #e0e7ff; padding: 5px 12px; border-radius: 6px;">
-                    <span style="font-size: 0.85rem; font-weight: bold; color: #1e40af;">👑 Master Ativo</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <!-- Botão para Ativar/Desativar Leitura com IR -->
+                    <button id="btn-toggle-ir" onclick="alternarModoIR()" style="background: #16a34a; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: background 0.2s;">
+                        🟢 Leitura com IR: ATIVADA
+                    </button>
+                    <div id="badge-master" style="display: none; background: #e0e7ff; padding: 5px 12px; border-radius: 6px;">
+                        <span style="font-size: 0.85rem; font-weight: bold; color: #1e40af;">👑 Master Ativo</span>
+                    </div>
                 </div>
             </div>
 
@@ -702,62 +708,96 @@
 
             <!-- Módulo: Faturamento & Dashboard Power BI Style -->
             <div id="tab-faturamento" class="card">
-                <h3>Dashboard de Faturamento & Gestão de Impostos (IR Automático)</h3>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Lê automaticamente entradas (clientes) e saídas (prestadores). Ao concluir atividades, as receitas e despesas são integradas aqui.</p>
+                <h3>Dashboard de Faturamento & Gestão de Impostos</h3>
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Acompanhe o painel executivo com visual estilo Power BI. Utilize as sub-abas abaixo para alternar entre as visões consolidadas e individuais.</p>
 
-                <!-- LAYOUT POWER BI STYLE (KPI CARDS) -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
-                    <div style="background: linear-gradient(135deg, #0f223d, #1e3a8a); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Faturamento Bruto (Entradas)</span>
-                        <h2 id="kpi-bruto" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                <!-- Sub-abas de Visualização de Faturamento -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                    <button onclick="mudarSubAbaFaturamento('geral')" id="btn-sub-fat-geral" class="btn-sub-aba ativo-sub">📊 Painel Geral (Dashboard)</button>
+                    <button onclick="mudarSubAbaFaturamento('clientes')" id="btn-sub-fat-clientes" class="btn-sub-aba">👥 Histórico de Clientes (Concluídos)</button>
+                    <button onclick="mudarSubAbaFaturamento('prestadores')" id="btn-sub-fat-prestadores" class="btn-sub-aba">🛠️ Histórico de Prestadores (Despesas)</button>
+                </div>
+
+                <!-- Sub-visão 1: Painel Geral -->
+                <div id="sub-fat-geral" class="sub-conteudo-fat" style="display: block;">
+                    <!-- LAYOUT POWER BI STYLE (KPI CARDS) -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                        <div style="background: linear-gradient(135deg, #0f223d, #1e3a8a); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Faturamento Bruto (Entradas)</span>
+                            <h2 id="kpi-bruto" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #b91c1c, #991b1b); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Total Despesas (Prestadores)</span>
+                            <h2 id="kpi-despesas" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #16a34a, #15803d); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Saldo Líquido Final</span>
+                            <h2 id="kpi-liquido" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
+                        <div id="card-kpi-imposto" style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">IR Descontado Automático</span>
+                            <h2 id="kpi-imposto" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+                        </div>
                     </div>
-                    <div style="background: linear-gradient(135deg, #b91c1c, #991b1b); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Total Despesas (Prestadores)</span>
-                        <h2 id="kpi-despesas" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #16a34a, #15803d); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Saldo Líquido Final</span>
-                        <h2 id="kpi-liquido" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">IR Descontado Automático</span>
-                        <h2 id="kpi-imposto" style="margin: 8px 0 0 0; font-size: 1.6rem;">R$ 0,00</h2>
+
+                    <!-- GRÁFICOS POWER BI STYLE -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                        <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                            <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Receita por Forma de Pagamento</h4>
+                            <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="chartMetodos"></canvas>
+                            </div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                            <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Entradas vs Saídas & Líquido</h4>
+                            <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
+                                <canvas id="chartComparativo"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- GRÁFICOS POWER BI STYLE -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
-                    <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-                        <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Receita por Forma de Pagamento</h4>
-                        <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
-                            <canvas id="chartMetodos"></canvas>
-                        </div>
-                    </div>
-                    <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-                        <h4 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; margin-bottom: 15px;">Entradas vs Saídas & Líquido</h4>
-                        <div style="position: relative; height: 240px; display: flex; justify-content: center; align-items: center;">
-                            <canvas id="chartComparativo"></canvas>
-                        </div>
+                <!-- Sub-visão 2: Histórico de Clientes (Concluídos) -->
+                <div id="sub-fat-clientes" class="sub-conteudo-fat" style="display: none;">
+                    <h4 style="margin-bottom: 10px; color: var(--primary);">Histórico Individual de Faturamento (Clientes Concluídos)</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Data Entrega</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Cliente / Descrição</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Método</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Bruto (Entrada)</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">IR Retido</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Líquido</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-faturamento-clientes-corpo">
+                                <tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente concluído registado.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <h4 style="margin-bottom: 10px; color: var(--primary);">Histórico Consolidado de Faturamento (Clientes Concluídos)</h4>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
-                        <thead>
-                            <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
-                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Data</th>
-                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Cliente / Descrição</th>
-                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Método</th>
-                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Bruto (Entrada)</th>
-                                <th style="padding: 10px; border: 1px solid #e2e8f0;">IR Retido</th>
-                                <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Líquido</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-faturamento-corpo">
-                            <tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhuma receita concluída registada.</td></tr>
-                        </tbody>
-                    </table>
+                <!-- Sub-visão 3: Histórico de Prestadores (Despesas) -->
+                <div id="sub-fat-prestadores" class="sub-conteudo-fat" style="display: none;">
+                    <h4 style="margin-bottom: 10px; color: var(--primary);">Histórico Individual de Despesas (Prestadores Concluídos)</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; text-align: left; color: var(--primary);">
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Data Início</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Prestador / Atividade</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Celular</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Método</th>
+                                    <th style="padding: 10px; border: 1px solid #e2e8f0;">Valor Saída (Despesa)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-faturamento-prestadores-corpo">
+                                <tr><td colspan="5" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador concluído registado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -890,8 +930,53 @@
             }
         }
 
+        function mudarSubAbaFaturamento(subAbaId) {
+            const subGeral = document.getElementById('sub-fat-geral');
+            const subClientes = document.getElementById('sub-fat-clientes');
+            const subPrestadores = document.getElementById('sub-fat-prestadores');
+            const btnGeral = document.getElementById('btn-sub-fat-geral');
+            const btnClientes = document.getElementById('btn-sub-fat-clientes');
+            const btnPrestadores = document.getElementById('btn-sub-fat-prestadores');
+
+            subGeral.style.display = 'none';
+            subClientes.style.display = 'none';
+            subPrestadores.style.display = 'none';
+            btnGeral.className = 'btn-sub-aba';
+            btnClientes.className = 'btn-sub-aba';
+            btnPrestadores.className = 'btn-sub-aba';
+
+            if (subAbaId === 'geral') {
+                subGeral.style.display = 'block';
+                btnGeral.className = 'btn-sub-aba ativo-sub';
+            } else if (subAbaId === 'clientes') {
+                subClientes.style.display = 'block';
+                btnClientes.className = 'btn-sub-aba ativo-sub';
+            } else if (subAbaId === 'prestadores') {
+                subPrestadores.style.display = 'block';
+                btnPrestadores.className = 'btn-sub-aba ativo-sub';
+            }
+        }
+
         let tipoAtividadeAtual = 'clientes';
         let filtroAtividadeAtual = 'dia';
+        let leituraComIRAtiva = true;
+
+        function alternarModoIR() {
+            leituraComIRAtiva = !leituraComIRAtiva;
+            const btnIR = document.getElementById('btn-toggle-ir');
+            const cardImposto = document.getElementById('card-kpi-imposto');
+
+            if (leituraComIRAtiva) {
+                btnIR.innerText = "🟢 Leitura com IR: ATIVADA";
+                btnIR.style.background = "#16a34a";
+                cardImposto.style.display = "block";
+            } else {
+                btnIR.innerText = "🔴 Leitura com IR: DESATIVADA";
+                btnIR.style.background = "#dc2626";
+                cardImposto.style.display = "none";
+            }
+            atualizarDashboardFaturamento();
+        }
 
         function mudarSubAbaAtividadesPrincipal(tipo) {
             tipoAtividadeAtual = tipo;
@@ -954,10 +1039,10 @@
         let chartComparativoInstance = null;
 
         function atualizarDashboardFaturamento() {
-            const tbody = document.getElementById('tabela-faturamento-corpo');
-            if (!tbody) return;
+            const tbodyClientes = document.getElementById('tabela-faturamento-clientes-corpo');
+            const tbodyPrestadores = document.getElementById('tabela-faturamento-prestadores-corpo');
+            if (!tbodyClientes || !tbodyPrestadores) return;
 
-            // Filtra apenas clientes concluídos como Entradas de Faturamento
             const clientesConcluidos = listaClientes.filter(c => c.status === 'concluido');
             const prestadoresConcluidos = listaPrestadores.filter(p => p.status === 'concluido');
 
@@ -977,8 +1062,12 @@
                 totalDespesas += parseFloat(p.valor) || 0;
             });
 
-            const dadosImposto = calcularIRAutomatico(totalBrutoEntrada);
-            const totalIR = dadosImposto.valorIR;
+            let totalIR = 0;
+            if (leituraComIRAtiva) {
+                const dadosImposto = calcularIRAutomatico(totalBrutoEntrada);
+                totalIR = dadosImposto.valorIR;
+            }
+
             const totalLiquidoEntrada = totalBrutoEntrada - totalIR;
             const saldoFinalLiquido = totalLiquidoEntrada - totalDespesas;
 
@@ -987,23 +1076,42 @@
             document.getElementById('kpi-liquido').innerText = `R$ ${saldoFinalLiquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             document.getElementById('kpi-imposto').innerText = `R$ ${totalIR.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
+            // Tabela 1: Histórico de Clientes
             if (clientesConcluidos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhuma receita de cliente marcada como concluída nas atividades.</td></tr>`;
+                tbodyClientes.innerHTML = `<tr><td colspan="6" style="padding: 15px; text-align: center; color: #64748b;">Nenhum cliente concluído registado.</td></tr>`;
             } else {
-                tbody.innerHTML = clientesConcluidos.map(c => {
+                tbodyClientes.innerHTML = clientesConcluidos.map(c => {
                     const val = parseFloat(c.valor) || 0;
                     const proporcao = totalBrutoEntrada > 0 ? (val / totalBrutoEntrada) : 0;
-                    const irItem = totalIR * proporcao;
+                    const irItem = leituraComIRAtiva ? (totalIR * proporcao) : 0;
                     const liquidoItem = val - irItem;
 
                     return `
                         <tr style="border-bottom: 1px solid #e2e8f0;">
                             <td style="padding: 10px;">${c.dataEntrega || c.dataInicio}</td>
-                            <td style="padding: 10px;">${c.nome} (${c.atividade})</td>
+                            <td style="padding: 10px;"><b>${c.nome}</b> (${c.atividade})</td>
                             <td style="padding: 10px;"><span style="background: #e0e7ff; color: #1e40af; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">${c.pagamento}</span></td>
                             <td style="padding: 10px; color: #16a34a; font-weight: bold;">R$ ${val.toFixed(2)}</td>
                             <td style="padding: 10px; color: #dc2626;">R$ ${irItem.toFixed(2)}</td>
                             <td style="padding: 10px; font-weight: bold;">R$ ${liquidoItem.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Tabela 2: Histórico de Prestadores (Despesas)
+            if (prestadoresConcluidos.length === 0) {
+                tbodyPrestadores.innerHTML = `<tr><td colspan="5" style="padding: 15px; text-align: center; color: #64748b;">Nenhum prestador concluído registado.</td></tr>`;
+            } else {
+                tbodyPrestadores.innerHTML = prestadoresConcluidos.map(p => {
+                    const val = parseFloat(p.valor) || 0;
+                    return `
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 10px;">${p.dataInicio}</td>
+                            <td style="padding: 10px;"><b>${p.nome}</b> (${p.atividade})</td>
+                            <td style="padding: 10px;">${p.celular}</td>
+                            <td style="padding: 10px;"><span style="background: #fef2f2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">${p.pagamento}</span></td>
+                            <td style="padding: 10px; color: #dc2626; font-weight: bold;">R$ ${val.toFixed(2)}</td>
                         </tr>
                     `;
                 }).join('');
