@@ -1,0 +1,10 @@
+__pycache__/
+.venv/
+.idea/
+*.db
+*.pyc
+.env
+*.secret*
+senha master.txt
+master@omnisys.com.txt
+*.log

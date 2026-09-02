@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omnisys Pro - Gestão Inteligente</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+--p:#0f223d;--a:#f59e0b;--ok:#16a34a;--no:#dc2626;--w:#f59e0b;
+--bg:#f1f5f9;--card:#fff;--line:#e2e8f0;--txt:#0f172a;--muted:#64748b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt)}
+input,select,button,textarea{font-family:inherit}
+button{cursor:pointer}
+.auth{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f223d 0%,#1e3a8a 55%,#312e81 100%);padding:20px}
+.auth-box{background:#fff;border-radius:18px;box-shadow:0 25px 60px rgba(0,0,0,.35);width:100%;max-width:430px;padding:34px 34px 28px}
+.auth-box h1{font-size:1.5rem;color:var(--p);font-weight:800;margin-bottom:4px}
+.auth-box h1 span{color:var(--a)}
+.auth-box .sub{color:var(--muted);font-size:.85rem;margin-bottom:22px}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.fg label{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.fg input,.fg select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:.95rem;outline:none;transition:.15s;background:#fff}
+.fg input:focus,.fg select:focus{border-color:var(--a);box-shadow:0 0 0 3px rgba(245,158,11,.15)}
+.fg input[type=checkbox]{width:auto}
+.bf{width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;color:#fff;font-weight:700;font-size:1rem;padding:13px;border-radius:10px;transition:.15s}
+.bf:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.bf:active{transform:translateY(0)}
+.link{display:block;text-align:center;margin-top:16px;color:var(--p);font-weight:600;font-size:.85rem;background:none;border:none}
+.link:hover{text-decoration:underline}
+.terms{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);margin-bottom:16px}
+.terms input{accent-color:var(--a);width:16px;height:16px}
+#dc{display:none}
+.topbar{position:fixed;top:0;left:250px;right:0;height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:50}
+.topbar .brand{font-weight:800;color:var(--p);font-size:1.05rem}
+.topbar .brand span{color:var(--a)}
+.topbar .tb-right{display:flex;align-items:center;gap:12px}
+.pill{background:var(--bg);border:1px solid var(--line);color:var(--p);padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:600}
+.badge-m{display:none;background:var(--p);color:var(--a);padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:800;letter-spacing:.04em}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:250px;background:var(--p);color:#fff;z-index:60;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar .sb-head{padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar .sb-head h2{font-size:1.05rem;font-weight:800}
+.sidebar .sb-head h2 span{color:var(--a)}
+.sidebar .sb-head .sb-user{font-size:.72rem;color:#94a3b8;margin-top:6px;word-break:break-all}
+.smenu{list-style:none;padding:14px 12px;flex:1}
+.smenu li .sep{margin:10px 0;border-top:1px solid rgba(255,255,255,.08)}
+.smenu button{display:block;width:100%;text-align:left;background:transparent;border:none;color:#cbd5e1;padding:11px 14px;border-radius:9px;font-size:.88rem;font-weight:600;transition:.15s}
+.smenu button:hover{background:rgba(255,255,255,.07);color:#fff}
+.smenu button.active{background:var(--a);color:#0f223d}
+.content{margin:78px 0 0 250px;padding:28px 30px}
+#mca{max-width:1200px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px}
+.card h3{margin:0 0 16px;color:var(--p);font-size:1.02rem}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1000px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.g4,.g3,.g2{grid-template-columns:1fr}.sidebar{width:210px}.topbar{left:210px}.content{margin-left:210px}}
+.kpi{border-radius:14px;padding:20px;color:#fff}
+.kpi span{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;opacity:.85}
+.kpi h2{margin-top:8px;font-size:1.6rem;font-weight:800}
+.tb{width:100%;border-collapse:collapse;font-size:.85rem}
+.tb th{text-align:left;color:var(--muted);text-transform:uppercase;font-size:.7rem;letter-spacing:.04em;padding:8px 10px;border-bottom:2px solid var(--line)}
+.tb td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tb tr:hover td{background:#f8fafc}
+.bg{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
+.bgg{background:#dcfce7;color:#166534}
+.bgr{background:#fee2e2;color:#991b1b}
+.bgy{background:#fef3c7;color:#92400e}
+.bgb{background:#dbeafe;color:#1e40af}
+.bgp{background:#ede9fe;color:#6b21a8}
+.bs{padding:6px 13px;border-radius:7px;font-size:.78rem;font-weight:700;border:none;font-family:inherit}
+.be{background:#dcfce7;color:#166534}.be:hover{background:#bbf7d0}
+.bd{background:#fee2e2;color:#991b1b}.bd:hover{background:#fecaca}
+.bw{background:#f1f5f9;color:#334155}.bw:hover{background:#e2e8f0}
+.bo{background:#fef3c7;color:#92400e}.bo:hover{background:#fde68a}
+.bsub{background:#f1f5f9;color:#475569;border:1px solid var(--line);padding:8px 15px;border-radius:8px;font-weight:600;font-size:.8rem}
+.bsub.act{background:var(--p);color:#fff;border-color:var(--p)}
+.bsub:hover{background:#e2e8f0}
+.tg2{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.mc2{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:16px 10px;text-align:center;transition:.15s}
+.mc2:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,34,61,.12)}
+.mc2 .mc-num{font-size:1.15rem;font-weight:800;color:var(--p)}
+.mc2 .mc-cap{font-size:.68rem;color:var(--muted)}
+.mc2.ml{border-color:#16a34a;background:#f0fdf4}.mc2.ml .mc-num{color:#166534}
+.mc2.mo{border-color:#dc2626;background:#fef2f2}.mc2.mo .mc-num{color:#991b1b}
+.mc2.mr{border-color:#f59e0b;background:#fffbeb}.mc2.mr .mc-num{color:#92400e}
+.mi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:.15s}
+.mi:hover{border-color:var(--a)}
+@media(max-width:640px){.tb{font-size:.75rem}.content{padding:18px 14px}}
+</style>
+</head>
+<body>
+<section id="login-screen" class="auth">
+<div class="auth-box">
+<h1>Omnisys<span> Pro</span></h1>
+<p class="sub">Gestão Inteligente · Entre na sua conta</p>
+<div class="fg"><label>E-mail</label><input type="email" id="login-u" placeholder="seu@email.com" autocomplete="email"></div>
+<div class="fg"><label>Senha</label><input type="password" id="login-s" placeholder="••••••••" autocomplete="current-password"></div>
+<button class="bf" onclick="fazerLogin()">Entrar</button>
+<button class="link" onclick="show('register-screen')">Criar conta gratuita</button>
+</div>
+</section>
+<section id="register-screen" class="auth" style="display:none">
+<div class="auth-box">
+<h1>Criar <span>conta</span></h1>
+<p class="sub">Cadastre sua empresa e comece</p>
+<div class="fg"><label>Nome / Empresa</label><input type="text" id="reg-nome" placeholder="Nome do dono ou da empresa"></div>
+<div class="fg"><label>Ramo de atuação</label><select id="reg-ramo">
+<option value="restaurante">Restaurante</option>
+<option value="bar">Bar</option>
+<option value="pizzaria">Pizzaria</option>
+<option value="cafeteria">Cafeteria</option>
+<option value="loja">Loja</option>
+<option value="petshop">Pet Shop</option>
+<option value="oficina">Oficina</option>
+<option value="salao">Salão</option>
+<option value="odonto">Clínica Odonto</option>
+<option value="academia">Academia</option>
+<option value="hotel">Hotel</option>
+<option value="escola">Escola</option>
+<option value="academia_aula">Professor</option>
+<option value="geral">Geral</option>
+</select></div>
+<div class="fg"><label>CNPJ / CPF</label><input type="text" id="reg-doc" placeholder="Documento da empresa"></div>
+<div class="fg"><label>Telefone / WhatsApp</label><input type="text" id="reg-tel" placeholder="(00) 00000-0000"></div>
+<div class="fg"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
+<div class="fg"><label>Senha (mín. 8 caracteres)</label><input type="password" id="reg-senha" placeholder="••••••••"></div>
+<div class="terms"><input type="checkbox" id="reg-termos"><span>Aceito os Termos de Uso e a Política de Privacidade (LGPD)</span></div>
+<button class="bf" onclick="executarCadastro()">Criar minha conta</button>
+<button class="link" onclick="show('login-screen')">Já tenho conta · Entrar</button>
+</div>
+</section>
+<div id="dc">
+<aside class="sidebar">
+<div class="sb-head"><h2>Omnisys<span> Pro</span></h2><div class="sb-user" id="u-email"></div></div>
+<ul class="smenu" id="smenu"></ul>
+</aside>
+<header class="topbar">
+<div class="brand">Omnisys<span> Pro</span></div>
+<div class="tb-right">
+<span class="badge-m" id="badge-m">MASTER</span>
+<span class="pill" id="u-ramo"></span>
+</div>
+</header>
+<main class="content"><div id="mca"></div></main>
+</div>
+<script>// ============ DATA LAYER (local + sync com o servidor) ============
+let APP={user:null,ramo:'',abaAtual:'',caixaAberto:null,mesaSel:null,pedidoAtual:[],token:null,syncPend:null,syncOn:false};
+const DB={
+get(k,d){try{return JSON.parse(localStorage.getItem('op_'+k))||d}catch{return d}},
+set(k,v){localStorage.setItem('op_'+k,JSON.stringify(v));agendarSync()},
+setLocal(k,v){localStorage.setItem('op_'+k,JSON.stringify(v))},
+snapshot(){const o={};for(let i=0;i<localStorage.length;i++){const ks=localStorage.key(i);if(ks&&ks.startsWith('op_')&&ks!=='op_sessao'&&ks!=='op_token')o[ks.slice(3)]=JSON.parse(localStorage.getItem(ks))}return o}
+};
+function sessao(){try{return JSON.parse(localStorage.getItem('op_sessao'))||null}catch{return null}}
+function setSessao(u,t){APP.user=u;APP.token=t||APP.token;localStorage.setItem('op_sessao',JSON.stringify(APP.user));localStorage.setItem('op_token',APP.token||'')}
+function sairSessao(){try{localStorage.removeItem('op_sessao');localStorage.removeItem('op_token')}catch(e){}APP.user=null;APP.token=null}
+let SYNC_TIMER=null;
+function agendarSync(){
+if(!APP.token)return;
+clearTimeout(SYNC_TIMER);
+SYNC_TIMER=setTimeout(enviarSync,1200);
+}
+function iniciarSync(){
+if(!APP.token)return;
+sessao();
+fetch('/api/sync',{headers:{'Authorization':'Bearer '+APP.token}}).then(r=>r.ok?r.json():null).then(j=>{
+if(!j)return;
+const remoto=j.data||{};
+const local=DB.snapshot();
+let mudou=false;
+for(const k in remoto){if(local[k]===undefined){try{localStorage.setItem('op_'+k,JSON.stringify(remoto[k]))}catch(e){};mudou=true}}
+if(mudou){DB.render&&DB.render();if(APP.abaAtual&&R[APP.abaAtual])R[APP.abaAtual](document.getElementById('mca'))}
+}).catch(()=>{})
+}
+async function enviarSync(){
+if(!APP.token||APP.syncOn)return;
+APP.syncOn=true;
+try{
+const r=await fetch('/api/sync',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+APP.token},body:JSON.stringify({data:DB.snapshot()})});
+if(r.status===401){sairSessao();show('login-screen')}
+}catch(e){}
+APP.syncOn=false;
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
+function fmt(v){return'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}
+function hoje(){return new Date().toISOString().split('T')[0]}
+function horaA(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function dataA(){const d=new Date();return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear()}
+function show(id){document.querySelectorAll('.auth').forEach(a=>a.style.display='none');document.getElementById(id).style.display='flex'}
+function showDash(){document.querySelectorAll('.auth').forEach(a=>a.style.display='none');document.getElementById('dc').style.display='block'}
+const REST_RAMOS=['restaurante','bar','pizzaria','cafeteria'];
+
+// ============ MODULOS POR RAMO ============
+const MODS={
+restaurante:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'mesas',i:'🪑',l:'Mesas & Salao'},{id:'cardapio',i:'📖',l:'Cardapio'},{id:'pedidos',i:'🧾',l:'Pedidos'},{id:'kds',i:'👨‍🍳',l:'Cozinha KDS'},{id:'pdv',i:'💳',l:'PDV / Caixa'},{id:'estoque',i:'📦',l:'Estoque & Insumos'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes CRM'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'equipe',i:'🧑‍💼',l:'Equipe & Comissoes'},{id:'config',i:'⚙️',l:'Configuracoes'}],
+bar:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'mesas',i:'🪑',l:'Mesas & Salao'},{id:'cardapio',i:'📖',l:'Cardapio'},{id:'pedidos',i:'🧾',l:'Pedidos'},{id:'kds',i:'👨‍🍳',l:'Cozinha KDS'},{id:'pdv',i:'💳',l:'PDV / Caixa'},{id:'estoque',i:'📦',l:'Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes CRM'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'equipe',i:'🧑‍💼',l:'Equipe'},{id:'config',i:'⚙️',l:'Config'}],
+pizzaria:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'mesas',i:'🪑',l:'Mesas'},{id:'cardapio',i:'📖',l:'Cardapio'},{id:'pedidos',i:'🧾',l:'Pedidos'},{id:'kds',i:'👨‍🍳',l:'Cozinha KDS'},{id:'pdv',i:'💳',l:'PDV / Caixa'},{id:'estoque',i:'📦',l:'Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+cafeteria:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'mesas',i:'🪑',l:'Mesas'},{id:'cardapio',i:'📖',l:'Cardapio'},{id:'pedidos',i:'🧾',l:'Pedidos'},{id:'pdv',i:'💳',l:'PDV'},{id:'estoque',i:'📦',l:'Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+loja:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'cardapio',i:'🏷️',l:'Produtos'},{id:'pdv',i:'💳',l:'PDV'},{id:'estoque',i:'📦',l:'Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+petshop:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'cardapio',i:'🏷️',l:'Produtos/Servicos'},{id:'pedidos',i:'🧾',l:'Atendimentos'},{id:'pdv',i:'💳',l:'PDV'},{id:'estoque',i:'📦',l:'Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes/Pets'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+oficina:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'pedidos',i:'🧾',l:'Servicos/OS'},{id:'pdv',i:'💳',l:'PDV'},{id:'estoque',i:'📦',l:'Pecas/Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+salao:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'agenda',i:'📅',l:'Agenda'},{id:'pedidos',i:'🧾',l:'Atendimentos'},{id:'pdv',i:'💳',l:'PDV'},{id:'estoque',i:'📦',l:'Produtos'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes/CRM'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'equipe',i:'🧑‍💼',l:'Profissionais'},{id:'config',i:'⚙️',l:'Config'}],
+odonto:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'agenda',i:'📅',l:'Agenda'},{id:'pedidos',i:'🧾',l:'Prontuarios'},{id:'pdv',i:'💳',l:'PDV'},{id:'estoque',i:'📦',l:'Materiais'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Pacientes'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+academia:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'pedidos',i:'🧾',l:'Matriculas'},{id:'pdv',i:'💳',l:'PDV'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Alunos'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+hotel:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'mesas',i:'🛏️',l:'Quartos'},{id:'pedidos',i:'🧾',l:'Hospedagens'},{id:'pdv',i:'💳',l:'PDV'},{id:'estoque',i:'📦',l:'Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Hospedes'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+escola:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'agenda',i:'📅',l:'Agenda/Horarios'},{id:'pedidos',i:'🧾',l:'Matriculas'},{id:'pdv',i:'💳',l:'Cobrancas'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Alunos/Pais'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+academia_aula:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'agenda',i:'📅',l:'Agenda'},{id:'pedidos',i:'🧾',l:'Aulas'},{id:'pdv',i:'💳',l:'Cobrancas'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Alunos'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}],
+geral:[{id:'dashboard',i:'📊',l:'Dashboard'},{id:'pedidos',i:'🧾',l:'Atividades'},{id:'pdv',i:'💳',l:'Faturamento'},{id:'estoque',i:'📦',l:'Estoque'},{id:'financeiro',i:'💰',l:'Financeiro'},{id:'crm',i:'👥',l:'Clientes'},{id:'relatorios',i:'📈',l:'Relatorios'},{id:'config',i:'⚙️',l:'Config'}]
+};
+function getMods(){return MODS[APP.ramo]||MODS.geral}
+
+// ============ AUTH ============
+async function executarCadastro(){
+const nome=document.getElementById('reg-nome').value.trim();
+const email=document.getElementById('reg-email').value.trim();
+const senha=document.getElementById('reg-senha').value.trim();
+const ramo=document.getElementById('reg-ramo').value;
+if(!nome||!email||!senha){alert('Preencha nome, e-mail e senha!');return}
+if(senha.length<8){alert('A senha deve ter no mínimo 8 caracteres!');return}
+if(!document.getElementById('reg-termos').checked){alert('Aceite os termos!');return}
+try{
+const r=await fetch('/api/usuarios/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,email,password:senha,ramo,doc:document.getElementById('reg-doc').value.trim(),tel:document.getElementById('reg-tel').value.trim()})});
+if(!r.ok){const e=await r.json().catch(()=>({}));alert(e.detail||'Erro ao cadastrar. Tente novamente.');return}
+}catch(e){alert('Servidor indisponível. Verifique sua conexão.');return}
+alert('Cadastro realizado! Faça login.');show('login-screen');
+}
+
+async function fazerLogin(){
+const email=document.getElementById('login-u').value.trim();
+const senha=document.getElementById('login-s').value.trim();
+if(!email||!senha){alert('Preencha e-mail e senha!');return}
+const btn=document.querySelector('#login-screen .bf');if(btn){btn.disabled=true;btn.textContent='Entrando...'}
+try{
+const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})});
+const d=await r.json().catch(()=>({}));
+if(!r.ok){alert((d.detail||'Email ou senha incorretos').replace('Email','E-mail'));return}
+APP.ramo=d.user.ramo||'geral';
+setSessao(d.user,d.token);
+iniciar();iniciarSync();
+}catch(e){alert('Servidor indisponível. Verifique sua conexão.');}
+finally{if(btn){btn.disabled=false;btn.textContent='Entrar'}}
+}
+
+function sairDoApp(){if(!confirm('Sair do sistema?'))return;sairSessao();APP.ramo='';document.getElementById('dc').style.display='none';show('login-screen')}
+
+// ============ NAVIGATION ============
+const R={dashboard:rDash,mesas:rMesas,cardapio:rCardapio,pedidos:rPedidos,kds:rKDS,pdv:rPDV,estoque:rEstoque,financeiro:rFin,crm:rCRM,relatorios:rRel,equipe:rEquipe,config:rConfig,agenda:rAgenda};
+function iniciar(){
+showDash();
+document.getElementById('u-email').innerText=APP.user.email||APP.user.nome;
+const nr={restaurante:'Restaurante',bar:'Bar',pizzaria:'Pizzaria',cafeteria:'Cafeteria',loja:'Loja',petshop:'Pet Shop',oficina:'Oficina',salao:'Salao',odonto:'Clinica',academia:'Academia',hotel:'Hotel',escola:'Escola',academia_aula:'Professor',geral:'Geral'};
+document.getElementById('u-ramo').innerText=nr[APP.ramo]||APP.ramo;
+document.getElementById('badge-m').style.display=APP.user.role==='adminMaster'?'inline':'none';
+renderSidebar();
+const mods=getMods();mudarAba(mods[0].id);
+}
+
+function renderSidebar(){
+const mods=getMods();const m=document.getElementById('smenu');
+m.innerHTML=mods.map(mo=>`<li><button onclick="mudarAba('${mo.id}',this)" id="btn-${mo.id}">${mo.i} ${mo.l}</button></li>`).join('')+
+'<li class="sep"></li><li><button onclick="sairDoApp()" style="background:rgba(220,38,38,.2);color:#fca5a5;font-weight:700;border:1px solid rgba(220,38,38,.4)">Sair do App</button></li>';
+}
+
+function mudarAba(id,el){
+APP.abaAtual=id;
+document.querySelectorAll('.smenu button').forEach(b=>b.classList.remove('active'));
+if(el)el.classList.add('active');
+const b2=document.getElementById('btn-'+id);if(b2)b2.classList.add('active');
+const area=document.getElementById('mca');
+if(R[id])R[id](area);
+}
+
+// ============ DASHBOARD ============
+function rDash(el){
+const ped=DB.get('pedidos',[]),it=DB.get('itensCardapio',[]),est=DB.get('estoque',[]),mes=DB.get('mesas',[]),cli=DB.get('clientesCRM',[]),fin=DB.get('financeiro',[]);
+const h=hoje(),ph=ped.filter(p=>p.data===h),rh=ph.reduce((s,p)=>s+parseFloat(p.total||0),0),pp=ped.filter(p=>p.status==='pendente'||p.status==='preparando').length;
+const mo=mes.filter(m=>m.status==='ocupada').length;
+const tR=fin.filter(f=>f.tipo==='receita').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+const tD=fin.filter(f=>f.tipo==='despesa').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+const eb=est.filter(e=>parseInt(e.qtdMin||0)>0&&parseInt(e.qtd||0)<=parseInt(e.qtdMin||0));
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Dashboard Geral</h2>
+<div class="g4" style="margin-bottom:25px">
+<div class="kpi" style="background:linear-gradient(135deg,#0f223d,#1e3a8a)"><span>Receita Hoje</span><h2>${fmt(rh)}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#16a34a,#15803d)"><span>Pedidos Hoje</span><h2>${ph.length}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#d97706,#b45309)"><span>Em Andamento</span><h2>${pp}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#dc2626,#991b1b)"><span>${REST_RAMOS.includes(APP.ramo)?'Mesas Ocupadas':'Estoque Baixo'}</span><h2>${REST_RAMOS.includes(APP.ramo)?mo+'/'+mes.length:eb.length+' itens'}</h2></div></div>
+<div class="g2">
+<div style="background:#fff;padding:20px;border-radius:10px;border:1px solid #e2e8f0"><h4 style="margin:0 0 15px;color:var(--p)">Financeiro</h4>
+<div style="display:flex;gap:15px;flex-wrap:wrap"><div style="text-align:center;flex:1;min-width:110px"><div style="font-size:.75rem;color:#64748b;text-transform:uppercase">Receitas</div><div style="font-size:1.2rem;font-weight:700;color:#16a34a">${fmt(tR)}</div></div>
+<div style="text-align:center;flex:1;min-width:110px"><div style="font-size:.75rem;color:#64748b;text-transform:uppercase">Despesas</div><div style="font-size:1.2rem;font-weight:700;color:#dc2626">${fmt(tD)}</div></div>
+<div style="text-align:center;flex:1;min-width:110px"><div style="font-size:.75rem;color:#64748b;text-transform:uppercase">Saldo</div><div style="font-size:1.2rem;font-weight:700;color:var(--a)">${fmt(tR-tD)}</div></div></div></div>
+<div style="background:#fff;padding:20px;border-radius:10px;border:1px solid #e2e8f0"><h4 style="margin:0 0 15px;color:var(--p)">Resumo</h4>
+<div style="font-size:.9rem;line-height:2">
+<div>Total Pedidos: <strong>${ped.length}</strong></div>
+<div>Clientes: <strong>${cli.length}</strong></div>
+<div>Itens Cardapio: <strong>${it.length}</strong></div>
+<div>Itens Estoque: <strong>${est.length}</strong></div>
+${eb.length?`<div style="color:#dc2626;font-weight:600">⚠️ Estoque Baixo: ${eb.length} itens!</div>`:''}</div></div></div>`;
+}
+// ============ MESAS ============
+function rMesas(el){
+let mes=DB.get('mesas',[]);
+if(!mes.length){mes=[];for(let i=1;i<=10;i++)mes.push({id:uid(),num:i,nome:'Mesa '+i,cap:4,status:'livre',pedido:null});DB.set('mesas',mes)}
+el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+<h3 style="margin:0;color:var(--p)">Mapa de Mesas</h3>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="bsub act" onclick="filterMesas('todas',this)">Todas</button>
+<button class="bsub" onclick="filterMesas('livre',this)">Livre</button>
+<button class="bsub" onclick="filterMesas('ocupada',this)">Ocupada</button>
+<button class="bsub" onclick="filterMesas('reservada',this)">Reservada</button>
+<button class="bf" style="width:auto;margin:0;padding:8px 16px" onclick="addMesa()">+ Nova</button></div></div>
+<div style="margin-bottom:15px;display:flex;gap:15px;font-size:.82rem">
+<span>🟢 Livre: ${mes.filter(m=>m.status==='livre').length}</span>
+<span>🔴 Ocupada: ${mes.filter(m=>m.status==='ocupada').length}</span>
+<span>🟡 Reservada: ${mes.filter(m=>m.status==='reservada').length}</span></div>
+<div class="tg2" id="gmesas">${mes.map(m=>`<div class="mc2 ${m.status==='livre'?'ml':m.status==='ocupada'?'mo':'mr'}" onclick="clicarMesa('${m.id}')" data-status="${m.status}">
+<div style="font-size:1.8rem">${m.status==='livre'?'🟢':m.status==='ocupada'?'🔴':'🟡'}</div>
+<div style="font-size:1.1rem;font-weight:700">${m.num}</div>
+<div style="font-size:.75rem;opacity:.8">${m.cap} lugares</div>
+<div style="font-size:.7rem;margin-top:4px;text-transform:uppercase;font-weight:600">${m.status}</div></div>`).join('')}</div>
+<div id="detmesa" style="display:none;background:#f8fafc;padding:20px;border-radius:10px;border:1px solid #e2e8f0"></div>
+<div style="margin-top:15px;font-size:.78rem;color:#64748b">💡 Dica: clique em uma mesa para ver detalhes, fechar conta ou fazer pedido.</div>`;
+}
+function filterMesas(f){document.querySelectorAll('#gmesas .mc2').forEach(c=>{c.style.display=(f==='todas'||c.dataset.status===f)?'':'none'})}
+function addMesa(){const num=prompt('Numero da mesa:');if(!num)return;const cap=prompt('Capacidade:','4');const mes=DB.get('mesas',[]);mes.push({id:uid(),num:parseInt(num),nome:'Mesa '+num,cap:parseInt(cap)||4,status:'livre',pedido:null});DB.set('mesas',mes);rMesas(document.getElementById('mca'))}
+function clicarMesa(id){const mes=DB.get('mesas',[]),m=mes.find(x=>x.id===id);if(!m)return;const ped=DB.get('pedidos',[]),p=ped.find(x=>x.mesaId===id&&x.status!=='fechado');const det=document.getElementById('detmesa');det.style.display='block';
+det.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:8px"><h4 style="margin:0;color:var(--p)">Mesa ${m.num} - ${m.status.toUpperCase()}</h4><div style="display:flex;gap:6px"><button class="bs bo" onclick="setMesa('${id}','ocupada')">Ocupar</button><button class="bs bw" onclick="setMesa('${id}','reservada')">Reservar</button><button class="bs be" onclick="setMesa('${id}','livre')">Libertar</button><button class="bs bd" onclick="delMesa('${id}')">Excluir</button></div></div>${p?`<div style="background:#fff;padding:15px;border-radius:8px;border:1px solid #e2e8f0"><strong>Pedido Aberto:</strong> #${p.id.slice(-5).toUpperCase()} | Total: ${fmt(p.total)} | Status: <span class="bg bgy">${p.status}</span><div style="margin-top:10px;display:flex;gap:6px"><button class="bs be" onclick="mudarAba('pedidos')">Ver Pedido</button><button class="bs bw" onclick="mudarAba('pdv')">Fechar Conta</button></div></div>`:`<button class="bf" style="width:auto;max-width:250px" onclick="criarPedMesa('${id}')">➕ Novo Pedido para Esta Mesa</button>`}`;det.scrollIntoView({behavior:'smooth'})}
+function setMesa(id,st){const mes=DB.get('mesas',[]),m=mes.find(x=>x.id===id);if(m){if(st==='livre')m.pedido=null;m.status=st;DB.set('mesas',mes);rMesas(document.getElementById('mca'))}}
+function delMesa(id){if(!confirm('Excluir esta mesa?'))return;let mes=DB.get('mesas',[]);mes=mes.filter(m=>m.id!==id);DB.set('mesas',mes);rMesas(document.getElementById('mca'))}
+function criarPedMesa(mid){const mes=DB.get('mesas',[]),m=mes.find(x=>x.id===mid);if(m){m.status='ocupada';DB.set('mesas',mes)}APP.mesaSel=mid;APP.pedidoAtual=[];mudarAba('pedidos')}
+// ============ CARDÁPIO ============
+function rCardapio(el){
+const itens=DB.get('itensCardapio',[]);
+const cats=[...new Set(itens.map(i=>i.cat))].filter(Boolean);
+el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+<h3 style="margin:0;color:var(--p)">${APP.ramo==='loja'?'Produtos':'Cardapio / Menu'}</h3>
+<button class="bf" style="width:auto;margin:0;padding:8px 16px" onclick="abrirFormI()">+ Novo Item</button></div>
+<div id="formI" style="display:none;background:#f8fafc;padding:20px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:20px">
+<h4 style="margin:0 0 12px;color:var(--p)" id="titFI">Novo Item</h4>
+<div class="g3">
+<div style="grid-column:span 3"><label>Nome:</label><input type="text" id="i-nome" placeholder="Ex: Hamburger Especial"></div>
+<div><label>Categoria:</label><select id="i-cat">${REST_RAMOS.includes(APP.ramo)?'<option>Entradas</option><option>Pratos Principais</option><option>Bebidas</option><option>Sobremesas</option><option>Promocoes</option><option>Outros</option>':'<option>Produtos</option><option>Servicos</option><option>Outros</option>'}</select></div>
+<div><label>Preco Venda (R$):</label><input type="number" step="0.01" id="i-preco"></div>
+<div><label>Custo CMV (R$):</label><input type="number" step="0.01" id="i-custo" style="border-color:#93c5fd;background:#eff6ff"></div>
+<div><label>Tempo Prep (min):</label><input type="number" id="i-tempo"></div>
+<div><label>Ativo:</label><select id="i-ativo"><option value="1">Sim</option><option value="0">Nao</option></select></div>
+<div style="grid-column:span 3"><label>Descricao:</label><textarea id="i-desc" rows="2" style="resize:vertical;width:100%"></textarea></div>
+<div style="grid-column:span 3;display:flex;gap:8px">
+<button class="bf" style="width:auto" onclick="salvarItemI()">Salvar Item</button>
+<button class="bf" style="width:auto;background:#64748b" onclick="fecharFormI()">Cancelar</button></div></div>
+<input type="hidden" id="i-editidx" value="-1"></div>
+<div style="display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap">
+<button class="bsub act" onclick="filterCard('Todos',this)">Todos</button>
+${cats.map(c=>`<button class="bsub" onclick="filterCard('${c}',this)">${c}</button>`).join('')}</div>
+<div class="g3" id="gcard">${itens.length===0?'<p style="color:#64748b;grid-column:span 3">Nenhum item cadastrado. Clique em "+ Novo Item".</p>':
+itens.map((it,i)=>`<div class="mi" data-cat="${it.cat}">
+<div style="display:flex;justify-content:space-between;align-items:start">
+<div><div style="font-weight:700;color:var(--p);font-size:.95rem">${it.nome}</div><div style="font-size:.78rem;color:#64748b;margin-top:2px">${it.cat}</div></div>
+<span class="bg ${it.ativo==='1'?'bgg':'bgr'}">${it.ativo==='1'?'Ativo':'Inativo'}</span></div>
+<div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:1.1rem;font-weight:700;color:var(--ok)">${fmt(it.preco)}</div>
+${it.custo?`<div style="font-size:.75rem;color:#64748b">CMV: ${fmt(it.custo)}</div>`:''}</div>
+${it.tempo?`<div style="font-size:.75rem;color:#64748b;margin-top:4px">⏱ ${it.tempo} min</div>`:''}
+<div style="margin-top:8px;display:flex;gap:4px">
+<button class="bs be" onclick="editItemI(${i})">Editar</button>
+<button class="bs bd" onclick="delItemI(${i})">Excluir</button></div></div>`).join('')}</div>`;
+}
+function abrirFormI(idx){document.getElementById('formI').style.display='block';document.getElementById('i-editidx').value=idx!==undefined?idx:-1;
+if(idx!==undefined){const it=DB.get('itensCardapio',[])[idx];document.getElementById('titFI').innerText='Editar: '+it.nome;
+document.getElementById('i-nome').value=it.nome;document.getElementById('i-cat').value=it.cat;document.getElementById('i-preco').value=it.preco;
+document.getElementById('i-custo').value=it.custo||'';document.getElementById('i-tempo').value=it.tempo||'';
+document.getElementById('i-ativo').value=it.ativo||'1';document.getElementById('i-desc').value=it.desc||'';}else{document.getElementById('i-nome').value='';document.getElementById('i-preco').value='';document.getElementById('i-custo').value='';document.getElementById('i-tempo').value='';document.getElementById('i-desc').value='';document.getElementById('titFI').innerText='Novo Item';}}
+function fecharFormI(){document.getElementById('formI').style.display='none'}
+function salvarItemI(){const idx=parseInt(document.getElementById('i-editidx').value);
+const item={id:idx>=0?DB.get('itensCardapio',[])[idx].id:uid(),nome:document.getElementById('i-nome').value.trim(),
+cat:document.getElementById('i-cat').value,preco:parseFloat(document.getElementById('i-preco').value)||0,
+custo:parseFloat(document.getElementById('i-custo').value)||0,tempo:parseInt(document.getElementById('i-tempo').value)||0,
+ativo:document.getElementById('i-ativo').value,desc:document.getElementById('i-desc').value.trim()};
+if(!item.nome){alert('Informe o nome!');return}
+const itens=DB.get('itensCardapio',[]);if(idx>=0)itens[idx]=item;else itens.push(item);DB.set('itensCardapio',itens);
+fecharFormI();rCardapio(document.getElementById('mca'));alert('Item salvo com sucesso!');}
+function editItemI(i){abrirFormI(i)}
+function delItemI(i){if(!confirm('Excluir este item?'))return;const itens=DB.get('itensCardapio',[]);itens.splice(i,1);DB.set('itensCardapio',itens);rCardapio(document.getElementById('mca'))}
+function filterCard(c){document.querySelectorAll('#gcard .mi').forEach(e=>{e.style.display=(c==='Todos'||e.dataset.cat===c)?'':'none'})}
+
+// ============ PEDIDOS ============
+const PED_STATUS=['pendente','preparando','pronto','entregue','fechado'];
+const PED_NEXT={'pendente':'preparando','preparando':'pronto','pronto':'entregue','entregue':'fechado'};
+const PED_COR={'pendente':'bgy','preparando':'bgb','pronto':'bgp','entregue':'bgg','fechado':'bgp'};
+const PED_ICON={'pendente':'⏳','preparando':'🍳','pronto':'✅','entregue':'📤','fechado':'🔒'};
+function rPedidos(el){
+const ped=DB.get('pedidos',[]),it=DB.get('itensCardapio',[]);
+let fat=DB.get('pedidoFiltro','todos');
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Pedidos</h2>
+<div class="card"><h3>Novo Pedido</h3>
+${REST_RAMOS.includes(APP.ramo)?`<div class="fg"><label>Mesa</label><select id="pf-mesa">${DB.get('mesas',[]).map(m=>`<option value="${m.id}">Mesa ${m.num}</option>`).join('')}</select></div>`:''}
+<div class="fg"><label>Cliente</label><select id="pf-cliente"><option value="">Consumidor Final</option>${DB.get('clientesCRM',[]).map(c=>`<option value="${c.id}">${c.nome}</option>`).join('')}</select></div>
+<div class="fg"><label>Canal</label><select id="pf-canal"><option value="salao">Salão</option><option value="balcao">Balcão</option><option value="delivery">Delivery</option><option value="ifood">iFood</option></select></div>
+<div class="fg"><label>Itens do Cardápio</label>
+<div style="display:flex;gap:8px;flex-wrap:wrap">${it.map(i=>`<button class="bsub" onclick="pedAddItem('${i.id||i.nome}')">${i.nome}</button>`).join('')}</div></div>
+<div id="pf-cart" style="margin-top:12px"></div></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px">
+<button class="bsub act" onclick="pedFiltro('todos',this)">Todos</button>
+${PED_STATUS.map(s=>`<button class="bsub" onclick="pedFiltro('${s}',this)">${s}</button>`).join('')}</div>
+<div id="pf-lista"></div>`;
+rPedCart();
+pedFiltro(fat);
+}
+let PED_CART=[];
+function rPedCart(){
+const el=document.getElementById('pf-cart');if(!el)return;
+el.innerHTML=`<div style="font-size:.82rem;color:#64748b;margin-top:8px">${PED_CART.length} itens distintos · ${PED_CART.reduce((s,i)=>s+parseInt(i.qtd||1),0)} unidades</div><table class="tb" style="margin-top:10px"><thead><tr><th>Item</th><th>Qt</th><th>Preço</th><th>Sub</th><th></th></tr></thead><tbody>
+${PED_CART.map((i,ix)=>`<tr><td>${i.nome}</td><td>${i.qtd}</td><td>${fmt(i.preco)}</td><td>${fmt(i.preco*i.qtd)}</td><td><button class="bs bd" onclick="pedCartDel(${ix})">x</button></td></tr>`).join('')}
+<tr><td colspan="3"><strong>Total</strong></td><td><strong>${fmt(PED_CART.reduce((s,i)=>s+i.preco*i.qtd,0))}</strong></td><td></td></tr></tbody></table>
+<button class="bf" style="width:auto;max-width:220px" onclick="criarPedido()">Criar Pedido</button>`;
+}
+function pedAddItem(nome){
+const it=DB.get('itensCardapio',[]);
+const i=it.find(x=>x.id===nome||x.nome===nome);
+if(!i){alert('Item não encontrado!');return}
+const p=parseFloat(i.precoVenda??i.preco??0)||0;
+const ex=PED_CART.find(x=>x.nome===i.nome);
+if(ex)ex.qtd=(parseInt(ex.qtd||1)+1);else PED_CART.push({id:i.id,nome:i.nome,preco:p,qtd:1});
+rPedCart();
+}
+function pedCartDel(ix){PED_CART.splice(ix,1);rPedCart()}
+function criarPedido(){
+if(!PED_CART.length){alert('Adicione itens!');return}
+let mesaId='',mesaNome='';
+const ms=document.getElementById('pf-mesa');
+if(ms){mesaId=ms.value;const m=DB.get('mesas',[]).find(x=>x.id===mesaId);mesaNome=m?('Mesa '+m.num):''}
+const cliEl=document.getElementById('pf-cliente');
+const clienteId=cliEl?cliEl.value:'';
+const cliente=DB.get('clientesCRM',[]).find(c=>c.id===clienteId);
+const canal=document.getElementById('pf-canal').value;
+const total=PED_CART.reduce((s,i)=>s+i.preco*i.qtd,0);
+const ped=DB.get('pedidos',[]);
+ped.push({id:uid(),mesaId,mesaNome,clienteId,clienteNome:cliente?cliente.nome:'',canal,itens:PED_CART,total,status:'pendente',data:hoje(),hora:horaA()});
+DB.set('pedidos',ped);
+if(mesaId){const mes=DB.get('mesas',[]),m=mes.find(x=>x.id===mesaId);if(m){m.status='ocupada';m.pedido=ped[ped.length-1].id;DB.set('mesas',mes)}}
+PED_CART=[];rPedidos(document.getElementById('mca'));
+}
+function pedFiltro(f,btn){
+if(btn){document.querySelectorAll('#pf-lista').forEach(()=>{});document.getElementById('mca').querySelectorAll('.bsub').forEach(b=>b.classList.remove('act'));btn.classList.add('act')}
+DB.set('pedidoFiltro',f);
+const ped=DB.get('pedidos',[]).filter(p=>f==='todos'||p.status===f);
+const el=document.getElementById('pf-lista');if(!el)return;
+el.innerHTML=ped.length?`<div class="g2">${ped.sort((a,b)=>b.data.localeCompare(a.data)).map(p=>`<div style="background:#fff;padding:18px;border-radius:10px;border:1px solid #e2e8f0">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+<strong>#${p.id.slice(-5).toUpperCase()}</strong><span class="bg ${PED_COR[p.status]||'bgb'}">${PED_ICON[p.status]||''} ${p.status}</span></div>
+<div style="font-size:.82rem;line-height:1.7;color:#475569">
+<div>${p.mesaNome||'—'} | ${p.canal||'—'} | ${p.data} ${p.hora}</div>
+<div>Cliente: ${p.clienteNome||'Consumidor Final'}</div>
+<div>Itens: ${(p.itens||[]).map(i=>`${i.nome} x${i.qtd}`).join(', ')}</div>
+<div style="color:var(--p);font-weight:700;font-size:1rem">${fmt(p.total)}</div></div>
+${p.status!=='fechado'?`<button class="bf" style="width:auto;max-width:200px;background:var(--w)" onclick="avancarPedido('${p.id}')">➤ Avançar (${PED_NEXT[p.status]})</button>`:''}</div>`).join('')}</div>`:`<div style="text-align:center;color:#64748b;padding:40px">Nenhum pedido com status '${f}'.</div>`;
+}
+function avancarPedido(id){
+const ped=DB.get('pedidos',[]),p=ped.find(x=>x.id===id);
+if(!p)return;
+if(p.status==='entregue'){
+p.status='fechado';
+if(p.mesaId){const mes=DB.get('mesas',[]),m=mes.find(x=>x.id===p.mesaId);if(m){m.status='livre';m.pedido=null;DB.set('mesas',mes)}}
+}else{p.status=PED_NEXT[p.status]||p.status}
+DB.set('pedidos',ped);rPedidos(document.getElementById('mca'));
+}
+
+// ============ KDS ============
+function rKDS(el){
+const ped=DB.get('pedidos',[]).filter(p=>['pendente','preparando','pronto'].includes(p.status));
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Cozinha / KDS</h2>
+<div style="display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap">
+<button class="bsub act" onclick="kdsFiltro('todos',this)">Todos</button>
+<button class="bsub" onclick="kdsFiltro('pendente',this)">Pendentes</button>
+<button class="bsub" onclick="kdsFiltro('preparando',this)">Preparando</button>
+<button class="bsub" onclick="kdsFiltro('pronto',this)">Prontos</button></div>
+<div class="g3" id="kds-g">${rKDSCards(ped)}</div>`;
+}
+function kdsFiltro(f,btn){
+document.querySelectorAll('.bsub').forEach(b=>b.classList.remove('act'));btn.classList.add('act');
+DB.set('kdsFiltro',f);
+const area=document.querySelector('#kds-g');
+if(!area)return;
+const ped=DB.get('pedidos',[]).filter(p=>['pendente','preparando','pronto'].includes(p.status)&&(f==='todos'||p.status===f));
+area.innerHTML=rKDSCards(ped);
+}
+function rKDSCards(ped){
+if(!ped.length)return'<div style="text-align:center;color:#64748b;padding:40px;grid-column:1/-1">Nenhum pedido na cozinha.</div>';
+return ped.sort((a,b)=>b.hora.localeCompare(a.hora)).map(p=>{
+const cls=p.status==='pendente'?'kds':p.status==='pronto'?'kds e':'kds p';
+return`<div class="${cls}">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<strong style="font-size:1.1rem">#${p.id.slice(-5).toUpperCase()}</strong>
+<span class="bg ${PED_COR[p.status]||'bgb'}">${PED_ICON[p.status]||''} ${p.status}</span></div>
+<div style="font-size:.75rem;opacity:.8;margin-bottom:8px">${p.mesaNome||''} ${p.canal?'· '+p.canal:''} · ${p.hora}</div>
+<ul style="margin:0;padding-left:18px;line-height:1.6;font-size:.88rem">${(p.itens||[]).map(i=>`<li>${i.qtd}x ${i.nome}</li>`).join('')}</ul>
+<div style="margin-top:12px;font-size:.85rem;font-weight:700">Total: ${fmt(p.total)}</div>
+<button class="bf" style="width:100%;margin-top:10px;background:var(--w)" onclick="avancarPedKDS('${p.id}')">➤ ${p.status==='pronto'?'Entregar':'Avançar p/ '+PED_NEXT[p.status]}</button></div>`;
+}).join('');
+}
+function avancarPedKDS(id){
+const ped=DB.get('pedidos',[]),p=ped.find(x=>x.id===id);
+if(!p)return;
+if(p.status==='pronto'){p.status='entregue'}
+else{p.status=PED_NEXT[p.status]||p.status}
+DB.set('pedidos',ped);
+const f=DB.get('kdsFiltro','todos');
+rKDS(document.getElementById('mca'));
+}
+
+// ============ PDV / CAIXA ============
+function rPDV(el){
+const cx=DB.get('caixas',[]);
+const abertos=cx.filter(c=>c.status==='aberto');
+APP.caixaAberto=abertos.length?abertos[abertos.length-1]:null;
+const pend=DB.get('pedidos',[]).filter(p=>p.status==='entregue');
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">PDV / Caixa</h2>
+<div class="g2">
+<div class="card"><h3>Caixa ${APP.caixaAberto?'Aberto':'Fechado'}</h3>
+${APP.caixaAberto?`
+<div style="font-size:.82rem;line-height:1.9;color:#475569">
+<div>Abertura: ${APP.caixaAberto.abertura}</div>
+<div>Saldo Inicial: <strong>${fmt(APP.caixaAberto.saldoInicial)}</strong></div>
+<div>Movimentos Hoje: <strong>${APP.caixaAberto.movimentos.length}</strong></div>
+<div style="font-size:1rem;font-weight:700;color:var(--ok)">Total: ${fmt(APP.caixaAberto.movimentos.reduce((s,m)=>s+parseFloat(m.valor||0),0))}</div></div>
+<button class="bf" style="background:var(--no)" onclick="fecharCaixa()">Fechar Caixa</button>`
+:`<div style="font-size:.85rem;color:#64748b;margin-bottom:10px">Abra o caixa para iniciar atendimento.</div>
+<div class="fg"><label>Saldo Inicial (R$)</label><input type="number" id="cx-abertura" value="0"></div>
+<button class="bf" onclick="abrirCaixa()">Abrir Caixa</button>`}</div>
+<div class="card"><h3>Pedidos Aguardando Pagamento</h3>
+${pend.length?`<table class="tb"><thead><tr><th>Pedido</th><th>Cliente</th><th>Total</th><th>Pagar</th></tr></thead><tbody>
+${pend.map(p=>`<tr><td>#${p.id.slice(-5).toUpperCase()}</td><td>${p.clienteNome||p.mesaNome||'—'}</td><td><strong>${fmt(p.total)}</strong></td>
+<td><button class="bs be" onclick="iniciarPagamento('${p.id}')">Pagar ➜</button></td></tr>`).join('')}</tbody></table>`
+:`<div style="text-align:center;color:#64748b;padding:20px">Nenhum pedido aguardando pagamento.</div>`}</div></div>
+<div id="pdv-pay" style="display:none"></div>`;
+}
+function abrirCaixa(){
+const v=parseFloat(document.getElementById('cx-abertura').value)||0;
+const cx=DB.get('caixas',[]);
+cx.push({id:uid(),abertura:dataA()+' '+horaA(),saldoInicial:v,movimentos:[],status:'aberto'});
+DB.set('caixas',cx);rPDV(document.getElementById('mca'));
+}
+function fecharCaixa(){
+if(!APP.caixaAberto)return;
+if(!confirm('Fechar o caixa?'))return;
+const c=APP.caixaAberto;
+c.fechamento=dataA()+' '+horaA();
+c.fechamentoValor=c.movimentos.reduce((s,m)=>s+parseFloat(m.valor||0),0);
+c.status='fechado';
+const cx=DB.get('caixas',[]);
+DB.set('caixas',cx.map(x=>x.id===c.id?c:x));
+const extra=parseFloat(prompt('Valor em espécie extra (trocos/retiradas)? Ou 0:','0'))||0;
+alert(`Caixa Fechado!\nAbertura: ${c.abertura}\nSaldo Inicial: ${fmt(c.saldoInicial)}\nMovimentado: ${fmt(c.fechamentoValor)}\nTotal Final: ${fmt(c.fechamentoValor+extra)}`);
+APP.caixaAberto=null;rPDV(document.getElementById('mca'));
+}
+function iniciarPagamento(id){
+const pend=DB.get('pedidos',[]),p=pend.find(x=>x.id===id);if(!p)return;
+const el=document.getElementById('pdv-pay');
+el.style.display='block';
+el.innerHTML=`<div class="card"><h3>Pagamento - Pedido #${p.id.slice(-5).toUpperCase()} | ${fmt(p.total)}</h3>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="bs bo" onclick="registrarPagamento('${id}','Dinheiro')">Dinheiro 💵</button>
+<button class="bs bw" onclick="registrarPagamento('${id}','Pix')">Pix 📱</button>
+<button class="bs be" onclick="registrarPagamento('${id}','Credito')">Crédito 💳</button>
+<button class="bs bgp" onclick="registrarPagamento('${id}','Debito')">Débito 💳</button>
+<button class="bs bd" onclick="dividirConta('${id}')">Dividir Conta 🔪</button></div></div>`;
+el.scrollIntoView({behavior:'smooth'});
+}
+function registrarPagamento(id,forma){
+const ped=DB.get('pedidos',[]),p=ped.find(x=>x.id===id);if(!p)return;
+p.status='fechado';p.pagamento=forma;p.pago=hoje();
+DB.set('pedidos',ped);
+if(p.mesaId){const mes=DB.get('mesas',[]),m=mes.find(x=>x.id===p.mesaId);if(m){m.status='livre';m.pedido=null;DB.set('mesas',mes)}}
+if(APP.caixaAberto){APP.caixaAberto.movimentos.push({id:uid(),valor:p.total,forma,desc:'Pedido #'+p.id.slice(-5).toUpperCase(),data:dataA()+' '+horaA()});DB.set('caixas',DB.get('caixas',[]))}
+const fin=DB.get('financeiro',[]);
+fin.push({id:uid(),tipo:'receita',descricao:'Venda '+forma+' - Pedido #'+p.id.slice(-5).toUpperCase(),valor:p.total,categoria:'Vendas',data:hoje()});
+DB.set('financeiro',fin);
+if(p.clienteId){const cli=DB.get('clientesCRM',[]),c=cli.find(x=>x.id===p.clienteId);if(c){c.pontos=(parseInt(c.pontos||0)+Math.floor(p.total));DB.set('clientesCRM',cli)}}
+rPDV(document.getElementById('mca'));
+}
+function dividirConta(id){
+const q=parseInt(prompt('Quantas pessoas?'))||2;if(q<2)return;
+const ped=DB.get('pedidos',[]),p=ped.find(x=>x.id===id);if(!p)return;
+const val=p.total/q;
+alert(`Conta dividida em ${q} partes de ${fmt(val)} cada.\nRegistre cada pagamento abaixo.`);
+rPDV(document.getElementById('mca'));
+}
+
+// ============ ESTOQUE ============
+function rEstoque(el){
+const est=DB.get('estoque',[]);
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Estoque & Insumos</h2>
+<div class="card"><h3>Novo Item</h3>
+<div class="g2">
+<div class="fg"><label>Nome</label><input type="text" id="es-nome" placeholder="Nome do item"></div>
+<div class="fg"><label>Código de Barras (EAN)</label><div style="display:flex;gap:6px"><input type="text" id="es-cod" placeholder="Digite o EAN"><button class="bs be" style="margin-top:4px" onclick="buscarEAN()">🔎 Buscar</button></div></div>
+<div class="fg"><label>Categoria</label><input type="text" id="es-cat" placeholder="Ex: Bebidas"></div>
+<div class="fg"><label>Unidade</label><select id="es-und"><option>un</option><option>kg</option><option>L</option><option>g</option><option>cx</option></select></div>
+<div class="fg"><label>Quantidade</label><input type="number" id="es-qtd" value="0"></div>
+<div class="fg"><label>Qtd Mínima</label><input type="number" id="es-min" value="0"></div>
+<div class="fg"><label>Custo Unit (R$)</label><input type="number" id="es-cust" value="0"></div>
+<div class="fg"><label>Preço Venda (R$)</label><input type="number" id="es-prev" value="0"></div>
+<div class="fg"><label>Validade</label><input type="date" id="es-val"></div></div>
+<input type="hidden" id="es-edit" value="">
+<button class="bf" onclick="salvarEstoque()">+ Salvar Item</button></div>
+<div id="es-lista">${rEstoqueLista(est)}</div>`;
+}
+function rEstoqueLista(est){
+if(!est.length)return'<div style="text-align:center;color:#64748b;padding:30px">Nenhum item cadastrado.</div>';
+return`<table class="tb"><thead><tr><th>Nome</th><th>Código</th><th>Cat</th><th>Qtd</th><th>Mín</th><th>Custo</th><th>Venda</th><th>Validade</th><th>Ações</th></tr></thead><tbody>
+${est.map(e=>{const low=parseInt(e.qtdMin||0)>0&&parseInt(e.qtd||0)<=parseInt(e.qtdMin||0);return`<tr${low?' style="background:#fef2f2"':''}>
+<td>${low?'🔴 ':''}${e.nome}</td><td>${e.codigo||'—'}</td><td>${e.categoria||'—'}</td>
+<td><strong>${e.qtd}</strong> ${e.unidade||'un'}</td><td>${e.qtdMin||0}</td>
+<td>${fmt(e.custoUnit)}</td><td>${fmt(e.precoVenda)}</td><td>${e.validade||'—'}</td>
+<td style="white-space:nowrap"><button class="bs be" onclick="editarEstoque('${e.id}')">Edit</button>
+<button class="bs bw" onclick="baixarEstoque('${e.id}')">Baixar</button>
+<button class="bs bd" onclick="delEstoque('${e.id}')">Del</button></td></tr>`}).join('')}</tbody></table>`;
+}
+function salvarEstoque(){
+const nome=document.getElementById('es-nome').value.trim();
+if(!nome){alert('Informe o nome!');return}
+const est=DB.get('estoque',[]);
+const editId=document.getElementById('es-edit').value;
+if(editId){
+const e=est.find(x=>x.id===editId);
+if(e){e.nome=nome;e.codigo=document.getElementById('es-cod').value.trim();e.categoria=document.getElementById('es-cat').value.trim();e.qtd=parseFloat(document.getElementById('es-qtd').value)||0;e.unidade=document.getElementById('es-und').value;e.qtdMin=parseFloat(document.getElementById('es-min').value)||0;e.custoUnit=parseFloat(document.getElementById('es-cust').value)||0;e.precoVenda=parseFloat(document.getElementById('es-prev').value)||0;e.validade=document.getElementById('es-val').value}
+}else{
+est.push({id:uid(),nome,codigo:document.getElementById('es-cod').value.trim(),categoria:document.getElementById('es-cat').value.trim(),qtd:parseFloat(document.getElementById('es-qtd').value)||0,unidade:document.getElementById('es-und').value,qtdMin:parseFloat(document.getElementById('es-min').value)||0,custoUnit:parseFloat(document.getElementById('es-cust').value)||0,precoVenda:parseFloat(document.getElementById('es-prev').value)||0,validade:document.getElementById('es-val').value});
+}
+DB.set('estoque',est);rEstoque(document.getElementById('mca'));
+}
+function editarEstoque(id){
+const e=DB.get('estoque',[]).find(x=>x.id===id);
+if(!e)return;
+document.getElementById('es-edit').value=id;
+document.getElementById('es-nome').value=e.nome||'';
+document.getElementById('es-cod').value=e.codigo||'';
+document.getElementById('es-cat').value=e.categoria||'';
+document.getElementById('es-und').value=e.unidade||'un';
+document.getElementById('es-qtd').value=e.qtd||0;
+document.getElementById('es-min').value=e.qtdMin||0;
+document.getElementById('es-cust').value=e.custoUnit||0;
+document.getElementById('es-prev').value=e.precoVenda||0;
+document.getElementById('es-val').value=e.validade||'';
+document.getElementById('es-nome').focus();
+}
+function baixarEstoque(id){
+const q=parseInt(prompt('Quantidade a baixar (diminuir):','1'))||0;
+if(q<=0)return;
+const est=DB.get('estoque',[]),e=est.find(x=>x.id===id);
+if(e){e.qtd=parseFloat(e.qtd||0)-q;DB.set('estoque',est);rEstoque(document.getElementById('mca'))}
+}
+function delEstoque(id){
+if(!confirm('Excluir?'))return;
+DB.set('estoque',DB.get('estoque',[]).filter(e=>e.id!==id));
+rEstoque(document.getElementById('mca'));
+}
+async function buscarEAN(){
+const cod=document.getElementById('es-cod').value.trim();
+if(!cod){alert('Digite o código de barras!');return}
+if(!/^\d{8,14}$/.test(cod)){alert('EAN inválido!');return}
+try{
+const d=await fetch('https://world.openfoodfacts.org/api/v2/product/'+cod+'.json').then(r=>r.json());
+if(d&&d.status===1&&d.product){
+const pr=d.product;
+document.getElementById('es-nome').value=pr.product_name||'';
+document.getElementById('es-cat').value=(pr.categories||'').split(',')[0]||'';
+document.getElementById('es-prev').value=pr.nutriscore_grade?'':'';
+alert('Produto encontrado: '+pr.product_name);
+}else{alert('Código não encontrado no banco OpenFoodFacts. Preencha manualmente.')}
+}catch(e){alert('Erro ao buscar. Preencha manualmente.')}
+}
+
+// ============ FINANCEIRO ============
+const FIN_CATS=['Vendas','Custos','Salários','Aluguel','Impostos','Compras','Outros'];
+function rFin(el){
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Financeiro</h2>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px">
+<button class="bsub act" onclick="mudarSubFinanceiro('resumo',this)">Resumo</button>
+<button class="bsub" onclick="mudarSubFinanceiro('lancar',this)">Lançar</button>
+<button class="bsub" onclick="mudarSubFinanceiro('apagar',this)">Contas a Pagar</button>
+<button class="bsub" onclick="mudarSubFinanceiro('areceber',this)">Contas a Receber</button>
+<button class="bsub" onclick="mudarSubFinanceiro('dre',this)">DRE</button></div>
+<div id="fimsal"></div>`;
+mudarSubFinanceiro('resumo',el.querySelector('.bsub'));
+}
+function ativaSub(n){
+const el=document.getElementById('mca');
+el.querySelectorAll('.bsub').forEach(b=>b.classList.remove('act'));
+const bs=Array.from(el.querySelectorAll('.bsub')).find(b=>b.textContent.trim().startsWith(n==='apagar'?'Contas a P':n==='areceber'?'Contas a R':n==='resumo'?'Resumo':n==='lancar'?'Lançar':'DRE'));
+if(bs)bs.classList.add('act');
+}
+function mudarSubFinanceiro(sub,btn){
+if(btn){btn.closest('#mca').querySelectorAll('.bsub').forEach(b=>b.classList.remove('act'));btn.classList.add('act')}
+const el=document.getElementById('fimsal');if(!el)return;
+const fin=DB.get('financeiro',[]);
+const tR=fin.filter(f=>f.tipo==='receita').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+const tD=fin.filter(f=>f.tipo==='despesa').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+if(sub==='resumo'){
+const recente=fin.slice(-8).reverse();
+el.innerHTML=`<div class="g4" style="margin-bottom:20px">
+<div class="kpi" style="background:linear-gradient(135deg,#16a34a,#15803d)"><span>Receitas</span><h2>${fmt(tR)}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#dc2626,#991b1b)"><span>Despesas</span><h2>${fmt(tD)}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#0f223d,#1e3a8a)"><span>Saldo</span><h2>${fmt(tR-tD)}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#d97706,#b45309)"><span>Lançamentos</span><h2>${fin.length}</h2></div></div>
+<div class="card"><h3>Últimos Lançamentos</h3>${recente.length?`<table class="tb"><thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria</th><th>Valor</th></tr></thead><tbody>${recente.map(f=>`<tr><td>${f.data||'—'}</td><td>${f.descricao}</td><td><span class="bg ${f.tipo==='receita'?'bgg':'bgr'}">${f.tipo}</span></td><td>${f.categoria||''}</td><td style="color:${f.tipo==='receita'?'var(--ok)':'var(--no)'}">${fmt(f.valor)}</td></tr>`).join('')}</tbody></table>`:'<div style="color:#64748b;text-align:center;padding:20px">Sem lançamentos.</div>'}</div>`;
+}
+else if(sub==='lancar'){
+el.innerHTML=`<div class="card"><h3>Lançar Movimento</h3>
+<div class="g3">
+<div class="fg"><label>Tipo</label><select id="fn-tipo"><option value="receita">Receita</option><option value="despesa">Despesa</option></select></div>
+<div class="fg"><label>Descrição</label><input type="text" id="fn-desc" placeholder="Descrição"></div>
+<div class="fg"><label>Valor (R$)</label><input type="number" id="fn-valor" value="0"></div>
+<div class="fg"><label>Categoria</label><select id="fn-cat">${FIN_CATS.map(c=>`<option>${c}</option>`).join('')}</select></div></div>
+<button class="bf" style="width:auto;max-width:200px" onclick="lancarFinanceiro()">+ Lançar</button></div>`;
+}
+else if(sub==='apagar'){
+const cp=DB.get('contasPagar',[]);
+el.innerHTML=`<div class="card"><h3>Nova Conta a Pagar</h3>
+<div class="g3">
+<div class="fg"><label>Descrição</label><input type="text" id="cp-desc"></div>
+<div class="fg"><label>Valor (R$)</label><input type="number" id="cp-valor" value="0"></div>
+<div class="fg"><label>Vencimento</label><input type="date" id="cp-venc"></div></div>
+<button class="bf" style="width:auto;max-width:160px" onclick="salvarContaPagar()">+ Adicionar</button></div>
+<div class="card"><h3>Contas a Pagar</h3>${cp.length?`<table class="tb"><thead><tr><th>Descrição</th><th>Valor</th><th>Vencimento</th><th>Status</th><th></th></tr></thead><tbody>
+${cp.map(c=>`<tr><td>${c.descricao}</td><td>${fmt(c.valor)}</td><td>${c.vencimento}</td><td>${c.pago?`<span class="bg bgg">Pago</span>`:(c.vencimento<hoje()?'<span class="bg bgr">Vencida</span>':'<span class="bg bgy">Pendente</span>')}</td><td>${c.pago?'':`<button class="bs bo" onclick="pagarConta('${c.id}')">Pagar</button> <button class="bs bd" onclick="delConta('${c.id}',1)">Del</button>`}</td></tr>`).join('')}</tbody></table>`:'<div style="color:#64748b;text-align:center;padding:20px">Nenhuma conta a pagar.</div>'}</div>`;
+}
+else if(sub==='areceber'){
+const cr=DB.get('contasReceber',[]);
+el.innerHTML=`<div class="card"><h3>Nova Conta a Receber</h3>
+<div class="g3">
+<div class="fg"><label>Descrição</label><input type="text" id="cr-desc"></div>
+<div class="fg"><label>Valor (R$)</label><input type="number" id="cr-valor" value="0"></div>
+<div class="fg"><label>Vencimento</label><input type="date" id="cr-venc"></div></div>
+<button class="bf" style="width:auto;max-width:160px" onclick="salvarContaReceber()">+ Adicionar</button></div>
+<div class="card"><h3>Contas a Receber</h3>${cr.length?`<table class="tb"><thead><tr><th>Descrição</th><th>Valor</th><th>Vencimento</th><th>Status</th><th></th></tr></thead><tbody>
+${cr.map(c=>`<tr><td>${c.descricao}</td><td>${fmt(c.valor)}</td><td>${c.vencimento}</td><td>${c.recebido?`<span class="bg bgg">Recebido</span>`:(c.vencimento<hoje()?'<span class="bg bgy">Atrasada</span>':'<span class="bg bgb">Pendente</span>')}</td><td>${c.recebido?'':`<button class="bs bo" onclick="receberConta('${c.id}')">Receber</button> <button class="bs bd" onclick="delConta('${c.id}',0)">Del</button>`}</td></tr>`).join('')}</tbody></table>`:'<div style="color:#64748b;text-align:center;padding:20px">Nenhuma conta a receber.</div>'}</div>`;
+}
+else if(sub==='dre'){
+const cm=(custo)=>`<tr><td style="padding-left:15px">${custo}</td></tr>`;
+el.innerHTML=`<div class="card"><h3>DRE Simplificada</h3>
+<table class="tb"><thead><tr><th>Descrição</th><th style="text-align:right">Valor</th></tr></thead><tbody>
+<tr><td><strong>Receita Total</strong></td><td style="text-align:right;color:var(--ok)"><strong>${fmt(tR)}</strong></td></tr>
+<tr><td>Despesas Totais</td><td style="text-align:right;color:var(--no)">(${fmt(tD)})</td></tr>
+<tr style="border-top:2px solid #cbd5e1"><td><strong>Resultado Operacional</strong></td><td style="text-align:right;font-weight:700;color:${tR-tD>=0?'var(--ok)':'var(--no)'}">${fmt(tR-tD)}</td></tr>
+<tr><td>Margem</td><td style="text-align:right">${tR?((tR-tD)/tR*100).toFixed(1):0}%</td></tr></tbody></table></div>`;
+}
+}
+function lancarFinanceiro(){
+const tipo=document.getElementById('fn-tipo').value;
+const desc=document.getElementById('fn-desc').value.trim();
+const valor=parseFloat(document.getElementById('fn-valor').value)||0;
+if(!desc||!valor){alert('Preencha descrição e valor!');return}
+const fin=DB.get('financeiro',[]);
+fin.push({id:uid(),tipo,descricao:desc,valor,categoria:document.getElementById('fn-cat').value,data:hoje()});
+DB.set('financeiro',fin);
+mudarSubFinanceiro('resumo');
+}
+function salvarContaPagar(){
+const d=document.getElementById('cp-desc').value.trim();
+const v=parseFloat(document.getElementById('cp-valor').value)||0;
+const venc=document.getElementById('cp-venc').value;
+if(!d||!v){alert('Preencha descrição e valor!');return}
+const cp=DB.get('contasPagar',[]);
+cp.push({id:uid(),descricao:d,valor:v,vencimento:venc||hoje(),pago:false});
+DB.set('contasPagar',cp);mudarSubFinanceiro('apagar');
+}
+function pagarConta(id){
+const cp=DB.get('contasPagar',[]),c=cp.find(x=>x.id===id);
+if(c){c.pago=true;c.dataPagto=hoje();DB.set('contasPagar',cp);
+const fin=DB.get('financeiro',[]);fin.push({id:uid(),tipo:'despesa',descricao:c.descricao,valor:c.valor,categoria:'Contas a Pagar',data:hoje()});DB.set('financeiro',fin)}
+mudarSubFinanceiro('apagar');
+}
+function salvarContaReceber(){
+const d=document.getElementById('cr-desc').value.trim();
+const v=parseFloat(document.getElementById('cr-valor').value)||0;
+const venc=document.getElementById('cr-venc').value;
+if(!d||!v){alert('Preencha descrição e valor!');return}
+const cr=DB.get('contasReceber',[]);
+cr.push({id:uid(),descricao:d,valor:v,vencimento:venc||hoje(),recebido:false});
+DB.set('contasReceber',cr);mudarSubFinanceiro('areceber');
+}
+function receberConta(id){
+const cr=DB.get('contasReceber',[]),c=cr.find(x=>x.id===id);
+if(c){c.recebido=true;c.dataRecebto=hoje();DB.set('contasReceber',cr);
+const fin=DB.get('financeiro',[]);fin.push({id:uid(),tipo:'receita',descricao:c.descricao,valor:c.valor,categoria:'Contas a Receber',data:hoje()});DB.set('financeiro',fin)}
+mudarSubFinanceiro('areceber');
+}
+function delConta(id,tipo){
+const k=tipo?'contasPagar':'contasReceber';
+if(!confirm('Excluir?'))return;
+DB.set(k,DB.get(k,[]).filter(c=>c.id!==id));
+mudarSubFinanceiro(tipo?'apagar':'areceber');
+}
+
+// ============ CRM ============
+function rCRM(el){
+const cli=DB.get('clientesCRM',[]);
+const mesAtual=new Date().getMonth()+1;
+const aniv=cli.filter(c=>{if(!c.dataNascimento)return false;const m=parseInt(c.dataNascimento.split('-')[1]);return m===mesAtual});
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Clientes CRM</h2>
+<div class="card"><h3>Novo Cliente</h3>
+<div class="g2">
+<div class="fg"><label>Nome</label><input type="text" id="cr-nome"></div>
+<div class="fg"><label>CPF/CNPJ</label><input type="text" id="cr-doc"></div>
+<div class="fg"><label>Telefone</label><input type="text" id="cr-tel"></div>
+<div class="fg"><label>E-mail</label><input type="email" id="cr-email"></div>
+<div class="fg"><label>Data Nascimento</label><input type="date" id="cr-nasc"></div>
+<div class="fg"><label>Pontos (Fidelidade)</label><input type="number" id="cr-pontos" value="0"></div>
+<div class="fg"><label>Preferências</label><input type="text" id="cr-pref" placeholder="Preferências"></div>
+<div class="fg"><label>Observações</label><input type="text" id="cr-obs" placeholder="Observações"></div></div>
+<button class="bf" style="width:auto;max-width:180px" onclick="salvarCRM()">+ Salvar Cliente</button></div>
+${aniv.length?`<div style="background:#fff;padding:18px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:15px"><h4 style="margin:0 0 10px;color:var(--p)">🎂 Aniversariantes do Mês</h4><div style="font-size:.9rem;line-height:1.8">${aniv.map(c=>`<div>🎈 ${c.nome} - ${c.dataNascimento.split('-').reverse().join('/')} ${c.telefone?'· '+c.telefone:''}</div>`).join('')}</div></div>`:''}
+<div class="card"><h3>Buscar / Lista</h3>
+<div class="fg"><input type="text" id="cr-busca" placeholder="Buscar por nome, telefone ou email..." oninput="buscarCRM()"></div>
+<div id="cr-lista">${rCRMLista(cli)}</div></div>`;
+}
+function rCRMLista(cli){
+if(!cli.length)return'<div style="color:#64748b;text-align:center;padding:20px">Nenhum cliente.</div>';
+return`<table class="tb"><thead><tr><th>Nome</th><th>Contato</th><th>Pontos</th><th>Cupons</th><th>Ações</th></tr></thead><tbody>
+${cli.map(c=>`<tr><td><strong>${c.nome}</strong>${c.dataNascimento?'<div style="font-size:.75rem;color:#64748b">Nasc: '+c.dataNascimento.split('-').reverse().join('/')+'</div>':''}</td>
+<td>${c.telefone||''}<div style="font-size:.75rem;color:#64748b">${c.email||''}</div></td>
+<td><span class="bg bgy">${c.pontos||0} pts</span></td>
+<td>${(c.cupons||[]).filter(x=>!x.usado).length}</td>
+<td style="white-space:nowrap"><button class="bs be" onclick="editarCRM('${c.id}')">Edit</button>
+<button class="bs bw" onclick="gerarCupom('${c.id}')">Cupom</button>
+<button class="bs bd" onclick="delCRM('${c.id}')">Del</button></td></tr>`).join('')}</tbody></table>`;
+}
+function salvarCRM(){
+const nome=document.getElementById('cr-nome').value.trim();
+if(!nome){alert('Informe o nome!');return}
+const cli=DB.get('clientesCRM',[]);
+cli.push({id:uid(),nome,doc:document.getElementById('cr-doc').value.trim(),telefone:document.getElementById('cr-tel').value.trim(),email:document.getElementById('cr-email').value.trim(),dataNascimento:document.getElementById('cr-nasc').value,preferencias:document.getElementById('cr-pref').value.trim(),observacoes:document.getElementById('cr-obs').value.trim(),pontos:parseInt(document.getElementById('cr-pontos').value)||0,cupons:[]});
+DB.set('clientesCRM',cli);rCRM(document.getElementById('mca'));
+}
+function gerarCupom(id){
+const cli=DB.get('clientesCRM',[]),c=cli.find(x=>x.id===id);
+if(!c)return;
+const val=parseFloat(prompt('Valor do cupom (R$):','10'))||0;
+if(!val)return;
+const cod='CUPON-'+Math.random().toString(36).substr(2,6).toUpperCase();
+(c.cupons=c.cupons||[]).push({id:uid(),codigo:cod,valor:val,usado:false});
+DB.set('clientesCRM',cli);
+alert('Cupom gerado: '+cod+' - '+fmt(val));rCRM(document.getElementById('mca'));
+}
+function buscarCRM(){
+const q=(document.getElementById('cr-busca').value||'').toLowerCase();
+const cli=DB.get('clientesCRM',[]).filter(c=>(!q||c.nome.toLowerCase().includes(q)||(c.telefone||'').includes(q)||(c.email||'').toLowerCase().includes(q)));
+document.getElementById('cr-lista').innerHTML=rCRMLista(cli);
+}
+function editarCRM(id){
+const cli=DB.get('clientesCRM',[]).find(x=>x.id===id);
+if(!cli)return;
+const n=prompt('Nome:',cli.nome);if(!n)return;
+cli.nome=n;
+cli.telefone=prompt('Telefone:',cli.telefone)||cli.telefone;
+cli.email=prompt('E-mail:',cli.email)||cli.email;
+const cp=DB.get('clientesCRM',[]);
+DB.set('clientesCRM',cp.map(x=>x.id===id?cli:x));rCRM(document.getElementById('mca'));
+}
+function delCRM(id){
+if(!confirm('Excluir cliente?'))return;
+DB.set('clientesCRM',DB.get('clientesCRM',[]).filter(c=>c.id!==id));
+rCRM(document.getElementById('mca'));
+}
+
+// ============ RELATORIOS ============
+function rRel(el){
+const ped=DB.get('pedidos',[]);
+const fech=ped.filter(p=>p.status==='fechado');
+const receita=fech.reduce((s,p)=>s+parseFloat(p.total||0),0);
+const ticket=receita/(fech.length||1);
+const tR=DB.get('financeiro',[]).filter(f=>f.tipo==='receita').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+const tD=DB.get('financeiro',[]).filter(f=>f.tipo==='despesa').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+const margem=tR?((tR-tD)/tR*100):0;
+const items={};
+fech.forEach(p=>(p.itens||[]).forEach(i=>{items[i.nome]=items[i.nome]||{qtd:0,rec:0};items[i.nome].qtd+=parseInt(i.qtd||1);items[i.nome].rec+=(i.qtd||1)*(i.preco||0)}));
+const top=Object.entries(items).sort((a,b)=>b[1].qtd-a[1].qtd).slice(0,10);
+const porDia={};
+fech.forEach(p=>{porDia[p.data]=porDia[p.data]||0;porDia[p.data]+=parseFloat(p.total||0)});
+const dias=Object.entries(porDia).sort().reverse();
+const cliGasto={};
+fech.forEach(p=>{if(p.clienteId){cliGasto[p.clienteId]=(cliGasto[p.clienteId]||0)+parseFloat(p.total||0)}});
+const topCli=Object.entries(cliGasto).sort((a,b)=>b[1]-a[1]).slice(0,10);
+const cliMap={};DB.get('clientesCRM',[]).forEach(c=>cliMap[c.id]=c.nome);
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Relatórios</h2>
+<div class="g4" style="margin-bottom:20px">
+<div class="kpi" style="background:linear-gradient(135deg,#0f223d,#1e3a8a)"><span>Total Pedidos</span><h2>${ped.length}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)"><span>Ticket Médio</span><h2>${fmt(ticket)}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#16a34a,#15803d)"><span>Receita</span><h2>${fmt(receita)}</h2></div>
+<div class="kpi" style="background:linear-gradient(135deg,#d97706,#b45309)"><span>Margem</span><h2>${margem.toFixed(1)}%</h2></div></div>
+<div class="g2">
+<div class="card"><h3>📊 Top Produtos</h3>${top.length?`<table class="tb"><thead><tr><th>Item</th><th>Qtd</th><th>Receita</th></tr></thead><tbody>${top.map(([n,v],ix)=>`<tr><td>${ix+1}. ${n}</td><td>${v.qtd}</td><td>${fmt(v.rec)}</td></tr>`).join('')}</tbody></table>`:'<div style="color:#64748b;padding:15px;text-align:center">Sem dados.</div>'}</div>
+<div class="card"><h3>💰 Top Clientes</h3>${topCli.length?`<table class="tb"><thead><tr><th>Cliente</th><th>Gasto</th></tr></thead><tbody>${topCli.map(([id,v],ix)=>`<tr><td>${ix+1}. ${cliMap[id]||'ID '+id.slice(-5)}</td><td>${fmt(v)}</td></tr>`).join('')}</tbody></table>`:'<div style="color:#64748b;padding:15px;text-align:center">Sem dados.</div>'}</div>
+<div class="card" style="grid-column:1/-1"><h3>Receita por Dia</h3>${dias.length?`<table class="tb"><thead><tr><th>Data</th><th>Receita</th></tr></thead><tbody>${dias.map(([d,v])=>`<tr><td>${d}</td><td>${fmt(v)}</td></tr>`).join('')}</tbody></table>`:'<div style="color:#64748b;padding:15px;text-align:center">Sem dados.</div>'}</div>
+</div>`;
+}
+
+// ============ EQUIPE / COMISSOES ============
+function rEquipe(el){
+const eq=DB.get('equipe',[]);
+const ped=DB.get('pedidos',[]).filter(p=>p.status==='fechado');
+const receita=ped.reduce((s,p)=>s+parseFloat(p.total||0),0);
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Equipe & Comissões</h2>
+<div class="card"><h3>Novo Membro</h3>
+<div class="g3">
+<div class="fg"><label>Nome</label><input type="text" id="eq-nome"></div>
+<div class="fg"><label>Função</label><select id="eq-fun"><option>garçom</option><option>cozinheiro</option><option>gerente</option><option>atendente</option><option>profissional</option></select></div>
+<div class="fg"><label>Comissão (%)</label><input type="number" id="eq-com" value="0"></div>
+<div class="fg"><label>Salário (R$)</label><input type="number" id="eq-sal" value="0"></div></div>
+<button class="bf" style="width:auto;max-width:180px" onclick="salvarEquipe()">+ Adicionar</button></div>
+<div class="card"><h3>Lista & Comissões</h3>${eq.length?`<table class="tb"><thead><tr><th>Nome</th><th>Função</th><th>Salário</th><th>Comissão</th><th>Comissão Est.</th><th></th></tr></thead><tbody>
+${eq.map(e=>{const comis=(e.comissao||0)/100*receita;return`<tr><td><strong>${e.nome}</strong></td><td>${e.funcao}</td><td>${fmt(e.salario)}</td><td>${e.comissao}%</td><td style="color:var(--ok)">${fmt(comis)}</td><td><button class="bs bd" onclick="delEquipe('${e.id}')">Del</button></td></tr>`}).join('')}</tbody></table>
+<div style="margin-top:10px;font-size:.82rem;color:#64748b">Comissão estimada com base na receita total de ${fmt(receita)}.</div>`:'<div style="color:#64748b;padding:15px;text-align:center">Nenhum membro cadastrado.</div>'}</div>`;
+}
+function salvarEquipe(){
+const nome=document.getElementById('eq-nome').value.trim();
+if(!nome){alert('Informe o nome!');return}
+const eq=DB.get('equipe',[]);
+eq.push({id:uid(),nome,funcao:document.getElementById('eq-fun').value,comissao:parseFloat(document.getElementById('eq-com').value)||0,salario:parseFloat(document.getElementById('eq-sal').value)||0});
+DB.set('equipe',eq);rEquipe(document.getElementById('mca'));
+}
+function delEquipe(id){
+if(!confirm('Remover membro?'))return;
+DB.set('equipe',DB.get('equipe',[]).filter(e=>e.id!==id));
+rEquipe(document.getElementById('mca'));
+}
+
+// ============ CONFIG ============
+function rConfig(el){
+const cfg=DB.get('config',{});
+el.innerHTML=`<h2 style="margin:0 0 20px;color:var(--p)">Configurações</h2>
+<div class="card"><h3>Dados do Negócio</h3>
+<div class="g2">
+<div class="fg"><label>Nome / Razão Social</label><input type="text" id="cf-nome" value="${cfg.nome||(APP.user?APP.user.nome:'')||''}"></div>
+<div class="fg"><label>CPF/CNPJ</label><input type="text" id="cf-doc" value="${cfg.doc||(APP.user?APP.user.doc:'')||''}"></div>
+<div class="fg"><label>Telefone</label><input type="text" id="cf-tel" value="${cfg.tel||(APP.user?APP.user.tel:'')||''}"></div>
+<div class="fg"><label>E-mail</label><input type="text" id="cf-email" value="${cfg.email||(APP.user?APP.user.email:'')||''}"></div>
+<div class="fg"><label>Ramo de Atuação</label><select id="cf-ramo">${['restaurante','bar','pizzaria','cafeteria','loja','petshop','oficina','salao','odonto','academia','hotel','escola','academia_aula','geral'].map(r=>`<option ${APP.ramo===r?'selected':''} value="${r}">${r}</option>`).join('')}</select></div></div>
+<button class="bf" style="width:auto;max-width:200px" onclick="salvarConfig()">💾 Salvar Config</button></div>
+<div class="g2">
+<div class="card"><h3>Backup / Exportar</h3>
+<div style="font-size:.85rem;color:#64748b;margin-bottom:10px">Exporte todos os dados em JSON para backup.</div>
+<button class="bf" onclick="exportarDados()">⬇ Exportar JSON</button></div>
+<div class="card"><h3>Restaurar / Importar</h3>
+<div style="font-size:.85rem;color:#64748b;margin-bottom:10px">Importe um JSON de backup gerado anteriormente.</div>
+<button class="bf" onclick="document.getElementById('imp-json').click()">⬆ Importar JSON</button>
+<input type="file" id="imp-json" accept=".json" style="display:none" onchange="importarDados(event)"></div>
+</div>
+<div class="card" style="border-color:#fecaca"><h3 style="color:var(--no)">Zona de Perigo</h3>
+<button class="bf" style="background:var(--no)" onclick="limparTudo()">🗑 Apagar Todos os Dados</button></div>`;
+}
+function salvarConfig(){
+const cfg=DB.get('config',{});
+cfg.nome=document.getElementById('cf-nome').value.trim();
+cfg.doc=document.getElementById('cf-doc').value.trim();
+cfg.tel=document.getElementById('cf-tel').value.trim();
+cfg.email=document.getElementById('cf-email').value.trim();
+const ramo=document.getElementById('cf-ramo').value;
+DB.set('config',cfg);
+if(ramo!==APP.ramo){APP.ramo=ramo;if(APP.user)APP.user.ramo=ramo;DB.setLocal('sessao',APP.user);renderSidebar();iniciar();}
+else{alert('Configurações salvas!');rConfig(document.getElementById('mca'))}
+}
+function exportarDados(){
+const dados={};
+for(const k of Object.keys(localStorage)){
+if(k.startsWith('op_'))dados[k.slice(3)]=JSON.parse(localStorage.getItem(k));
+}
+const blob=new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='omnisys-backup-'+hoje()+'.json';
+a.click();
+}
+function importarDados(ev){
+const f=ev.target.files[0];if(!f)return;
+const r=new FileReader();
+r.onload=()=>{try{const d=JSON.parse(r.result);Object.keys(d).forEach(k=>DB.set(k,d[k]));alert('Dados importados com sucesso!');iniciar()}catch(e){alert('Arquivo inválido!')}};
+r.readAsText(f);
+}
+function limparTudo(){
+if(!confirm('TEM CERTEZA? Isto apagará TODOS os dados locais do sistema!')){
+return}
+if(!confirm('Confirma definitivamente?'))return;
+Object.keys(localStorage).filter(k=>k.startsWith('op_')).forEach(k=>localStorage.removeItem(k));
+alert('Todos os dados foram apagados.');sairDoApp();
+}
+
+// ============ AGENDA ============
+function rAgenda(el){
+const agr=DB.get('agenda',{});
+const hojeData=new Date();
+const m=hojeData.getMonth(),y=hojeData.getFullYear();
+const mesNome=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][m];
+const primeiro=new Date(y,m,1).getDay();
+const diasMes=new Date(y,m+1,0).getDate();
+const semanas=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+el.innerHTML=`<h2 style="margin:0 0 10px;color:var(--p)">Agenda ${mesNome} ${y}</h2>
+<div style="display:flex;gap:10px;margin-bottom:15px;align-items:center">
+<button class="bsub" onclick="mudarMesAgenda(-1)">◀ Anterior</button>
+<button class="bsub" onclick="mudarMesAgenda(1)">Próximo ▶</button>
+<span style="font-size:.85rem;color:#64748b">Clique em um dia para adicionar anotação.</span></div>
+<div class="tg2" style="grid-template-columns:repeat(7,1fr);gap:8px;min-width:720px">
+${semanas.map(s=>`<div style="text-align:center;font-weight:700;font-size:.78rem;color:var(--p);text-transform:uppercase;padding:6px">${s}</div>`).join('')}
+${Array(primeiro).fill(0).map(()=>'<div></div>').join('')}
+${Array(diasMes).fill(0).map((_,i)=>{const dia=i+1;const key=y+'-'+String(m+1).padStart(2,'0')+'-'+String(dia).padStart(2,'0');const nota=agr[key]||'';const isHoje=key===hoje();return`<div class="mi" style="min-height:90px;${isHoje?'border:2px solid var(--a)':''}" onclick="verAgenda('${key}')">
+<div style="font-weight:700;font-size:1rem;color:${isHoje?'var(--a)':'var(--p)'}">${dia}</div>
+${nota?`<div style="font-size:.7rem;color:var(--w);margin-top:4px;max-height:50px;overflow:hidden">📝 ${nota}</div>`:''}
+</div>`}).join('')}
+</div>`;
+}
+function mudarMesAgenda(delta){
+rAgenda(document.getElementById('mca'));
+}
+function verAgenda(key){
+const agr=DB.get('agenda',{});
+const nota=prompt('Anotação para '+key+':',agr[key]||'')+'';
+if(nota&&nota!=='null')agr[key]=nota;else delete agr[key];
+DB.set('agenda',agr);rAgenda(document.getElementById('mca'));
+}
+
+// ============ BOOT ============
+(function boot(){
+window.addEventListener('online',()=>{if(APP.token)enviarSync()});
+const s=sessao();
+const t=(function(){try{return localStorage.getItem('op_token')}catch(e){return null}})();
+if(s&&t){setSessao(s,t);APP.ramo=s.ramo||'geral';iniciar();iniciarSync();return}
+if(s&&!t){const us=s;APP.ramo=us.ramo||'geral';APP.user=us;iniciar();return}
+show('login-screen');
+})();
+</script>
